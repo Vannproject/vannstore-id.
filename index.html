@@ -1,0 +1,547 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VannStore - Premium Digital Store</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<style>
+    /* --- RESET & ANIMASI LATAR BELAKANG --- */
+    *{ margin:0; padding:0; box-sizing:border-box; font-family:'Segoe UI', Roboto, Helvetica, Arial, sans-serif; }
+    
+    body{ 
+        height:100vh; 
+        width: 100vw;
+        overflow:hidden; 
+        display:flex; 
+        justify-content:center; 
+        align-items:center; 
+        background: linear-gradient(-45deg, #020617, #0b132b, #1c2541, #3a0ca3); 
+        background-size:400% 400%; 
+        animation:bgMove 12s ease infinite; 
+        color:white; 
+    }
+    
+    @keyframes bgMove{ 
+        0%{background-position:0% 50%;} 
+        50%{background-position:100% 50%;} 
+        100%{background-position:0% 50%;} 
+    }
+    
+    .container{ text-align:center; z-index:2; width: 90%; max-width: 400px; padding: 10px; }
+    
+    /* --- SPLASH SCREEN --- */
+    #splash-screen {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: 9999;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+        overflow: hidden;
+    }
+    
+    .splash-bg-top, .splash-bg-bottom {
+        position: absolute;
+        left: 0;
+        width: 100%;
+        height: 50%;
+        background: #020617;
+        transition: transform 0.8s cubic-bezier(0.77, 0, 0.175, 1);
+    }
+    .splash-bg-top { top: 0; transform: translateY(0); }
+    .splash-bg-bottom { bottom: 0; transform: translateY(0); }
+    
+    .splash-content {
+        position: relative;
+        z-index: 10000;
+        text-align: center;
+        transition: opacity 0.4s ease, transform 0.5s ease;
+    }
+    
+    .splash-logo {
+        font-size: 54px;
+        font-weight: 900;
+        letter-spacing: -1px;
+        background: linear-gradient(90deg, #3b82f6, #93c5fd, #ffffff, #3b82f6);
+        background-size: 200% auto;
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        filter: drop-shadow(0 0 30px rgba(59, 130, 246, 0.6));
+        animation: textGlowReveal 1.2s cubic-bezier(0.215, 0.610, 0.355, 1) forwards, shineText 3s linear infinite;
+        opacity: 0;
+    }
+    
+    .splash-sub {
+        color: #60a5fa;
+        font-size: 13px;
+        margin-top: 12px;
+        letter-spacing: 4px;
+        text-transform: uppercase;
+        font-weight: 600;
+        opacity: 0;
+        transform: translateY(10px);
+        animation: subReveal 1s ease forwards 0.5s;
+    }
+    
+    .splash-line {
+        width: 0;
+        height: 2px;
+        background: linear-gradient(90deg, transparent, #3b82f6, transparent);
+        margin: 8px auto 0 auto;
+        animation: lineExpand 1s ease forwards 0.2s;
+    }
+
+    @keyframes textGlowReveal {
+        0% { transform: scale(0.85) blur(5px); opacity: 0; }
+        100% { transform: scale(1) blur(0); opacity: 1; }
+    }
+    @keyframes shineText { to { background-position: 200% center; } }
+    @keyframes subReveal { to { opacity: 1; transform: translateY(0); } }
+    @keyframes lineExpand { to { width: 180px; } }
+    
+    #splash-screen.exit .splash-content { opacity: 0; transform: scale(1.02); transition: all 0.3s ease; }
+    #splash-screen.exit .splash-bg-top { transform: translateY(-101%); }
+    #splash-screen.exit .splash-bg-bottom { transform: translateY(101%); }
+    
+    /* --- TOMBOL KIRI & KANAN ATAS --- */
+    .menu-trigger { 
+        position: absolute; top: 25px; left: 25px; z-index: 100; font-size: 24px; cursor: pointer; display: none; color: #60a5fa; 
+        background: rgba(255, 255, 255, 0.05); padding: 10px 14px; border-radius: 12px; border: 1px solid rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(5px); transition: all 0.3s ease; 
+    }
+    .menu-trigger:hover { background: rgba(96, 165, 250, 0.2); color: white; box-shadow: 0 0 15px rgba(96, 165, 250, 0.5); }
+
+    .info-trigger {
+        position: absolute; top: 25px; right: 25px; z-index: 100; font-size: 22px; cursor: pointer; display: none; color: #fbbf24; 
+        background: rgba(255, 255, 255, 0.05); padding: 10px 13px; border-radius: 12px; border: 1px solid rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(5px); transition: all 0.3s ease;
+    }
+    .info-trigger:hover { background: rgba(251, 191, 36, 0.2); color: white; box-shadow: 0 0 15px rgba(251, 191, 36, 0.5); }
+    .info-trigger::after { content: ''; position: absolute; top: 8px; right: 10px; width: 8px; height: 8px; background: #ef4444; border-radius: 50%; box-shadow: 0 0 8px #ef4444; }
+
+    /* --- JENDELA POPUP INFORMASI (MODAL) --- */
+    .info-modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(2, 6, 23, 0.7); backdrop-filter: blur(8px); z-index: 99999; display: none; justify-content: center; align-items: center; }
+    .info-modal-content { background: #0f172a; border: 1px solid rgba(251, 191, 36, 0.3); box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6), 0 0 25px rgba(251, 191, 36, 0.1); padding: 24px; border-radius: 24px; width: 85%; max-width: 340px; text-align: center; animation: modalSlideUp 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) forwards; }
+    .info-modal-header { font-size: 18px; font-weight: 700; color: #fbbf24; margin-bottom: 12px; display: flex; align-items: center; justify-content: center; gap: 8px; }
+    .info-modal-body { font-size: 14px; color: #cbd5e1; line-height: 1.6; margin-bottom: 20px; text-align: left; background: rgba(0,0,0,0.2); padding: 12px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.03); }
+    .info-modal-close { background: linear-gradient(135deg, #fbbf24, #d97706); color: #020617; font-weight: 700; padding: 10px 20px; border: none; border-radius: 12px; cursor: pointer; width: 100%; transition: transform 0.2s ease; }
+    @keyframes modalSlideUp { from { opacity: 0; transform: translateY(20px) scale(0.95); } to { opacity: 1; transform: translateY(0) scale(1); } }
+    
+    /* --- SIDEBAR --- */
+    .sidebar { position: fixed; top: 0; left: -280px; width: 280px; height: 100%; background: rgba(3, 7, 18, 0.9); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); z-index: 99; padding: 90px 20px 20px 20px; transition: all 0.4s cubic-bezier(0.25, 1, 0.5, 1); box-shadow: 10px 0 30px rgba(0,0,0,0.7); border-right: 1px solid rgba(255,255,255,0.08); }
+    .sidebar.active { left: 0; }
+    .sidebar a { display: flex; align-items: center; gap: 15px; padding: 14px 20px; color: #94a3b8; text-decoration: none; font-size: 16px; font-weight: 500; border-radius: 12px; margin-bottom: 8px; transition: all 0.3s ease; }
+    .sidebar a:hover { background: rgba(96, 165, 250, 0.15); color: #60a5fa; padding-left: 25px; }
+    .sidebar a.active-menu { background: linear-gradient(135deg, #3b82f6, #1d4ed8); color: white; box-shadow: 0 4px 15px rgba(59, 130, 246, 0.4); }
+
+    /* --- LOGIN SECTION & CARD --- */
+    #login-section { animation: fadeIn 0.8s ease-out; }
+    #login-section h1{ font-size:52px; font-weight: 800; letter-spacing: -1.5px; background: linear-gradient(135deg, #ffffff, #93c5fd, #3b82f6); -webkit-background-clip: text; -webkit-text-fill-color: transparent; filter: drop-shadow(0 0 20px rgba(59, 130, 246, 0.3)); margin-bottom: 5px; }
+    #login-section p { color: #94a3b8; font-size: 15px; margin-bottom: 25px; }
+    
+    .app-card { background: rgba(255, 255, 255, 0.03); padding: 24px 20px; border-radius: 28px; backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border: 1px solid rgba(255, 255, 255, 0.08); width: 100%; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5); }
+    .page-content { display: none; }
+    .page-content.active { display: block; animation: pageSlideIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) forwards; }
+
+    /* --- PROFILE ACCENTS --- */
+    .profile-container { position: relative; display: inline-block; margin-bottom: 10px; }
+    #user-photo { width: 75px; height: 75px; border-radius: 50%; border: 3px solid #3b82f6; box-shadow: 0 0 15px rgba(59, 130, 246, 0.4); object-fit: cover; }
+    #user-name { font-size: 21px; font-weight: 700; letter-spacing: -0.5px; margin-top: 3px; }
+    #user-email { color: #94a3b8; font-size: 13px; margin-bottom: 2px; }
+    
+    .userid-badge { display: inline-flex; align-items: center; gap: 6px; background: rgba(59, 130, 246, 0.12); border: 1px solid rgba(59, 130, 246, 0.25); color: #93c5fd; font-size: 11px; font-weight: 600; padding: 4px 10px; border-radius: 8px; margin-top: 5px; cursor: pointer; transition: all 0.2s; }
+    .userid-badge:hover { background: rgba(59, 130, 246, 0.25); }
+
+    .info-box { background: rgba(0, 0, 0, 0.3); border: 1px solid rgba(255,255,255,0.05); padding: 12px 16px; border-radius: 16px; margin: 12px 0; text-align: left; font-size: 13.5px; }
+    .info-item { display: flex; justify-content: space-between; margin-bottom: 8px; color: #cbd5e1; }
+    .info-item:last-child { margin-bottom: 0; }
+    .info-item span:last-child { font-weight: 600; color: #60a5fa; }
+
+    /* --- BOX RIWAYAT TRANSAKSI --- */
+    .history-box { background: rgba(0, 0, 0, 0.2); border: 1px solid rgba(255, 255, 255, 0.04); border-radius: 16px; padding: 12px; margin-bottom: 15px; max-height: 140px; overflow-y: auto; }
+    .history-title { font-size: 13px; font-weight: 600; color: #94a3b8; text-align: left; margin-bottom: 8px; display: flex; align-items: center; gap: 6px; }
+    .history-empty { font-size: 12.5px; color: #64748b; padding: 15px 0; font-style: italic; }
+    
+    .tx-item { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid rgba(255,255,255,0.03); }
+    .tx-item:last-child { border-bottom: none; }
+    .tx-info { text-align: left; }
+    .tx-info h5 { font-size: 13px; font-weight: 600; color: #f8fafc; }
+    .tx-info span { font-size: 11px; color: #64748b; }
+    .tx-price { font-size: 12.5px; font-weight: 700; color: #10b981; }
+
+    /* --- KATALOG PRODUK --- */
+    .product-list { max-height: 42vh; overflow-y: auto; padding-right: 5px; margin-top: 15px; }
+    .product-list::-webkit-scrollbar { width: 4px; }
+    .product-list::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.15); border-radius: 10px; }
+    
+    .product-item { background: rgba(15, 23, 42, 0.5); border: 1px solid rgba(255, 255, 255, 0.05); border-radius: 18px; padding: 14px 18px; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; transition: all 0.25s ease; }
+    .product-item:hover { background: rgba(59, 130, 246, 0.08); border-color: rgba(59, 130, 246, 0.3); transform: translateY(-3px); }
+    .product-info h4 { font-size: 14.5px; font-weight: 600; color: #f8fafc; text-align: left; }
+    .product-info p { font-size: 13px; color: #10b981; font-weight: 700; text-align: left; margin-top: 2px; }
+    
+    .buy-item-btn { padding: 8px 16px; font-size: 12.5px; font-weight: 700; background: #10b981 !important; border-radius: 10px !important; margin: 0 !important; width: auto !important; box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3); }
+    .buy-item-btn:hover { background: #059669 !important; transform: scale(1.05); }
+
+    /* --- GLOBAL CHAT SCREEN INTERFACE --- */
+    .chat-container { display: flex; flex-direction: column; height: 46vh; background: rgba(0, 0, 0, 0.25); border: 1px solid rgba(255, 255, 255, 0.04); border-radius: 20px; padding: 10px; margin-top: 10px; }
+    .chat-messages { flex: 1; overflow-y: auto; padding-right: 5px; display: flex; flex-direction: column; gap: 10px; }
+    .chat-messages::-webkit-scrollbar { width: 3px; }
+    .chat-messages::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.1); border-radius: 10px; }
+    
+    /* Balon Obrolan Chat */
+    .chat-bubble { display: flex; gap: 8px; align-items: flex-start; max-width: 85%; animation: fadeIn 0.25s ease; text-align: left; }
+    .chat-bubble.my-chat { align-self: flex-end; flex-direction: row-reverse; text-align: right; }
+    .chat-avatar { width: 28px; height: 28px; border-radius: 50%; border: 1px solid rgba(255,255,255,0.1); object-fit: cover; }
+    .chat-content-box { background: rgba(255, 255, 255, 0.06); padding: 8px 12px; border-radius: 14px; border: 1px solid rgba(255,255,255,0.02); }
+    .chat-bubble.my-chat .chat-content-box { background: linear-gradient(135deg, #1e3a8a, #3b82f6); border-color: rgba(59, 130, 246, 0.2); }
+    .chat-sender-name { font-size: 11px; font-weight: 700; color: #93c5fd; margin-bottom: 2px; display: block; }
+    .chat-bubble.my-chat .chat-sender-name { color: #facc15; }
+    .chat-msg-text { font-size: 13px; color: #f1f5f9; word-break: break-word; line-height: 1.4; }
+    
+    /* Input Box Chat di Bagian Bawah */
+    .chat-input-area { display: flex; gap: 8px; margin-top: 10px; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 8px; }
+    .chat-input-field { flex: 1; background: rgba(15, 23, 42, 0.6); border: 1px solid rgba(255, 255, 255, 0.08); padding: 10px 14px; border-radius: 12px; color: white; font-size: 13.5px; outline: none; transition: border 0.2s; }
+    .chat-input-field:focus { border-color: #3b82f6; }
+    .chat-send-btn { width: 40px; height: 40px; background: #3b82f6; border: none; border-radius: 12px; color: white; cursor: pointer; font-size: 14px; display: flex; align-items: center; justify-content: center; transition: all 0.2s; }
+    .chat-send-btn:hover { background: #2563eb; transform: scale(1.05); }
+
+    /* --- BUTTONS --- */
+    .btn{ margin-top:15px; padding:14px 24px; border:none; border-radius:16px; font-weight:700; font-size: 15px; cursor:pointer; background: linear-gradient(135deg, #3b82f6, #2563eb); color: white; transition: all 0.25s ease; width: 100%; box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3); }
+    .btn:hover{ transform: translateY(-2px); box-shadow: 0 6px 20px rgba(59, 130, 246, 0.5); }
+    
+    .logout-btn{ margin-top:0px; padding:11px 20px; background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.2); color: #ef4444; box-shadow: none; border-radius:14px; font-size: 14px; }
+    .logout-btn:hover { background: #ef4444; color: white; box-shadow: 0 6px 15px rgba(239, 68, 68, 0.4); }
+    
+    .cs-btn { background: linear-gradient(135deg, #22c55e, #16a34a); display: flex; align-items: center; justify-content: center; gap: 10px; text-decoration: none; box-shadow: 0 4px 15px rgba(34, 197, 94, 0.3); }
+
+    @keyframes fadeIn { from{ opacity: 0; transform: translateY(5px); } to{ opacity: 1; transform: translateY(0); } }
+    @keyframes pageSlideIn { from{ opacity: 0; transform: scale(0.95) translateY(10px); } to{ opacity: 1; transform: scale(1) translateY(0); } }
+</style>
+</head>
+<body>
+
+<div id="splash-screen">
+    <div class="splash-bg-top"></div>
+    <div class="splash-bg-bottom"></div>
+    <div class="splash-content">
+        <div class="splash-logo">VannStore</div>
+        <div class="splash-line"></div>
+        <div class="splash-sub">Premium Digital Store</div>
+    </div>
+</div>
+
+<div class="menu-trigger" id="menu-btn" onclick="toggleSidebar()"><i class="fa-solid fa-bars"></i></div>
+<div class="info-trigger" id="info-btn" onclick="toggleInfoModal()"><i class="fa-solid fa-bell"></i></div>
+
+<div class="info-modal" id="info-modal-box">
+    <div class="info-modal-content">
+        <div class="info-modal-header"><i class="fa-solid fa-bullhorn"></i> Informasi VannStore</div>
+        <div class="info-modal-body" id="info-text-content">
+            <strong>Halo User!</strong><br><br>
+            Selamat datang di VannStore Premium Digital Store. Web saat ini sedang dalam tahap uji coba versi beta.<br><br>
+            Jika ada maintenance sistem ke depan, infonya akan langsung kami update di sini ya! Terima kasih.
+        </div>
+        <button class="info-modal-close" onclick="toggleInfoModal()">Mengerti</button>
+    </div>
+</div>
+
+<div class="sidebar" id="sidebar-menu">
+    <a href="#" id="m-profile" class="active-menu" onclick="switchPage('profile-page', 'm-profile')"><i class="fa-solid fa-user"></i> Profile Akun</a>
+    <a href="#" id="m-shop" onclick="switchPage('shop-page', 'm-shop')"><i class="fa-solid fa-cart-shopping"></i> Beli Produk</a>
+    <a href="#" id="m-chat" onclick="switchPage('chat-page', 'm-chat')"><i class="fa-solid fa-comments"></i> Chat Global</a>
+    <a href="#" id="m-cs" onclick="switchPage('cs-page', 'm-cs')"><i class="fa-solid fa-headset"></i> Hubungi CS</a>
+    <a href="#" id="menu-logout" style="color: #f87171; margin-top: 40px;"><i class="fa-solid fa-right-from-bracket"></i> Keluar</a>
+</div>
+
+<div class="container">
+    <div id="login-section">
+        <h1>VannStore</h1>
+        <p>Premium Digital Store</p>
+        <button class="btn" id="btn-login"><i class="fa-brands fa-google" style="margin-right:8px;"></i> Login dengan Google</button>
+    </div>
+
+    <div id="main-dashboard" style="display: none; width: 100%;">
+        <div class="app-card">
+            
+            <div id="profile-page" class="page-content active">
+                <div class="profile-container"><img id="user-photo" src="" alt="Profile"></div>
+                <h2 id="user-name">Nama</h2>
+                <p id="user-email">email@gmail.com</p>
+                
+                <div class="userid-badge" id="btn-copy-id" onclick="copyUserID()">
+                    <i class="fa-solid fa-fingerprint"></i> ID: <span id="user-id-text">Loading...</span>
+                </div>
+                
+                <div class="info-box">
+                    <div class="info-item">
+                        <span><i class="fa-solid fa-calendar-days" style="margin-right:5px;"></i> Terdaftar</span>
+                        <span id="join-date">-</span>
+                    </div>
+                    <div class="info-item">
+                        <span><i class="fa-solid fa-wallet" style="margin-right:5px;"></i> Pengeluaran</span>
+                        <span id="total-transaksi">Rp 0</span>
+                    </div>
+                </div>
+
+                <div class="history-box">
+                    <div class="history-title"><i class="fa-solid fa-clock-rotate-left" style="color: #60a5fa;"></i> Riwayat Transaksi</div>
+                    <div id="tx-history-container" class="history-empty">Belum ada riwayat transaksi</div>
+                </div>
+
+                <button class="btn logout-btn" id="btn-logout">Logout</button>
+            </div>
+
+            <div id="shop-page" class="page-content">
+                <h3 style="font-weight: 700; font-size: 18px;"><i class="fa-solid fa-tags" style="color:#60a5fa; margin-right:8px;"></i> Produk Pilihan</h3>
+                <div class="product-list">
+                    <div class="product-item">
+                        <div class="product-info"><h4>Mobile Legends 86 Dm</h4><p>Rp 20.000</p></div>
+                        <button class="btn buy-item-btn" onclick="orderProduct('MLBB 86 Dm', 20000)">Beli</button>
+                    </div>
+                    <div class="product-item">
+                        <div class="product-info"><h4>Free Fire 140 Dm</h4><p>Rp 19.500</p></div>
+                        <button class="btn buy-item-btn" onclick="orderProduct('FF 140 Dm', 19500)">Beli</button>
+                    </div>
+                    <div class="product-item">
+                        <div class="product-info"><h4>Spotify Premium 1 Bln</h4><p>Rp 15.000</p></div>
+                        <button class="btn buy-item-btn" onclick="orderProduct('Spotify 1 Bulan', 15000)">Beli</button>
+                    </div>
+                </div>
+            </div>
+
+            <div id="chat-page" class="page-content">
+                <h3 style="font-weight: 700; font-size: 17px;"><i class="fa-solid fa-comments" style="color:#3b82f6; margin-right:8px;"></i> Obrolan Komunitas</h3>
+                <div class="chat-container">
+                    <div class="chat-messages" id="chat-messages-box">
+                        </div>
+                    <div class="chat-input-area">
+                        <input type="text" class="chat-input-field" id="chat-input" placeholder="Tulis pesan kamu..." maxlength="150">
+                        <button class="chat-send-btn" id="btn-send-chat"><i class="fa-solid fa-paper-plane"></i></button>
+                    </div>
+                </div>
+            </div>
+
+            <div id="cs-page" class="page-content">
+                <h3 style="font-weight: 700; font-size: 18px; margin-bottom: 8px;"><i class="fa-solid fa-circle-question" style="color:#22c55e; margin-right:8px;"></i> Butuh Bantuan?</h3>
+                <p style="color: #94a3b8; font-size: 13.5px; margin-bottom: 20px; line-height: 1.6;">Jika top up belum masuk atau ada kesalahan sistem, silakan chat Admin CS di bawah.</p>
+                <div class="info-box" style="text-align: center; background: rgba(34, 197, 94, 0.02); border-color: rgba(34, 197, 94, 0.15);">
+                    <p style="color: #94a3b8; font-size: 13px; margin-bottom: 3px;">Jam Kerja Layanan</p>
+                    <p style="font-size: 15px; color:#22c55e;"><strong>09:00 - 22:00 WIB</strong></p>
+                </div>
+                <a href="https://wa.me/628XXXXXXXXXX" target="_blank" class="btn cs-btn"><i class="fa-brands fa-whatsapp" style="font-size:18px;"></i> Hubungi via WhatsApp</a>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+import { getAuth, signInWithPopup, GoogleAuthProvider, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+import { getFirestore, collection, addDoc, query, where, orderBy, limit, onSnapshot } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyBTxQROsHI1X2t5HoMrWYAsrKSYByhptjQ",
+  authDomain: "vannstore-id.firebaseapp.com",
+  projectId: "vannstore-id",
+  storageBucket: "vannstore-id.firebasestorage.app",
+  messagingSenderId: "72722881791",
+  appId: "1:72722881791:web:8c2b5e14c51ae97979c0ca",
+  measurementId: "G-5WX6EZEGJ4"
+};
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+const provider = new GoogleAuthProvider();
+
+let currentUser = null;
+let unsubscribeTx = null;
+let unsubscribeChat = null;
+
+window.addEventListener("DOMContentLoaded", () => {
+    setTimeout(() => {
+        const splash = document.getElementById("splash-screen");
+        splash.classList.add("exit");
+        setTimeout(() => { splash.style.setProperty("display", "none", "important"); }, 800); 
+    }, 3200); 
+});
+
+onAuthStateChanged(auth, (user) => {
+    if (user) {
+        setupDashboard(user);
+    } else {
+        handleLogoutDOM();
+    }
+});
+
+document.getElementById("btn-login").addEventListener("click", () => {
+    signInWithPopup(auth, provider).then((result) => {
+        setupDashboard(result.user);
+    }).catch((err) => alert("Login Gagal: " + err.message));
+});
+
+const handleLogout = () => { signOut(auth); };
+document.getElementById("btn-logout").addEventListener("click", handleLogout);
+document.getElementById("menu-logout").addEventListener("click", handleLogout);
+
+function handleLogoutDOM() {
+    if(unsubscribeTx) { unsubscribeTx(); unsubscribeTx = null; }
+    if(unsubscribeChat) { unsubscribeChat(); unsubscribeChat = null; }
+    currentUser = null;
+    document.getElementById("login-section").style.display = "block";
+    document.getElementById("main-dashboard").style.display = "none";
+    document.getElementById("menu-btn").style.display = "none";
+    document.getElementById("info-btn").style.display = "none";
+    document.getElementById("sidebar-menu").classList.remove("active");
+}
+
+function setupDashboard(user) {
+    currentUser = user;
+    document.getElementById("login-section").style.display = "none";
+    document.getElementById("main-dashboard").style.display = "flex";
+    document.getElementById("menu-btn").style.display = "block";
+    document.getElementById("info-btn").style.display = "block";
+    
+    document.getElementById("user-name").innerText = user.displayName;
+    document.getElementById("user-email").innerText = user.email;
+    document.getElementById("user-photo").src = user.photoURL;
+    document.getElementById("user-id-text").innerText = user.uid;
+    document.getElementById("join-date").innerText = user.metadata.creationTime ? new Date(user.metadata.creationTime).toLocaleDateString('id-ID') : new Date().toLocaleDateString('id-ID');
+    
+    listenToTransactions(user.uid);
+    listenGlobalChat(); // Aktifkan pendengar obrolan global realtime
+    switchPage('profile-page', 'm-profile');
+}
+
+function listenToTransactions(uid) {
+    if(unsubscribeTx) unsubscribeTx();
+    const txRef = collection(db, "transaksi");
+    const q = query(txRef, where("userId", "==", uid), orderBy("timestamp", "desc"));
+    
+    unsubscribeTx = onSnapshot(q, (snapshot) => {
+        const container = document.getElementById("tx-history-container");
+        let totalPengeluaran = 0;
+        if(snapshot.empty) {
+            container.innerHTML = "Belum ada riwayat transaksi";
+            container.className = "history-empty";
+            document.getElementById("total-transaksi").innerText = "Rp 0";
+            return;
+        }
+        container.innerHTML = "";
+        container.className = ""; 
+        snapshot.forEach((doc) => {
+            const data = doc.data();
+            totalPengeluaran += data.harga;
+            const itemHTML = `
+                <div class="tx-item">
+                    <div class="tx-info"><h5>${data.produk}</h5><span>${data.tanggal}</span></div>
+                    <div class="tx-price">Rp ${data.harga.toLocaleString('id-ID')}</div>
+                </div>`;
+            container.innerHTML += itemHTML;
+        });
+        document.getElementById("total-transaksi").innerText = "Rp " + totalPengeluaran.toLocaleString('id-ID');
+    });
+}
+
+// REALTIME LISTEN ROOM CHAT GLOBAL
+function listenGlobalChat() {
+    if(unsubscribeChat) unsubscribeChat();
+    const chatRef = collection(db, "obrolan");
+    const q = query(chatRef, orderBy("timestamp", "asc"), limit(40)); // Batasi 40 obrolan terakhir demi hemat kuota gratisan
+    
+    unsubscribeChat = onSnapshot(q, (snapshot) => {
+        const box = document.getElementById("chat-messages-box");
+        box.innerHTML = "";
+        
+        if(snapshot.empty) {
+            box.innerHTML = `<div style="font-size:12px; color:#64748b; font-style:italic; padding:20px; text-align:center;">Belum ada obrolan. Yuk mulai menyapa!</div>`;
+            return;
+        }
+        
+        snapshot.forEach((doc) => {
+            const chat = doc.data();
+            const isMe = chat.senderId === currentUser.uid;
+            
+            const chatHTML = `
+                <div class="chat-bubble ${isMe ? 'my-chat' : ''}">
+                    <img class="chat-avatar" src="${chat.senderPhoto}" alt="Avatar">
+                    <div class="app-card chat-content-box">
+                        <span class="chat-sender-name">${chat.senderName}</span>
+                        <p class="chat-msg-text">${chat.pesan}</p>
+                    </div>
+                </div>`;
+            box.innerHTML += chatHTML;
+        });
+        box.scrollTop = box.scrollHeight; // Geser scroll otomatis ke obrolan paling bawah
+    });
+}
+
+// KIRIM PESAN CHAT KE FIRESTORE
+async function sendChatMessage() {
+    const input = document.getElementById("chat-input");
+    const text = input.value.trim();
+    if(!text || !currentUser) return;
+    
+    try {
+        input.value = ""; // Bersihkan textfield dengan cepat
+        await addDoc(collection(db, "obrolan"), {
+            senderId: currentUser.uid,
+            senderName: currentUser.displayName,
+            senderPhoto: currentUser.photoURL,
+            pesan: text,
+            timestamp: new Date().getTime()
+        });
+    } catch(e) {
+        console.error("Gagal mengirim chat: ", e);
+    }
+}
+
+document.getElementById("btn-send-chat").addEventListener("click", sendChatMessage);
+document.getElementById("chat-input").addEventListener("keypress", (e) => { if(e.key === "Enter") sendChatMessage(); });
+
+window.orderProduct = async (productName, price) => {
+    if(!currentUser) return alert("Silakan login terlebih dahulu!");
+    try {
+        const tanggalSkarang = new Date().toLocaleDateString('id-ID', {day: 'numeric', month: 'numeric', year: 'numeric'});
+        await addDoc(collection(db, "transaksi"), {
+            userId: currentUser.uid,
+            produk: productName,
+            harga: price,
+            tanggal: tanggalSkarang,
+            timestamp: new Date().getTime()
+        });
+        alert(`Pesanan Sukses!\nProduk: ${productName} (Rp ${price.toLocaleString('id-ID')}) telah dicatat di riwayat.`);
+    } catch (e) { alert("Gagal memproses transaksi: " + e.message); }
+};
+
+window.copyUserID = () => {
+    const idText = document.getElementById("user-id-text").innerText;
+    navigator.clipboard.writeText(idText).then(() => alert("User ID berhasil disalin: " + idText));
+};
+
+window.toggleSidebar = () => { document.getElementById("sidebar-menu").classList.toggle("active"); };
+window.toggleInfoModal = () => {
+    const modal = document.getElementById("info-modal-box");
+    modal.style.display = (modal.style.display === "flex") ? "none" : "flex";
+};
+
+window.switchPage = (pageId, menuId) => {
+    document.querySelectorAll('.page-content').forEach(page => page.classList.remove('active'));
+    document.querySelectorAll('.sidebar a').forEach(item => item.classList.remove('active-menu'));
+    document.getElementById(pageId).classList.add('active');
+    if(menuId) document.getElementById(menuId).classList.add('active-menu');
+    document.getElementById("sidebar-menu").classList.remove("active");
+    if(pageId === 'chat-page') {
+        const box = document.getElementById("chat-messages-box");
+        box.scrollTop = box.scrollHeight;
+    }
+};
+</script>
+</body>
+</html>
