@@ -156,6 +156,7 @@
     .userid-badge:hover { background: rgba(59, 130, 246, 0.25); }
 
     .info-box { background: rgba(0, 0, 0, 0.3); border: 1px solid rgba(255,255,255,0.05); padding: 12px 16px; border-radius: 16px; margin: 12px 0; text-align: left; font-size: 13.5px; }
+    .info-box p { text-align: center; } /* Memastikan teks di info-box CS tetap di tengah */
     .info-item { display: flex; justify-content: space-between; margin-bottom: 8px; color: #cbd5e1; }
     .info-item:last-child { margin-bottom: 0; }
     .info-item span:last-child { font-weight: 600; color: #60a5fa; }
@@ -347,17 +348,18 @@
             <div id="shop-page" class="page-content">
                 <h3 style="font-weight: 700; font-size: 18px;"><i class="fa-solid fa-tags" style="color:#60a5fa; margin-right:8px;"></i> Produk Pilihan</h3>
                 <div class="product-list">
+                    <!-- PRODUK BERUBAH MENJADI NOKOS SESUAI PERMINTAAN -->
                     <div class="product-item">
-                        <div class="product-info"><h4>Mobile Legends 86 Dm</h4><p>Rp 20.000</p></div>
-                        <button class="btn buy-item-btn" onclick="orderProduct('MLBB 86 Dm', 20000)">Beli</button>
+                        <div class="product-info"><h4>Nokos Shopee</h4><p>Rp 2.000</p></div>
+                        <button class="btn buy-item-btn" onclick="orderProduct('Nokos Shopee', 2000, 'shopee')">Beli</button>
                     </div>
                     <div class="product-item">
-                        <div class="product-info"><h4>Free Fire 140 Dm</h4><p>Rp 19.500</p></div>
-                        <button class="btn buy-item-btn" onclick="orderProduct('FF 140 Dm', 19500)">Beli</button>
+                        <div class="product-info"><h4>Nokos WhatsApp</h4><p>Rp 3.500</p></div>
+                        <button class="btn buy-item-btn" onclick="orderProduct('Nokos WhatsApp', 3500, 'wa')">Beli</button>
                     </div>
                     <div class="product-item">
-                        <div class="product-info"><h4>Spotify Premium 1 Bln</h4><p>Rp 15.000</p></div>
-                        <button class="btn buy-item-btn" onclick="orderProduct('Spotify 1 Bulan', 15000)">Beli</button>
+                        <div class="product-info"><h4>Nokos DANA</h4><p>Rp 4.000</p></div>
+                        <button class="btn buy-item-btn" onclick="orderProduct('Nokos DANA', 4000, 'dana')">Beli</button>
                     </div>
                 </div>
             </div>
@@ -390,7 +392,7 @@
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
 import { getAuth, signInWithPopup, GoogleAuthProvider, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-import { getFirestore, collection, addDoc, query, where, orderBy, limit, onSnapshot } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+import { getFirestore, collection, addDoc, query, where, orderBy, limit, onSnapshot, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyBTxQROsHI1X2t5HoMrWYAsrKSYByhptjQ",
@@ -600,18 +602,57 @@ async function sendChatMessage() {
 document.getElementById("btn-send-chat").addEventListener("click", sendChatMessage);
 document.getElementById("chat-input").addEventListener("keypress", (e) => { if(e.key === "Enter") sendChatMessage(); });
 
-window.orderProduct = async (productName, price) => {
+// LOGIKA BELI BARANG BARU: SEKARANG DENGAN PENGECEKAN SALDO FIRESTORE
+window.orderProduct = async (productName, price, serviceType) => {
     if(!currentUser) return window.showToast("Akses Ditolak", "Silakan login terlebih dahulu untuk membeli!", "error");
+    
     try {
+        // Ambil data saldo user secara real-time dari dokumen users/[uid] sebelum memproses
+        const userDocRef = doc(db, "users", currentUser.uid);
+        const userDocSnap = await getDoc(userDocRef);
+        
+        let saldoUser = 0;
+        if (userDocSnap.exists()) {
+            const userData = userDocSnap.data();
+            saldoUser = userData.saldo || 0;
+        }
+        
+        // Pengecekan saldo utama
+        if (saldoUser < price) {
+            return window.showToast(
+                "Saldo Tidak Cukup", 
+                `Gagal membeli ${productName}. Saldo Anda saat ini Rp ${saldoUser.toLocaleString('id-ID')}, kurang Rp ${(price - saldoUser).toLocaleString('id-ID')} lagi. Silakan top up!`, 
+                "error"
+            );
+        }
+        
+        window.showToast("Memproses", "Sedang mengambil nomor OTP...", "success");
+        
+        // Memanggil fungsi backend yang aman di Netlify
+        const response = await fetch(`/.netlify/functions/api-rumahotp?service=${serviceType}`);
+        const result = await response.json();
+        
+        if (!response.ok || !result.success) {
+            throw new Error(result.error || "Gagal mengambil nomor dari provider.");
+        }
+        
+        // ID RumahOTP dan Nomor HP yang berhasil dipesan pembeli
+        const orderId = result.data.id;
+        const nomorHp = result.data.number;
+        
         const tanggalSkarang = new Date().toLocaleDateString('id-ID', {day: 'numeric', month: 'numeric', year: 'numeric'});
+        
+        // Simpan transaksi sukses ke Firebase Firestore agar muncul di riwayat web
         await addDoc(collection(db, "transaksi"), {
             userId: currentUser.uid,
-            produk: productName,
+            produk: `${productName} (${nomorHp})`,
             harga: price,
             tanggal: tanggalSkarang,
             timestamp: new Date().getTime()
         });
-        window.showToast("Pembelian Sukses", `${productName} (Rp ${price.toLocaleString('id-ID')}) tercatat di riwayat!`, "success");
+        
+        window.showToast("Pembelian Sukses", `Nomor: ${nomorHp} | ID Order: ${orderId}`, "success");
+        
     } catch (e) { 
         window.showToast("Transaksi Gagal", e.message, "error"); 
     }
