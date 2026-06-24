@@ -449,7 +449,7 @@ function listenToTransactions(uid) {
     });
 }
 
-// REALTIME LISTEN ROOM CHAT GLOBAL
+    // REALTIME LISTEN ROOM CHAT GLOBAL
 function listenGlobalChat() {
     if(unsubscribeChat) unsubscribeChat();
     const chatRef = collection(db, "obrolan");
@@ -468,11 +468,17 @@ function listenGlobalChat() {
             const chat = doc.data();
             const isMe = chat.senderId === currentUser.uid;
             
+            // Cek apakah email kamu cocok untuk memunculkan Badge + Teks Admin
+            const isAdmin = isMe && currentUser.email === "jaenajaemin316@gmail.com";
+            
+            // Kombinasi Logo Kotak Merah + Teks ADMIN yang proporsional
+            const adminBadge = isAdmin ? `<span style="background: #ef4444; color: white; font-size: 9px; padding: 2px 6px; border-radius: 4px; margin-left: 6px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; display: inline-block; vertical-align: middle;">👑 Admin</span>` : '';
+            
             const chatHTML = `
                 <div class="chat-bubble ${isMe ? 'my-chat' : ''}">
                     <img class="chat-avatar" src="${chat.senderPhoto}" alt="Avatar">
                     <div class="app-card chat-content-box">
-                        <span class="chat-sender-name">${chat.senderName}</span>
+                        <span class="chat-sender-name" style="display: flex; align-items: center; gap: 2px;">${chat.senderName}${adminBadge}</span>
                         <p class="chat-msg-text">${chat.pesan}</p>
                     </div>
                 </div>`;
