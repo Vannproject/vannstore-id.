@@ -250,6 +250,16 @@
     .error .toast-title { color: #ef4444; }
     .toast-desc { font-size: 12px; color: #cbd5e1; line-height: 1.4; word-break: break-word; }
 
+    /* --- JENDELA POPUP TRANSAKSI NOKOS (PENDING POPUP) --- */
+    .otp-modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(2, 6, 23, 0.8); backdrop-filter: blur(10px); z-index: 999998; display: none; justify-content: center; align-items: center; }
+    .otp-modal-content { background: #0f172a; border: 1px solid rgba(59, 130, 246, 0.3); box-shadow: 0 25px 50px rgba(0, 0, 0, 0.7); padding: 24px; border-radius: 28px; width: 90%; max-width: 360px; text-align: center; animation: modalSlideUp 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) forwards; }
+    .otp-timer { font-size: 14px; font-weight: 700; color: #ef4444; background: rgba(239, 68, 68, 0.1); padding: 6px 14px; border-radius: 10px; display: inline-block; margin-bottom: 15px; }
+    .otp-number-display { font-size: 22px; font-weight: 800; color: #3b82f6; letter-spacing: 1px; margin: 10px 0; background: rgba(0,0,0,0.2); padding: 10px; border-radius: 14px; border: 1px solid rgba(255,255,255,0.05); }
+    .otp-box-display { font-size: 26px; font-weight: 900; color: #10b981; letter-spacing: 4px; background: rgba(16, 185, 129, 0.1); border: 2px dashed #10b981; padding: 15px; border-radius: 16px; margin: 15px 0; animation: pulseGlow 2s infinite ease-in-out; }
+    .cancel-otp-btn { background: linear-gradient(135deg, #ef4444, #b91c1c); color: white; font-weight: 700; padding: 12px; border: none; border-radius: 14px; cursor: pointer; width: 100%; margin-top: 10px; box-shadow: 0 4px 15px rgba(239, 68, 68, 0.3); transition: all 0.2s; }
+    .cancel-otp-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(239, 68, 68, 0.5); }
+    @keyframes pulseGlow { 0%, 100% { opacity: 0.8; } 50% { opacity: 1; transform: scale(1.02); } }
+
     /* --- BUTTONS --- */
     .btn{ margin-top:15px; padding:14px 24px; border:none; border-radius:16px; font-weight:700; font-size: 15px; cursor:pointer; background: linear-gradient(135deg, #3b82f6, #2563eb); color: white; transition: all 0.25s ease; width: 100%; box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3); }
     .btn:hover{ transform: translateY(-2px); box-shadow: 0 6px 20px rgba(59, 130, 246, 0.5); }
@@ -265,12 +275,26 @@
 </head>
 <body>
 
-<!-- COMPONENT KUSTOM PREMIUM TOAST -->
 <div class="toast-container" id="custom-toast">
     <div class="toast-icon" id="toast-icon-box"><i class="fa-solid fa-circle-check"></i></div>
     <div class="toast-content">
         <div class="toast-title" id="toast-header-text">Sukses</div>
         <div class="toast-desc" id="toast-body-text">Deskripsi pesan di sini.</div>
+    </div>
+</div>
+
+<div class="otp-modal" id="otp-modal-box">
+    <div class="otp-modal-content">
+        <div class="otp-timer" id="otp-countdown-timer"><i class="fa-solid fa-clock"></i> 15:00</div>
+        <h3 style="font-size:16px; font-weight:700;"><i class="fa-solid fa-sim-card" style="color:#3b82f6;"></i> Nomor Nokos Anda</h3>
+        <div class="otp-number-display" id="otp-number-text">08xxxxxxxxxx</div>
+        <p style="font-size:12px; color:#94a3b8; margin:5px 0 15px 0;">Silakan salin nomor di atas ke aplikasi tujuan.</p>
+        
+        <h4 style="font-size:14px; font-weight:600; color:#cbd5e1;">Kode OTP Anda</h4>
+        <div class="otp-box-display" id="otp-code-text">MENUNGGU OTP...</div>
+        
+        <p style="font-size:11.5px; color:#64748b; line-height:1.4; margin-bottom:15px;">Sistem mengecek OTP secara otomatis. Jika dibatalkan atau waktu habis, saldo Anda aman.</p>
+        <button class="cancel-otp-btn" id="btn-cancel-otp">Batalkan Pesanan</button>
     </div>
 </div>
 
@@ -348,7 +372,6 @@
             <div id="shop-page" class="page-content">
                 <h3 style="font-weight: 700; font-size: 18px;"><i class="fa-solid fa-tags" style="color:#60a5fa; margin-right:8px;"></i> Produk Pilihan</h3>
                 <div class="product-list">
-                    <!-- PRODUK BERUBAH MENJADI NOKOS SESUAI PERMINTAAN -->
                     <div class="product-item">
                         <div class="product-info"><h4>Nokos Shopee</h4><p>Rp 2.000</p></div>
                         <button class="btn buy-item-btn" onclick="orderProduct('Nokos Shopee', 2000, 'shopee')">Beli</button>
@@ -414,14 +437,17 @@ let unsubscribeTx = null;
 let unsubscribeChat = null;
 let toastTimeout = null;
 
-// FUNGSI AKSI TOAST PREMIUM UNTUK MENGGANTIKAN ALERT()
+// Variabel Global untuk Kontrol Sistem Pending OTP
+let otpCountdownInterval = null;
+let otpPollingInterval = null;
+let currentActiveOrderId = null;
+
 window.showToast = (title, message, type = "success") => {
     const toast = document.getElementById("custom-toast");
     const iconBox = document.getElementById("toast-icon-box");
     const header = document.getElementById("toast-header-text");
     const body = document.getElementById("toast-body-text");
     
-    // Reset status kelas tipe toast sebelumnya
     toast.classList.remove("success", "error");
     toast.classList.add(type);
     
@@ -434,13 +460,9 @@ window.showToast = (title, message, type = "success") => {
         iconBox.innerHTML = '<i class="fa-solid fa-circle-exclamation"></i>';
     }
     
-    // Munculkan toast
     toast.classList.add("show");
-    
-    // Bersihkan timeout lama jika user mengklik trigger berturut-turut
     clearTimeout(toastTimeout);
     
-    // Sembunyikan otomatis setelah 3.5 detik
     toastTimeout = setTimeout(() => {
         toast.classList.remove("show");
     }, 3500);
@@ -467,7 +489,6 @@ document.getElementById("btn-login").addEventListener("click", () => {
         setupDashboard(result.user);
         window.showToast("Login Sukses", `Selamat datang kembali, ${result.user.displayName}!`, "success");
     }).catch((err) => {
-        // Deteksi jika eror dipicu karena jendela ditutup user
         if(err.code === "auth/popup-closed-by-user") {
             window.showToast("Login Dibatalkan", "Jendela login ditutup sebelum selesai. Jika lewat WA, silakan salin link ke Google Chrome asli.", "error");
         } else {
@@ -493,6 +514,7 @@ function handleLogoutDOM() {
     document.getElementById("menu-btn").style.display = "none";
     document.getElementById("info-btn").style.display = "none";
     document.getElementById("sidebar-menu").classList.remove("active");
+    closeOtpModal();
 }
 
 function setupDashboard(user) {
@@ -602,22 +624,20 @@ async function sendChatMessage() {
 document.getElementById("btn-send-chat").addEventListener("click", sendChatMessage);
 document.getElementById("chat-input").addEventListener("keypress", (e) => { if(e.key === "Enter") sendChatMessage(); });
 
-// LOGIKA BELI BARANG BARU: SEKARANG DENGAN PENGECEKAN SALDO FIRESTORE
+// LOGIKA BELI BARANG BARU DENGAN POPUP PENDING OTP & TOMBOL BATALKAN
 window.orderProduct = async (productName, price, serviceType) => {
     if(!currentUser) return window.showToast("Akses Ditolak", "Silakan login terlebih dahulu untuk membeli!", "error");
     
     try {
-        // Ambil data saldo user secara real-time dari dokumen users/[uid] sebelum memproses
+        // Ambil data saldo user dari Firestore users/[uid]
         const userDocRef = doc(db, "users", currentUser.uid);
         const userDocSnap = await getDoc(userDocRef);
         
         let saldoUser = 0;
         if (userDocSnap.exists()) {
-            const userData = userDocSnap.data();
-            saldoUser = userData.saldo || 0;
+            saldoUser = userDocSnap.data().saldo || 0;
         }
         
-        // Pengecekan saldo utama
         if (saldoUser < price) {
             return window.showToast(
                 "Saldo Tidak Cukup", 
@@ -628,35 +648,115 @@ window.orderProduct = async (productName, price, serviceType) => {
         
         window.showToast("Memproses", "Sedang mengambil nomor OTP...", "success");
         
-        // Memanggil fungsi backend yang aman di Netlify
-        const response = await fetch(`/.netlify/functions/api-rumahotp?service=${serviceType}`);
+        // Memanggil fungsi backend di Netlify
+        const response = await fetch(`/.netlify/functions/api-rumahotp?action=order&service=${serviceType}`);
         const result = await response.json();
         
         if (!response.ok || !result.success) {
             throw new Error(result.error || "Gagal mengambil nomor dari provider.");
         }
         
-        // ID RumahOTP dan Nomor HP yang berhasil dipesan pembeli
         const orderId = result.data.id;
         const nomorHp = result.data.number;
-        
-        const tanggalSkarang = new Date().toLocaleDateString('id-ID', {day: 'numeric', month: 'numeric', year: 'numeric'});
-        
-        // Simpan transaksi sukses ke Firebase Firestore agar muncul di riwayat web
-        await addDoc(collection(db, "transaksi"), {
-            userId: currentUser.uid,
-            produk: `${productName} (${nomorHp})`,
-            harga: price,
-            tanggal: tanggalSkarang,
-            timestamp: new Date().getTime()
-        });
-        
-        window.showToast("Pembelian Sukses", `Nomor: ${nomorHp} | ID Order: ${orderId}`, "success");
+        currentActiveOrderId = orderId;
+
+        // Buka Tampilan Pop-Up Menunggu OTP & Aktifkan Hitung Mundur
+        openOtpModal(nomorHp, orderId, productName, price);
         
     } catch (e) { 
         window.showToast("Transaksi Gagal", e.message, "error"); 
     }
 };
+
+function openOtpModal(nomorHp, orderId, productName, price) {
+    document.getElementById("otp-number-text").innerText = nomorHp;
+    document.getElementById("otp-code-text").innerText = "MENUNGGU OTP...";
+    document.getElementById("otp-modal-box").style.display = "flex";
+    
+    // 1. Hitung Mundur 15 Menit (900 detik)
+    let timeLeft = 900; 
+    const timerElement = document.getElementById("otp-countdown-timer");
+    
+    clearInterval(otpCountdownInterval);
+    otpCountdownInterval = setInterval(() => {
+        let minutes = Math.floor(timeLeft / 60);
+        let seconds = timeLeft % 60;
+        seconds = seconds < 10 ? '0' + seconds : seconds;
+        timerElement.innerHTML = `<i class="fa-solid fa-clock"></i> ${minutes}:${seconds}`;
+        
+        if (timeLeft <= 0) {
+            clearInterval(otpCountdownInterval);
+            handleCancelProcess(orderId, "Waktu Habis", "Pesanan otomatis dibatalkan karena batas waktu habis.");
+        }
+        timeLeft--;
+    }, 1000);
+
+    // 2. Polling / Cek berkala status OTP masuk setiap 7 detik
+    clearInterval(otpPollingInterval);
+    otpPollingInterval = setInterval(async () => {
+        try {
+            const checkResponse = await fetch(`/.netlify/functions/api-rumahotp?action=status&id=${orderId}`);
+            const checkResult = await checkResponse.json();
+            
+            if (checkResult.success && checkResult.data.sms) {
+                // OTP Berhasil Masuk!
+                clearInterval(otpCountdownInterval);
+                clearInterval(otpPollingInterval);
+                
+                const otpCode = checkResult.data.sms;
+                document.getElementById("otp-code-text").innerText = otpCode;
+                
+                // Simpan transaksi sukses ke Firestore
+                const tanggalSkarang = new Date().toLocaleDateString('id-ID', {day: 'numeric', month: 'numeric', year: 'numeric'});
+                await addDoc(collection(db, "transaksi"), {
+                    userId: currentUser.uid,
+                    produk: `${productName} (${nomorHp})`,
+                    harga: price,
+                    tanggal: tanggalSkarang,
+                    timestamp: new Date().getTime()
+                });
+                
+                window.showToast("Transaksi Sukses", `Kode OTP berhasil didapatkan: ${otpCode}`, "success");
+                
+                // Beri tombol penutup modal setelah sukses
+                document.getElementById("btn-cancel-otp").innerText = "Tutup Jendela";
+                document.getElementById("btn-cancel-otp").onclick = closeOtpModal;
+                document.getElementById("btn-cancel-otp").style.background = "linear-gradient(135deg, #10b981, #059669)";
+            }
+        } catch (err) {
+            console.error("Gagal melakukan polling status:", err);
+        }
+    }, 7000);
+
+    // Pasang fungsi pada Tombol Batalkan
+    document.getElementById("btn-cancel-otp").innerText = "Batalkan Pesanan";
+    document.getElementById("btn-cancel-otp").style.background = "linear-gradient(135deg, #ef4444, #b91c1c)";
+    document.getElementById("btn-cancel-otp").onclick = () => {
+        handleCancelProcess(orderId, "Dibatalkan", "Pesanan nomor berhasil dibatalkan.");
+    };
+}
+
+async function handleCancelProcess(orderId, toastTitle, toastMsg) {
+    window.showToast("Memproses", "Sedang membatalkan nomor...", "success");
+    clearInterval(otpCountdownInterval);
+    clearInterval(otpPollingInterval);
+    
+    try {
+        // Tembak API pembatalan ke backend Netlify kamu
+        await fetch(`/.netlify/functions/api-rumahotp?action=cancel&id=${orderId}`);
+    } catch(e) {
+        console.error("Gagal mengirim cancel ke server:", e);
+    }
+    
+    closeOtpModal();
+    window.showToast(toastTitle, toastMsg, "error");
+}
+
+function closeOtpModal() {
+    clearInterval(otpCountdownInterval);
+    clearInterval(otpPollingInterval);
+    document.getElementById("otp-modal-box").style.display = "none";
+}
 
 window.copyUserID = () => {
     const idText = document.getElementById("user-id-text").innerText;
