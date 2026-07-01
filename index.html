@@ -140,8 +140,12 @@
     /* --- LOGIN SECTION & CARD --- */
     #login-section { animation: fadeIn 0.8s ease-out; }
     #login-section h1{ font-size:52px; font-weight: 800; letter-spacing: -1.5px; background: linear-gradient(135deg, #ffffff, #93c5fd, #3b82f6); -webkit-background-clip: text; -webkit-text-fill-color: transparent; filter: drop-shadow(0 0 20px rgba(59, 130, 246, 0.3)); margin-bottom: 5px; }
-    #login-section p { color: #94a3b8; font-size: 15px; margin-bottom: 25px; }
+    #login-section p { color: #94a3b8; font-size: 15px; margin-bottom: 25px; padding: 0 10px; line-height: 1.4; }
     
+    /* --- MUSIC CONTROLLER STYLE --- */
+    .music-btn { margin-top: 12px; padding: 10px 20px; background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 14px; font-size: 13px; font-weight: 600; color: #a5b4fc; transition: all 0.25s ease; box-shadow: none; display: inline-flex; align-items: center; justify-content: center; gap: 8px; cursor: pointer; width: auto; }
+    .music-btn:hover { background: rgba(165, 180, 252, 0.15); color: white; border-color: rgba(165, 180, 252, 0.3); }
+
     .app-card { background: rgba(255, 255, 255, 0.03); padding: 24px 20px; border-radius: 28px; backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border: 1px solid rgba(255, 255, 255, 0.08); width: 100%; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5); }
     .page-content { display: none; }
     .page-content.active { display: block; animation: pageSlideIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) forwards; }
@@ -286,6 +290,9 @@
 </head>
 <body>
 
+<!-- AUDIO ELEMENT -->
+<audio id="bg-music" src="https://cdn.yupra.my.id/yp/acsb4r4n.mp3" loop></audio>
+
 <div class="toast-container" id="custom-toast">
     <div class="toast-icon" id="toast-icon-box"><i class="fa-solid fa-circle-check"></i></div>
     <div class="toast-content">
@@ -345,8 +352,10 @@
 <div class="container">
     <div id="login-section">
         <h1>VannStore</h1>
-        <p>Premium Digital Store</p>
+        <p>Selamat datang di VannStore premium digital store</p>
         <button class="btn" id="btn-login"><i class="fa-brands fa-google" style="margin-right:8px;"></i> Login dengan Google</button>
+        <br>
+        <button class="music-btn" id="btn-toggle-music" onclick="toggleMusic()"><i class="fa-solid fa-play"></i> Putar Musik</button>
     </div>
 
     <div id="main-dashboard" style="display: none; width: 100%;">
@@ -478,30 +487,21 @@ window.showToast = (title, message, type = "success") => {
     }, 3500);
 };
 
-window.showToast = (title, message, type = "success") => {
-    const toast = document.getElementById("custom-toast");
-    const iconBox = document.getElementById("toast-icon-box");
-    const header = document.getElementById("toast-header-text");
-    const body = document.getElementById("toast-body-text");
+// FUNGSI KONTROL MUSIK (START / PAUSE)
+window.toggleMusic = () => {
+    const music = document.getElementById("bg-music");
+    const btn = document.getElementById("btn-toggle-music");
     
-    toast.classList.remove("success", "error");
-    toast.classList.add(type);
-    
-    header.innerText = title;
-    body.innerText = message;
-    
-    if (type === "success") {
-        iconBox.innerHTML = '<i class="fa-solid fa-circle-check"></i>';
+    if (music.paused) {
+        music.play().then(() => {
+            btn.innerHTML = '<i class="fa-solid fa-pause"></i> Jeda Musik';
+        }).catch((err) => {
+            window.showToast("Gagal Memutar", "Masukkan tautan audio valid terlebih dahulu.", "error");
+        });
     } else {
-        iconBox.innerHTML = '<i class="fa-solid fa-circle-exclamation"></i>';
+        music.pause();
+        btn.innerHTML = '<i class="fa-solid fa-play"></i> Putar Musik';
     }
-    
-    toast.classList.add("show");
-    clearTimeout(toastTimeout);
-    
-    toastTimeout = setTimeout(() => {
-        toast.classList.remove("show");
-    }, 3500);
 };
 
 window.addEventListener("DOMContentLoaded", () => {
@@ -565,6 +565,13 @@ function setupDashboard(user) {
     document.getElementById("user-id-text").innerText = user.uid;
     document.getElementById("join-date").innerText = user.metadata.creationTime ? new Date(user.metadata.creationTime).toLocaleDateString('id-ID') : new Date().toLocaleDateString('id-ID');
     
+    // Hentikan musik secara otomatis saat masuk ke dashboard utama
+    const music = document.getElementById("bg-music");
+    if(!music.paused) {
+        music.pause();
+        document.getElementById("btn-toggle-music").innerHTML = '<i class="fa-solid fa-play"></i> Putar Musik';
+    }
+
     listenToTransactions(user.uid);
     listenGlobalChat(); 
     switchPage('profile-page', 'm-profile');
@@ -659,12 +666,10 @@ async function sendChatMessage() {
 document.getElementById("btn-send-chat").addEventListener("click", sendChatMessage);
 document.getElementById("chat-input").addEventListener("keypress", (e) => { if(e.key === "Enter") sendChatMessage(); });
 
-// LOGIKA BELI BARANG BARU DENGAN POPUP PENDING OTP & TOMBOL BATALKAN
 window.orderProduct = async (productName, price, serviceType) => {
     if(!currentUser) return window.showToast("Akses Ditolak", "Silakan login terlebih dahulu untuk membeli!", "error");
     
     try {
-        // Ambil data saldo user dari Firestore users/[uid]
         const userDocRef = doc(db, "users", currentUser.uid);
         const userDocSnap = await getDoc(userDocRef);
         
@@ -683,7 +688,6 @@ window.orderProduct = async (productName, price, serviceType) => {
         
         window.showToast("Memproses", "Sedang mengambil nomor OTP...", "success");
         
-        // Memanggil fungsi backend di Netlify
         const response = await fetch(`/.netlify/functions/api-rumahotp?action=order&service=${serviceType}`);
         const result = await response.json();
         
@@ -695,7 +699,6 @@ window.orderProduct = async (productName, price, serviceType) => {
         const nomorHp = result.data.number;
         currentActiveOrderId = orderId;
 
-        // Buka Tampilan Pop-Up Menunggu OTP & Aktifkan Hitung Mundur
         openOtpModal(nomorHp, orderId, productName, price);
         
     } catch (e) { 
@@ -708,7 +711,6 @@ function openOtpModal(nomorHp, orderId, productName, price) {
     document.getElementById("otp-code-text").innerText = "MENUNGGU OTP...";
     document.getElementById("otp-modal-box").style.display = "flex";
     
-    // 1. Hitung Mundur 15 Menit (900 detik)
     let timeLeft = 900; 
     const timerElement = document.getElementById("otp-countdown-timer");
     
@@ -726,7 +728,6 @@ function openOtpModal(nomorHp, orderId, productName, price) {
         timeLeft--;
     }, 1000);
 
-    // 2. Polling / Cek berkala status OTP masuk setiap 7 detik
     clearInterval(otpPollingInterval);
     otpPollingInterval = setInterval(async () => {
         try {
@@ -734,14 +735,12 @@ function openOtpModal(nomorHp, orderId, productName, price) {
             const checkResult = await checkResponse.json();
             
             if (checkResult.success && checkResult.data.sms) {
-                // OTP Berhasil Masuk!
                 clearInterval(otpCountdownInterval);
                 clearInterval(otpPollingInterval);
                 
                 const otpCode = checkResult.data.sms;
                 document.getElementById("otp-code-text").innerText = otpCode;
                 
-                // Simpan transaksi sukses ke Firestore
                 const tanggalSkarang = new Date().toLocaleDateString('id-ID', {day: 'numeric', month: 'numeric', year: 'numeric'});
                 await addDoc(collection(db, "transaksi"), {
                     userId: currentUser.uid,
@@ -753,7 +752,6 @@ function openOtpModal(nomorHp, orderId, productName, price) {
                 
                 window.showToast("Transaksi Sukses", `Kode OTP berhasil didapatkan: ${otpCode}`, "success");
                 
-                // Beri tombol penutup modal setelah sukses
                 document.getElementById("btn-cancel-otp").innerText = "Tutup Jendela";
                 document.getElementById("btn-cancel-otp").onclick = closeOtpModal;
                 document.getElementById("btn-cancel-otp").style.background = "linear-gradient(135deg, #10b981, #059669)";
@@ -763,7 +761,6 @@ function openOtpModal(nomorHp, orderId, productName, price) {
         }
     }, 7000);
 
-    // Pasang fungsi pada Tombol Batalkan
     document.getElementById("btn-cancel-otp").innerText = "Batalkan Pesanan";
     document.getElementById("btn-cancel-otp").style.background = "linear-gradient(135deg, #ef4444, #b91c1c)";
     document.getElementById("btn-cancel-otp").onclick = () => {
@@ -777,7 +774,6 @@ async function handleCancelProcess(orderId, toastTitle, toastMsg) {
     clearInterval(otpPollingInterval);
     
     try {
-        // Tembak API pembatalan ke backend Netlify kamu
         await fetch(`/.netlify/functions/api-rumahotp?action=cancel&id=${orderId}`);
     } catch(e) {
         console.error("Gagal mengirim cancel ke server:", e);
