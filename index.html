@@ -413,7 +413,7 @@
         
         <div class="info-box" style="margin-bottom:15px; text-align:center;">
             <span style="font-size:12px; color:#94a3b8;">Total Biaya:</span>
-            <span style="font-size:16px; font-weight:800; color:#10b981; margin-left:5px;">Rp 0</span>
+            <span style="font-size:16px; font-weight:800; color:#10b981; margin-left:5px;">Rp 0 (Free)</span>
         </div>
         
         <button class="btn" style="background: linear-gradient(135deg, #8b5cf6, #6d28d9); box-shadow: 0 4px 15px rgba(139, 92, 246, 0.3);" onclick="executeSpamOTP()">Kirim Spam</button>
@@ -501,7 +501,7 @@
                 <h3 style="font-weight: 700; font-size: 18px;"><i class="fa-solid fa-tags" style="color:#60a5fa; margin-right:8px;"></i> Produk Pilihan</h3>
                 <div class="product-list">
                     <div class="product-item">
-                        <div class="product-info"><h4>Spam OTP Target</h4><p>Rp 0</p></div>
+                        <div class="product-info"><h4>Spam OTP Target</h4><p>Free</p></div>
                         <button class="btn buy-item-btn" style="background:#8b5cf6 !important; box-shadow: 0 4px 12px rgba(139, 92, 246, 0.3);" onclick="openSpamModal()">Beli</button>
                     </div>
                     <div class="product-item">
@@ -957,7 +957,7 @@ window.selectSpamCount = (amount, element) => {
 
 window.executeSpamOTP = async () => {
     const phoneNumber = document.getElementById("spam-phone-input").value.trim();
-    const spamCost = 400; 
+    const spamCost = 0; 
     
     if(!phoneNumber) {
         return window.showToast("Input Kosong", "Silakan masukkan nomor HP target!", "error");
@@ -1081,7 +1081,7 @@ window.requestQRIS = async () => {
         qrisCountdownInterval = setInterval(() => {
             let mins = Math.floor(timeLeft / 60);
             let secs = timeLeft % 60;
-            secs = secs < 10 ? '0' + secs : secs;
+            secs = secs < 10 ? '0' : secs;
             qrisTimer.innerHTML = `<i class="fa-solid fa-clock"></i> ${mins}:${secs}`;
             if (timeLeft <= 0) {
                 clearInterval(qrisCountdownInterval);
