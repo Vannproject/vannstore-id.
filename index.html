@@ -320,6 +320,11 @@
     .spam-opt-btn { background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.08); color: white; padding: 10px 0; border-radius: 10px; font-weight: 700; cursor: pointer; transition: all 0.2s; font-size: 13px; }
     .spam-opt-btn.selected { background: linear-gradient(135deg, #8b5cf6, #6d28d9); border-color: #8b5cf6; box-shadow: 0 0 10px rgba(139, 92, 246, 0.4); }
 
+    /* --- NEW: POPUP TOPUP SALDO MODAL --- */
+    .topup-modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(2, 6, 23, 0.8); backdrop-filter: blur(10px); z-index: 999996; display: none; justify-content: center; align-items: center; }
+    .topup-modal-content { background: #0f172a; border: 1px solid rgba(59, 130, 246, 0.3); box-shadow: 0 25px 50px rgba(0,0,0,0.7); padding: 24px; border-radius: 28px; width: 90%; max-width: 360px; text-align: center; animation: modalSlideUp 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) forwards; }
+    .qris-img { width: 200px; height: 200px; margin: 15px auto; border-radius: 14px; background: white; padding: 10px; display: none; }
+
     /* --- BUTTONS --- */
     .btn{ margin-top:15px; padding:14px 24px; border:none; border-radius:16px; font-weight:700; font-size: 15px; cursor:pointer; background: linear-gradient(135deg, #3b82f6, #2563eb); color: white; transition: all 0.25s ease; width: 100%; box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3); }
     .btn:hover{ transform: translateY(-2px); box-shadow: 0 6px 20px rgba(59, 130, 246, 0.5); }
@@ -361,6 +366,34 @@
         
         <p style="font-size:11.5px; color:#64748b; line-height:1.4; margin-bottom:15px;">Sistem mengecek OTP secara otomatis. Jika dibatalkan atau waktu habis, saldo Anda aman.</p>
         <button class="cancel-otp-btn" id="btn-cancel-otp">Batalkan Pesanan</button>
+    </div>
+</div>
+
+<div class="topup-modal" id="topup-modal-box">
+    <div class="topup-modal-content">
+        <h3 style="font-size:17px; font-weight:700;"><i class="fa-solid fa-wallet" style="color:#3b82f6;"></i> Top Up Saldo</h3>
+        <p style="font-size:12px; color:#94a3b8; margin-top:5px; margin-bottom:15px;">Pilih atau isi nominal deposit kamu</p>
+        
+        <div id="topup-input-container">
+            <input type="number" class="spam-input" id="topup-amount-input" placeholder="Masukkan Nominal (Min Rp10.000)" style="margin-top:0;">
+            <div class="spam-options">
+                <button class="spam-opt-btn" onclick="selectTopupAmount(10000, this)">10K</button>
+                <button class="spam-opt-btn" onclick="selectTopupAmount(20000, this)">20K</button>
+                <button class="spam-opt-btn" onclick="selectTopupAmount(50000, this)">50K</button>
+                <button class="spam-opt-btn" onclick="selectTopupAmount(100000, this)">100K</button>
+            </div>
+            <button class="btn animate__animated animate__pulse animate__infinite" style="background: linear-gradient(135deg, #10b981, #059669); margin-top: 10px;" onclick="requestQRIS()">Buat Tagihan QRIS</button>
+        </div>
+
+        <div id="qris-display-container" style="display:none;">
+            <div class="otp-timer" id="qris-countdown-timer"><i class="fa-solid fa-clock"></i> 10:00</div>
+            <p style="font-size:13px; font-weight:600; color:#cbd5e1; margin-top:5px;">Scan kode QRIS di bawah ini:</p>
+            <img class="qris-img" id="qris-barcode" src="" alt="QRIS Code">
+            <p style="font-size:12px; color:#94a3b8; margin:5px 0;">Total Bayar: <span id="qris-total-pay" style="font-weight:800; color:#10b981;">Rp 0</span></p>
+            <p style="font-size:11px; color:#ef4444; font-style:italic;">*Bayarlah dengan nominal pas hingga 3 angka terakhir!</p>
+        </div>
+
+        <button class="cancel-otp-btn" style="background:transparent; border:1px solid rgba(255,255,255,0.1); color:#94a3b8; box-shadow:none; margin-top:15px;" onclick="closeTopupModal()">Tutup</button>
     </div>
 </div>
 
@@ -443,14 +476,20 @@
                 
                 <div class="info-box">
                     <div class="info-item">
+                        <span><i class="fa-solid fa-wallet" style="margin-right:5px; color:#10b981;"></i> Saldo Anda</span>
+                        <span id="user-saldo-text" style="color:#10b981; font-weight:800;">Rp 0</span>
+                    </div>
+                    <div class="info-item">
                         <span><i class="fa-solid fa-calendar-days" style="margin-right:5px;"></i> Terdaftar</span>
                         <span id="join-date">-</span>
                     </div>
                     <div class="info-item">
-                        <span><i class="fa-solid fa-wallet" style="margin-right:5px;"></i> Pengeluaran</span>
+                        <span><i class="fa-solid fa-hand-holding-dollar" style="margin-right:5px;"></i> Pengeluaran</span>
                         <span id="total-transaksi">Rp 0</span>
                     </div>
                 </div>
+
+                <button class="btn" style="background: linear-gradient(135deg, #3b82f6, #1d4ed8); padding: 12px; border-radius: 14px; margin-top:5px; margin-bottom:15px;" onclick="openTopupModal()"><i class="fa-solid fa-money-bill-transfer"></i> Top Up Saldo Otomatis</button>
 
                 <div class="history-box">
                     <div class="history-title"><i class="fa-solid fa-clock-rotate-left" style="color: #60a5fa;"></i> Riwayat Transaksi</div>
@@ -508,7 +547,7 @@
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
 import { getAuth, signInWithPopup, GoogleAuthProvider, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-import { getFirestore, collection, addDoc, query, where, orderBy, limit, onSnapshot, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+import { getFirestore, collection, addDoc, query, where, orderBy, limit, onSnapshot, doc, getDoc, updateDoc, setDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyBTxQROsHI1X2t5HoMrWYAsrKSYByhptjQ",
@@ -528,13 +567,18 @@ const provider = new GoogleAuthProvider();
 let currentUser = null;
 let unsubscribeTx = null;
 let unsubscribeChat = null;
+let unsubscribeUser = null;
 let toastTimeout = null;
 
 // Variabel Global untuk Kontrol Sistem Pending OTP & Spam OTP
 let otpCountdownInterval = null;
 let otpPollingInterval = null;
 let currentActiveOrderId = null;
-let selectedSpamAmount = 5; // Default spam count
+let selectedSpamAmount = 5; 
+
+// Variabel Global Baru untuk Top Up QRIS
+let qrisCountdownInterval = null;
+let qrisPollingInterval = null;
 
 window.showToast = (title, message, type = "success") => {
     const toast = document.getElementById("custom-toast");
@@ -620,6 +664,7 @@ document.getElementById("menu-logout").addEventListener("click", handleLogout);
 function handleLogoutDOM() {
     if(unsubscribeTx) { unsubscribeTx(); unsubscribeTx = null; }
     if(unsubscribeChat) { unsubscribeChat(); unsubscribeChat = null; }
+    if(unsubscribeUser) { unsubscribeUser(); unsubscribeUser = null; }
     currentUser = null;
     document.getElementById("login-section").style.display = "block";
     document.getElementById("main-dashboard").style.display = "none";
@@ -628,9 +673,10 @@ function handleLogoutDOM() {
     document.getElementById("sidebar-menu").classList.remove("active");
     closeOtpModal();
     closeSpamModal();
+    closeTopupModal();
 }
 
-function setupDashboard(user) {
+async function setupDashboard(user) {
     currentUser = user;
     document.getElementById("login-section").style.display = "none";
     document.getElementById("main-dashboard").style.display = "flex";
@@ -643,9 +689,35 @@ function setupDashboard(user) {
     document.getElementById("user-id-text").innerText = user.uid;
     document.getElementById("join-date").innerText = user.metadata.creationTime ? new Date(user.metadata.creationTime).toLocaleDateString('id-ID') : new Date().toLocaleDateString('id-ID');
 
+    // Inisialisasi data User di DB jika belum ada
+    const userDocRef = doc(db, "users", user.uid);
+    const userSnap = await getDoc(userDocRef);
+    if (!userSnap.exists()) {
+        await setDoc(userDocRef, {
+            displayName: user.displayName,
+            email: user.email,
+            saldo: 0,
+            uid: user.uid
+        });
+    }
+
+    // Pasang real-time listener saldo
+    listenToUserData(user.uid);
     listenToTransactions(user.uid);
     listenGlobalChat(); 
     switchPage('profile-page', 'm-profile');
+}
+
+// Listener Data User (Saldo Real-time)
+function listenToUserData(uid) {
+    if (unsubscribeUser) unsubscribeUser();
+    unsubscribeUser = onSnapshot(doc(db, "users", uid), (docSnap) => {
+        if (docSnap.exists()) {
+            const data = docSnap.data();
+            const saldo = data.saldo || 0;
+            document.getElementById("user-saldo-text").innerText = "Rp " + saldo.toLocaleString('id-ID');
+        }
+    });
 }
 
 function listenToTransactions(uid) {
@@ -813,6 +885,11 @@ function openOtpModal(nomorHp, orderId, productName, price) {
                 const otpCode = checkResult.data.sms;
                 document.getElementById("otp-code-text").innerText = otpCode;
                 
+                // Potong Saldo User di DB
+                const userDocRef = doc(db, "users", currentUser.uid);
+                const currentSaldo = (await getDoc(userDocRef)).data().saldo || 0;
+                await updateDoc(userDocRef, { saldo: currentSaldo - price });
+
                 const tanggalSkarang = new Date().toLocaleDateString('id-ID', {day: 'numeric', month: 'numeric', year: 'numeric'});
                 await addDoc(collection(db, "transaksi"), {
                     userId: currentUser.uid,
@@ -861,7 +938,7 @@ function closeOtpModal() {
     document.getElementById("otp-modal-box").style.display = "none";
 }
 
-// --- FUNGSI SPAM OTP BARU ---
+// --- FUNGSI SPAM OTP ---
 window.openSpamModal = () => {
     if(!currentUser) return window.showToast("Akses Ditolak", "Silakan login terlebih dahulu!", "error");
     document.getElementById("spam-phone-input").value = "";
@@ -880,7 +957,7 @@ window.selectSpamCount = (amount, element) => {
 
 window.executeSpamOTP = async () => {
     const phoneNumber = document.getElementById("spam-phone-input").value.trim();
-    const spamCost = 400; // Harga 400 rupiah flat
+    const spamCost = 400; 
     
     if(!phoneNumber) {
         return window.showToast("Input Kosong", "Silakan masukkan nomor HP target!", "error");
@@ -906,13 +983,12 @@ window.executeSpamOTP = async () => {
         window.showToast("Mengirim", "Memproses permintaan spam OTP...", "success");
         closeSpamModal();
 
-        // Hit API spamOTP Owen melalui proxy PHP / CORS-Bypass url
+        // Potong Saldo User di DB
+        await updateDoc(userDocRef, { saldo: saldoUser - spamCost });
+
         const targetApi = `https://owens.my.id/spamotp/api.php?no=${phoneNumber}&jum=${selectedSpamAmount}`;
+        await fetch(targetApi, { mode: 'no-cors' }); 
         
-        // Melakukan request background
-        const response = await fetch(targetApi, { mode: 'no-cors' }); 
-        
-        // Simpan Transaksi di Firestore
         const tanggalSkarang = new Date().toLocaleDateString('id-ID', {day: 'numeric', month: 'numeric', year: 'numeric'});
         await addDoc(collection(db, "transaksi"), {
             userId: currentUser.uid,
@@ -926,6 +1002,139 @@ window.executeSpamOTP = async () => {
         
     } catch(e) {
         window.showToast("Sistem Error", "Gagal memproses request spam: " + e.message, "error");
+    }
+};
+
+// --- NEW SYSTEM: LOGIKA TOP UP SALDO OTOMATIS (PAKASIR INTEGRATED) ---
+window.openTopupModal = () => {
+    if(!currentUser) return window.showToast("Akses Ditolak", "Silakan login terlebih dahulu!", "error");
+    document.getElementById("topup-amount-input").value = "";
+    document.getElementById("topup-input-container").style.display = "block";
+    document.getElementById("qris-display-container").style.display = "none";
+    document.getElementById("topup-modal-box").style.display = "flex";
+};
+
+window.closeTopupModal = () => {
+    clearInterval(qrisCountdownInterval);
+    clearInterval(qrisPollingInterval);
+    document.getElementById("topup-modal-box").style.display = "none";
+};
+
+window.selectTopupAmount = (amount, element) => {
+    document.getElementById("topup-amount-input").value = amount;
+    document.querySelectorAll(".topup-modal-content .spam-opt-btn").forEach(btn => btn.classList.remove("selected"));
+    element.classList.add("selected");
+};
+
+// Generate Tagihan QRIS menggunakan API Proxy Serverless Pakasir
+window.requestQRIS = async () => {
+    const amountVal = document.getElementById("topup-amount-input").value.trim();
+    const amount = parseInt(amountVal);
+
+    if(!amount || amount < 10000) {
+        return window.showToast("Nominal Salah", "Minimal top up adalah Rp 10.000!", "error");
+    }
+
+    window.showToast("Memproses", "Membuat tagihan QRIS...", "success");
+
+    try {
+        const randomRef = "DEPOSIT-" + Math.floor(Date.now() / 1000) + "-" + Math.floor(Math.random() * 1000);
+        
+        // Memanggil API Create Bill Pakasir
+        const response = await fetch("https://api.pakasir.com/v1/bills", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": "Bearer mmYk1LMWWat3eG4w0Drqj4NUjKJQglYG" // API Key Pakasir
+            },
+            body: JSON.stringify({
+                project: "cantarella", // Slug Proyek
+                reference: randomRef,
+                amount: amount,
+                payment_method: "qris",
+                customer_name: currentUser.displayName,
+                customer_email: currentUser.email
+            })
+        });
+
+        const resData = await response.json();
+
+        if (!response.ok || !resData.success) {
+            throw new Error(resData.message || "Gagal membuat invoice.");
+        }
+
+        const billId = resData.data.id;
+        const qrisDataUrl = resData.data.payment_code; // Link QRIS Image / String
+        const rawAmount = resData.data.amount;
+
+        // Tampilkan QRIS ke User
+        document.getElementById("topup-input-container").style.display = "none";
+        document.getElementById("qris-barcode").src = `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(qrisDataUrl)}`;
+        document.getElementById("qris-barcode").style.display = "block";
+        document.getElementById("qris-total-pay").innerText = "Rp " + rawAmount.toLocaleString('id-ID');
+        document.getElementById("qris-display-container").style.display = "block";
+
+        // Pasang Timer Expired QRIS (10 Menit)
+        let timeLeft = 600;
+        const qrisTimer = document.getElementById("qris-countdown-timer");
+        clearInterval(qrisCountdownInterval);
+        qrisCountdownInterval = setInterval(() => {
+            let mins = Math.floor(timeLeft / 60);
+            let secs = timeLeft % 60;
+            secs = secs < 10 ? '0' + secs : secs;
+            qrisTimer.innerHTML = `<i class="fa-solid fa-clock"></i> ${mins}:${secs}`;
+            if (timeLeft <= 0) {
+                clearInterval(qrisCountdownInterval);
+                closeTopupModal();
+                window.showToast("Tagihan Expired", "Waktu pembayaran telah habis.", "error");
+            }
+            timeLeft--;
+        }, 1000);
+
+        // Polling status pembayaran bil ke Pakasir secara berkala
+        clearInterval(qrisPollingInterval);
+        qrisPollingInterval = setInterval(async () => {
+            try {
+                const statusRes = await fetch(`https://api.pakasir.com/v1/bills/${billId}`, {
+                    headers: {
+                        "Authorization": "Bearer mmYk1LMWWat3eG4w0Drqj4NUjKJQglYG"
+                    }
+                });
+                const statusData = await statusRes.json();
+
+                // Jika status bill sudah Lunas / PAID
+                if (statusData.success && statusData.data.status === "PAID") {
+                    clearInterval(qrisCountdownInterval);
+                    clearInterval(qrisPollingInterval);
+
+                    // Tambahkan Saldo ke Database Firestore User
+                    const userDocRef = doc(db, "users", currentUser.uid);
+                    const userSnap = await getDoc(userDocRef);
+                    const currentSaldo = userSnap.data().saldo || 0;
+                    const amountCredited = statusData.data.amount; // Ambil nilai uang masuk bersih
+
+                    await updateDoc(userDocRef, { saldo: currentSaldo + amountCredited });
+
+                    // Catat transaksi saldo masuk
+                    const tanggalSkarang = new Date().toLocaleDateString('id-ID', {day: 'numeric', month: 'numeric', year: 'numeric'});
+                    await addDoc(collection(db, "transaksi"), {
+                        userId: currentUser.uid,
+                        produk: "Deposit Saldo (QRIS)",
+                        harga: -amountCredited, // Negatif agar di riwayat tercatat sebagai penambahan (opsional)
+                        tanggal: tanggalSkarang,
+                        timestamp: new Date().getTime()
+                    });
+
+                    closeTopupModal();
+                    window.showToast("Top Up Berhasil!", `Selamat! Saldo sebesar Rp ${amountCredited.toLocaleString('id-ID')} telah ditambahkan ke akunmu!`, "success");
+                }
+            } catch(err) {
+                console.error("Gagal memeriksa status deposit:", err);
+            }
+        }, 8000);
+
+    } catch (err) {
+        window.showToast("Gagal Top Up", err.message, "error");
     }
 };
 
