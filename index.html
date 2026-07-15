@@ -205,7 +205,7 @@
     .userid-badge:hover { background: rgba(59, 130, 246, 0.25); }
 
     .info-box { background: rgba(0, 0, 0, 0.3); border: 1px solid rgba(255,255,255,0.05); padding: 12px 16px; border-radius: 16px; margin: 12px 0; text-align: left; font-size: 13.5px; }
-    .info-box p { text-align: center; } /* Memastikan teks di info-box CS tetap di tengah */
+    .info-box p { text-align: center; }
     .info-item { display: flex; justify-content: space-between; margin-bottom: 8px; color: #cbd5e1; }
     .info-item:last-child { margin-bottom: 0; }
     .info-item span:last-child { font-weight: 600; color: #60a5fa; }
@@ -309,6 +309,17 @@
     .cancel-otp-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(239, 68, 68, 0.5); }
     @keyframes pulseGlow { 0%, 100% { opacity: 0.8; } 50% { opacity: 1; transform: scale(1.02); } }
 
+    /* --- JENDELA POPUP SPAM OTP --- */
+    .spam-modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(2, 6, 23, 0.8); backdrop-filter: blur(10px); z-index: 999997; display: none; justify-content: center; align-items: center; }
+    .spam-modal-content { background: #0f172a; border: 1px solid rgba(139, 92, 246, 0.3); box-shadow: 0 25px 50px rgba(0, 0, 0, 0.7); padding: 24px; border-radius: 28px; width: 90%; max-width: 360px; text-align: center; animation: modalSlideUp 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) forwards; }
+    
+    .spam-input { width: 100%; background: rgba(15, 23, 42, 0.6); border: 1px solid rgba(255, 255, 255, 0.08); padding: 12px 16px; border-radius: 14px; color: white; font-size: 14px; text-align: center; outline: none; transition: border 0.2s; margin-top: 15px; margin-bottom: 15px; }
+    .spam-input:focus { border-color: #8b5cf6; }
+    
+    .spam-options { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-bottom: 20px; }
+    .spam-opt-btn { background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.08); color: white; padding: 10px 0; border-radius: 10px; font-weight: 700; cursor: pointer; transition: all 0.2s; font-size: 13px; }
+    .spam-opt-btn.selected { background: linear-gradient(135deg, #8b5cf6, #6d28d9); border-color: #8b5cf6; box-shadow: 0 0 10px rgba(139, 92, 246, 0.4); }
+
     /* --- BUTTONS --- */
     .btn{ margin-top:15px; padding:14px 24px; border:none; border-radius:16px; font-weight:700; font-size: 15px; cursor:pointer; background: linear-gradient(135deg, #3b82f6, #2563eb); color: white; transition: all 0.25s ease; width: 100%; box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3); }
     .btn:hover{ transform: translateY(-2px); box-shadow: 0 6px 20px rgba(59, 130, 246, 0.5); }
@@ -350,6 +361,30 @@
         
         <p style="font-size:11.5px; color:#64748b; line-height:1.4; margin-bottom:15px;">Sistem mengecek OTP secara otomatis. Jika dibatalkan atau waktu habis, saldo Anda aman.</p>
         <button class="cancel-otp-btn" id="btn-cancel-otp">Batalkan Pesanan</button>
+    </div>
+</div>
+
+<div class="spam-modal" id="spam-modal-box">
+    <div class="spam-modal-content">
+        <h3 style="font-size:17px; font-weight:700;"><i class="fa-solid fa-fire" style="color:#8b5cf6;"></i> Order Spam OTP</h3>
+        <p style="font-size:12px; color:#94a3b8; margin-top:5px;">Masukkan nomor HP target & tentukan jumlah spam</p>
+        
+        <input type="tel" class="spam-input" id="spam-phone-input" placeholder="Contoh: 081234567890">
+        
+        <div class="spam-options">
+            <button class="spam-opt-btn selected" onclick="selectSpamCount(5, this)">5x</button>
+            <button class="spam-opt-btn" onclick="selectSpamCount(10, this)">10x</button>
+            <button class="spam-opt-btn" onclick="selectSpamCount(15, this)">15x</button>
+            <button class="spam-opt-btn" onclick="selectSpamCount(20, this)">20x</button>
+        </div>
+        
+        <div class="info-box" style="margin-bottom:15px; text-align:center;">
+            <span style="font-size:12px; color:#94a3b8;">Total Biaya:</span>
+            <span style="font-size:16px; font-weight:800; color:#10b981; margin-left:5px;">Rp 400</span>
+        </div>
+        
+        <button class="btn" style="background: linear-gradient(135deg, #8b5cf6, #6d28d9); box-shadow: 0 4px 15px rgba(139, 92, 246, 0.3);" onclick="executeSpamOTP()">Kirim Spam</button>
+        <button class="cancel-otp-btn" style="background:transparent; border:1px solid rgba(255,255,255,0.1); color:#94a3b8; box-shadow:none; margin-top:10px;" onclick="closeSpamModal()">Tutup</button>
     </div>
 </div>
 
@@ -427,6 +462,10 @@
                 <h3 style="font-weight: 700; font-size: 18px;"><i class="fa-solid fa-tags" style="color:#60a5fa; margin-right:8px;"></i> Produk Pilihan</h3>
                 <div class="product-list">
                     <div class="product-item">
+                        <div class="product-info"><h4>Spam OTP Target</h4><p>Rp 400</p></div>
+                        <button class="btn buy-item-btn" style="background:#8b5cf6 !important; box-shadow: 0 4px 12px rgba(139, 92, 246, 0.3);" onclick="openSpamModal()">Beli</button>
+                    </div>
+                    <div class="product-item">
                         <div class="product-info"><h4>Nokos Shopee</h4><p>Rp 2.000</p></div>
                         <button class="btn buy-item-btn" onclick="orderProduct('Nokos Shopee', 2000, 'shopee')">Beli</button>
                     </div>
@@ -491,10 +530,11 @@ let unsubscribeTx = null;
 let unsubscribeChat = null;
 let toastTimeout = null;
 
-// Variabel Global untuk Kontrol Sistem Pending OTP
+// Variabel Global untuk Kontrol Sistem Pending OTP & Spam OTP
 let otpCountdownInterval = null;
 let otpPollingInterval = null;
 let currentActiveOrderId = null;
+let selectedSpamAmount = 5; // Default spam count
 
 window.showToast = (title, message, type = "success") => {
     const toast = document.getElementById("custom-toast");
@@ -522,7 +562,7 @@ window.showToast = (title, message, type = "success") => {
     }, 3500);
 };
 
-// FUNGSI KONTROL MUSIK (START / PAUSE)
+// FUNGSI KONTROL MUSIK
 window.toggleMusic = () => {
     const music = document.getElementById("bg-music");
     const btn = document.getElementById("floating-music-btn");
@@ -563,7 +603,7 @@ document.getElementById("btn-login").addEventListener("click", () => {
         window.showToast("Login Sukses", `Selamat datang kembali, ${result.user.displayName}!`, "success");
     }).catch((err) => {
         if(err.code === "auth/popup-closed-by-user") {
-            window.showToast("Login Dibatalkan", "Jendela login ditutup sebelum selesai. Jika lewat WA, silakan salin link ke Google Chrome asli.", "error");
+            window.showToast("Login Dibatalkan", "Jendela login ditutup.", "error");
         } else {
             window.showToast("Login Gagal", err.message, "error");
         }
@@ -587,6 +627,7 @@ function handleLogoutDOM() {
     document.getElementById("info-btn").style.display = "none";
     document.getElementById("sidebar-menu").classList.remove("active");
     closeOtpModal();
+    closeSpamModal();
 }
 
 function setupDashboard(user) {
@@ -696,6 +737,7 @@ async function sendChatMessage() {
 document.getElementById("btn-send-chat").addEventListener("click", sendChatMessage);
 document.getElementById("chat-input").addEventListener("keypress", (e) => { if(e.key === "Enter") sendChatMessage(); });
 
+// SYSTEM TRANSAKSI PRODUK NOKOS
 window.orderProduct = async (productName, price, serviceType) => {
     if(!currentUser) return window.showToast("Akses Ditolak", "Silakan login terlebih dahulu untuk membeli!", "error");
     
@@ -711,7 +753,7 @@ window.orderProduct = async (productName, price, serviceType) => {
         if (saldoUser < price) {
             return window.showToast(
                 "Saldo Tidak Cukup", 
-                `Gagal membeli ${productName}. Saldo Anda saat ini Rp ${saldoUser.toLocaleString('id-ID')}, kurang Rp ${(price - saldoUser).toLocaleString('id-ID')} lagi. Silakan top up!`, 
+                `Gagal membeli ${productName}. Saldo Anda saat ini Rp ${saldoUser.toLocaleString('id-ID')}, kurang Rp ${(price - saldoUser).toLocaleString('id-ID')} lagi.`, 
                 "error"
             );
         }
@@ -818,6 +860,74 @@ function closeOtpModal() {
     clearInterval(otpPollingInterval);
     document.getElementById("otp-modal-box").style.display = "none";
 }
+
+// --- FUNGSI SPAM OTP BARU ---
+window.openSpamModal = () => {
+    if(!currentUser) return window.showToast("Akses Ditolak", "Silakan login terlebih dahulu!", "error");
+    document.getElementById("spam-phone-input").value = "";
+    document.getElementById("spam-modal-box").style.display = "flex";
+};
+
+window.closeSpamModal = () => {
+    document.getElementById("spam-modal-box").style.display = "none";
+};
+
+window.selectSpamCount = (amount, element) => {
+    selectedSpamAmount = amount;
+    document.querySelectorAll(".spam-opt-btn").forEach(btn => btn.classList.remove("selected"));
+    element.classList.add("selected");
+};
+
+window.executeSpamOTP = async () => {
+    const phoneNumber = document.getElementById("spam-phone-input").value.trim();
+    const spamCost = 400; // Harga 400 rupiah flat
+    
+    if(!phoneNumber) {
+        return window.showToast("Input Kosong", "Silakan masukkan nomor HP target!", "error");
+    }
+    
+    try {
+        const userDocRef = doc(db, "users", currentUser.uid);
+        const userDocSnap = await getDoc(userDocRef);
+        
+        let saldoUser = 0;
+        if (userDocSnap.exists()) {
+            saldoUser = userDocSnap.data().saldo || 0;
+        }
+        
+        if (saldoUser < spamCost) {
+            return window.showToast(
+                "Saldo Tidak Cukup", 
+                `Gagal order Spam OTP. Saldo Anda Rp ${saldoUser.toLocaleString('id-ID')}, butuh Rp ${spamCost}`, 
+                "error"
+            );
+        }
+        
+        window.showToast("Mengirim", "Memproses permintaan spam OTP...", "success");
+        closeSpamModal();
+
+        // Hit API spamOTP Owen melalui proxy PHP / CORS-Bypass url
+        const targetApi = `https://owens.my.id/spamotp/api.php?no=${phoneNumber}&jum=${selectedSpamAmount}`;
+        
+        // Melakukan request background
+        const response = await fetch(targetApi, { mode: 'no-cors' }); 
+        
+        // Simpan Transaksi di Firestore
+        const tanggalSkarang = new Date().toLocaleDateString('id-ID', {day: 'numeric', month: 'numeric', year: 'numeric'});
+        await addDoc(collection(db, "transaksi"), {
+            userId: currentUser.uid,
+            produk: `Spam OTP (${phoneNumber}) ${selectedSpamAmount}x`,
+            harga: spamCost,
+            tanggal: tanggalSkarang,
+            timestamp: new Date().getTime()
+        });
+
+        window.showToast("Berhasil", `Spam OTP sebanyak ${selectedSpamAmount}x berhasil dikirim ke ${phoneNumber}!`, "success");
+        
+    } catch(e) {
+        window.showToast("Sistem Error", "Gagal memproses request spam: " + e.message, "error");
+    }
+};
 
 window.copyUserID = () => {
     const idText = document.getElementById("user-id-text").innerText;
