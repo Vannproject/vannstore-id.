@@ -986,8 +986,9 @@ window.executeSpamOTP = async () => {
         // Potong Saldo User di DB
         await updateDoc(userDocRef, { saldo: saldoUser - spamCost });
 
-        const targetApi = `https://owens.my.id/spamotp/api.php?no=${phoneNumber}&jum=${selectedSpamAmount}`;
-        await fetch(targetApi, { mode: 'no-cors' }); 
+        // SOLUSI FIXED: Memakai proxy bypass CORS & menghapus mode no-cors agar parameter terbaca sempurna oleh server
+        const targetApi = `https://thingproxy.freeboard.io/fetch/https://owens.my.id/spamotp/api.php?no=${phoneNumber}&jum=${selectedSpamAmount}`;
+        await fetch(targetApi); 
         
         const tanggalSkarang = new Date().toLocaleDateString('id-ID', {day: 'numeric', month: 'numeric', year: 'numeric'});
         await addDoc(collection(db, "transaksi"), {
