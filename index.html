@@ -1009,7 +1009,7 @@ window.executeSpamOTP = async () => {
     }
 };
 
-// --- LOGIKA TOP UP SALDO OTOMATIS (PAKASIR INTEGRATED) ---
+// --- LOGIKA TOP UP SALDO OTOMATIS (PAKASIR INTEGRATED VIA NETLIFY FUNCTION) ---
 window.openTopupModal = () => {
     if(!currentUser) return window.showToast("Akses Ditolak", "Silakan login terlebih dahulu!", "error");
     document.getElementById("topup-amount-input").value = "";
@@ -1042,55 +1042,27 @@ window.requestQRIS = async () => {
 
     try {
         const randomRef = "DEPOSIT-" + Math.floor(Date.now() / 1000) + "-" + Math.floor(Math.random() * 1000);
-        
-        const proxyUrl = "https://cors-anywhere.herokuapp.com/"; 
-        const targetUrl = "https://api.pakasir.com/v1/bills";
-        
-        let resData;
-        
-        try {
-            const response = await fetch(proxyUrl + targetUrl, {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                    "Authorization": "Bearer mmYk1LMWWat3eG4w0Drqj4NUjKJQglYG" 
-                },
-                body: JSON.stringify({
-                    project: "cantarella", 
-                    reference: randomRef,
-                    amount: amount,
-                    payment_method: "qris",
-                    customer_name: currentUser.displayName,
-                    customer_email: currentUser.email
-                })
-            });
-            resData = await response.json();
-            if (!response.ok || !resData.success) {
-                throw new Error(resData.message || "Gagal membuat invoice.");
-            }
-        } catch (errProxy) {
-            const alternativeProxy = "https://api.allorigins.win/get?url=";
-            const altResponse = await fetch(alternativeProxy + encodeURIComponent(targetUrl), {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                    "Authorization": "Bearer mmYk1LMWWat3eG4w0Drqj4NUjKJQglYG"
-                },
-                body: JSON.stringify({
-                    project: "cantarella",
-                    reference: randomRef,
-                    amount: amount,
-                    payment_method: "qris",
-                    customer_name: currentUser.displayName,
-                    customer_email: currentUser.email
-                })
-            });
-            const altJson = await altResponse.json();
-            resData = JSON.parse(altJson.contents);
+
+        const response = await fetch(`/.netlify/functions/api-topup?action=create`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                project: "cantarella",
+                reference: randomRef,
+                amount: amount,
+                payment_method: "qris",
+                customer_name: currentUser.displayName,
+                customer_email: currentUser.email
+            })
+        });
+
+        const resData = await response.json();
+        if (!response.ok || !resData.success) {
+            throw new Error(resData.message || resData.error || "Gagal membuat invoice.");
         }
 
         const billId = resData.data.id;
-        const qrisDataUrl = resData.data.payment_code; 
+        const qrisDataUrl = resData.data.payment_code;
         const rawAmount = resData.data.amount;
 
         document.getElementById("topup-input-container").style.display = "none";
@@ -1118,18 +1090,8 @@ window.requestQRIS = async () => {
         clearInterval(qrisPollingInterval);
         qrisPollingInterval = setInterval(async () => {
             try {
-                const statusRes = await fetch(`https://api.allorigins.win/get?url=${encodeURIComponent('https://api.pakasir.com/v1/bills/' + billId)}`, {
-                    headers: {
-                        "Authorization": "Bearer mmYk1LMWWat3eG4w0Drqj4NUjKJQglYG"
-                    }
-                });
-                
-                // PERBAIKAN DI SINI: AllOrigins dibaca sebagai teks biasa dulu agar aman dari crash input
-                const statusText = await statusRes.text();
-                const statusJsonWrapper = JSON.parse(statusText);
-                
-                // Ambil string data asli di properti '.contents', lalu diparse kembali ke JSON
-                const statusData = JSON.parse(statusJsonWrapper.contents);
+                const statusRes = await fetch(`/.netlify/functions/api-topup?action=status&id=${billId}`);
+                const statusData = await statusRes.json();
 
                 if (statusData.success && statusData.data.status === "PAID") {
                     clearInterval(qrisCountdownInterval);
@@ -1138,7 +1100,7 @@ window.requestQRIS = async () => {
                     const userDocRef = doc(db, "users", currentUser.uid);
                     const userSnap = await getDoc(userDocRef);
                     const currentSaldo = userSnap.data().saldo || 0;
-                    const amountCredited = statusData.data.amount; 
+                    const amountCredited = statusData.data.amount;
 
                     await updateDoc(userDocRef, { saldo: currentSaldo + amountCredited });
 
@@ -1146,7 +1108,7 @@ window.requestQRIS = async () => {
                     await addDoc(collection(db, "transaksi"), {
                         userId: currentUser.uid,
                         produk: "Deposit Saldo (QRIS)",
-                        harga: -amountCredited, 
+                        harga: -amountCredited,
                         tanggal: tanggalSkarang,
                         timestamp: new Date().getTime()
                     });
@@ -1160,11 +1122,7 @@ window.requestQRIS = async () => {
         }, 8000);
 
     } catch (err) {
-        let errMsg = err.message;
-        if (errMsg === "Failed to fetch") {
-            errMsg = "Gagal membuat invoice: Masalah koneksi CORS Proxy Server.";
-        }
-        window.showToast("Gagal Top Up", errMsg, "error");
+        window.showToast("Gagal Top Up", err.message, "error");
     }
 };
 
