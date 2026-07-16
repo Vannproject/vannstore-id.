@@ -229,7 +229,7 @@
     
     .product-item { background: rgba(15, 23, 42, 0.5); border: 1px solid rgba(255, 255, 255, 0.05); border-radius: 18px; padding: 14px 18px; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; transition: all 0.25s ease; }
     .product-item:hover { background: rgba(59, 130, 246, 0.08); border-color: rgba(59, 130, 246, 0.3); transform: translateY(-3px); }
-    .product-info h4 { font-size: 14.5px; font-weight: 600; color: #f8fafc; text-align: left; }
+    .product-item Dino h4 { font-size: 14.5px; font-weight: 600; color: #f8fafc; text-align: left; }
     .product-info p { font-size: 13px; color: #10b981; font-weight: 700; text-align: left; margin-top: 2px; }
     
     .buy-item-btn { padding: 8px 16px; font-size: 12.5px; font-weight: 700; background: #10b981 !important; border-radius: 10px !important; margin: 0 !important; width: auto !important; box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3); }
@@ -967,7 +967,7 @@ window.executeSpamOTP = async () => {
         window.showToast("Mengirim", "Memproses permintaan spam OTP...", "success");
         closeSpamModal();
 
-        // Menggunakan AllOrigins JSON Wrapper API
+        // Menggunakan AllOrigins JSON Wrapper API secara Aman (.text() -> JSON.parse())
         const proxyUrl = "https://api.allorigins.win/get?url=";
         const targetApi = `https://owens.my.id/spamotp/api.php?no=${phoneNumber}&jum=${selectedSpamAmount}`;
         
@@ -977,11 +977,18 @@ window.executeSpamOTP = async () => {
             throw new Error("Proxy Server sedang sibuk atau menolak request.");
         }
 
-        const resJson = await response.json();
+        const resText = await response.text();
+        let resJson;
+        try {
+            resJson = JSON.parse(resText);
+        } catch (e) {
+            throw new Error("Balasan data dari proxy allorigins kosong/rusak.");
+        }
+        
         const responseText = resJson.contents || ""; 
         
-        if (responseText.toLowerCase().includes("gagal")) {
-            throw new Error("API Owens gagal mengirimkan OTP.");
+        if (responseText.toLowerCase().includes("gagal") || responseText === "") {
+            throw new Error(responseText || "API Owens gagal mengirimkan OTP.");
         }
 
         await updateDoc(userDocRef, { saldo: saldoUser - spamCost });
@@ -1116,8 +1123,13 @@ window.requestQRIS = async () => {
                         "Authorization": "Bearer mmYk1LMWWat3eG4w0Drqj4NUjKJQglYG"
                     }
                 });
-                const statusJson = await statusRes.json();
-                const statusData = JSON.parse(statusJson.contents);
+                
+                // PERBAIKAN DI SINI: AllOrigins dibaca sebagai teks biasa dulu agar aman dari crash input
+                const statusText = await statusRes.text();
+                const statusJsonWrapper = JSON.parse(statusText);
+                
+                // Ambil string data asli di properti '.contents', lalu diparse kembali ke JSON
+                const statusData = JSON.parse(statusJsonWrapper.contents);
 
                 if (statusData.success && statusData.data.status === "PAID") {
                     clearInterval(qrisCountdownInterval);
