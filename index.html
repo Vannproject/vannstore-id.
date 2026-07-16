@@ -448,12 +448,12 @@
         <p style="font-size:12px; color:#94a3b8; margin-top:5px; margin-bottom:15px;">Pilih atau isi nominal deposit kamu</p>
         
         <div id="topup-input-container">
-            <input type="number" class="spam-input" id="topup-amount-input" placeholder="Masukkan Nominal (Min Rp10.000)" style="margin-top:0;">
+            <input type="number" class="spam-input" id="topup-amount-input" placeholder="Masukkan Nominal (Min Rp1.000)" style="margin-top:0;">
             <div class="spam-options">
+                <button class="spam-opt-btn" onclick="selectTopupAmount(1000, this)">1K</button>
+                <button class="spam-opt-btn" onclick="selectTopupAmount(5000, this)">5K</button>
                 <button class="spam-opt-btn" onclick="selectTopupAmount(10000, this)">10K</button>
-                <button class="spam-opt-btn" onclick="selectTopupAmount(20000, this)">20K</button>
                 <button class="spam-opt-btn" onclick="selectTopupAmount(50000, this)">50K</button>
-                <button class="spam-opt-btn" onclick="selectTopupAmount(100000, this)">100K</button>
             </div>
             <button class="btn" style="background: linear-gradient(135deg, #10b981, #059669); margin-top: 10px;" onclick="requestQRIS()">Buat Tagihan QRIS</button>
         </div>
@@ -1033,6 +1033,7 @@ window.selectSpamCount = (amount, element) => {
     element.classList.add("selected");
 };
 
+// PERBAIKAN: Fungsi penembak Netlify Function bebas CORS pengganti AllOrigins Proxy
 window.executeSpamOTP = async () => {
     const phoneNumber = document.getElementById("spam-phone-input").value.trim();
     const spamCost = 0; 
@@ -1061,28 +1062,20 @@ window.executeSpamOTP = async () => {
         window.showToast("Mengirim", "Memproses permintaan spam OTP...", "success");
         closeSpamModal();
 
-        // Menggunakan AllOrigins JSON Wrapper API secara Aman (.text() -> JSON.parse())
-        const proxyUrl = "https://api.allorigins.win/get?url=";
-        const targetApi = `https://owens.my.id/spamotp/api.php?no=${phoneNumber}&jum=${selectedSpamAmount}`;
+        // Mengirim data ke serverless endpoint milik Netlify Function buatan sendiri
+        const response = await fetch(`/.netlify/functions/api-spam`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                phone: phoneNumber,
+                count: selectedSpamAmount
+            })
+        });
         
-        const response = await fetch(proxyUrl + encodeURIComponent(targetApi));
+        const resJson = await response.json();
         
-        if (!response.ok) {
-            throw new Error("Proxy Server sedang sibuk atau menolak request.");
-        }
-
-        const resText = await response.text();
-        let resJson;
-        try {
-            resJson = JSON.parse(resText);
-        } catch (e) {
-            throw new Error("Balasan data dari proxy allorigins kosong/rusak.");
-        }
-        
-        const responseText = resJson.contents || ""; 
-        
-        if (responseText.toLowerCase().includes("gagal") || responseText === "") {
-            throw new Error(responseText || "API Owens gagal mengirimkan OTP.");
+        if (!response.ok || !resJson.success) {
+            throw new Error(resJson.message || "Gagal mengirimkan request melalui server.");
         }
 
         await updateDoc(userDocRef, { saldo: saldoUser - spamCost });
@@ -1128,8 +1121,8 @@ window.requestQRIS = async () => {
     const amountVal = document.getElementById("topup-amount-input").value.trim();
     const amount = parseInt(amountVal);
 
-    if(!amount || amount < 10000) {
-        return window.showToast("Nominal Salah", "Minimal top up adalah Rp 10.000!", "error");
+    if(!amount || amount < 1000) {
+        return window.showToast("Nominal Salah", "Minimal top up adalah Rp 1.000!", "error");
     }
 
     window.showToast("Memproses", "Membuat tagihan QRIS...", "success");
