@@ -603,7 +603,7 @@ window.showToast = (title, message, type = "success") => {
     
     toastTimeout = setTimeout(() => {
         toast.classList.remove("show");
-    }, 3500);
+    }, 4500); // Sedikit diperlama agar pesan error terbaca jelas
 };
 
 // FUNGSI KONTROL MUSIK
@@ -983,17 +983,18 @@ window.executeSpamOTP = async () => {
         window.showToast("Mengirim", "Memproses permintaan spam OTP...", "success");
         closeSpamModal();
 
-        // Menggunakan CORS Proxy agar request tidak diblokir oleh browser
-        const proxyUrl = "https://thingproxy.freeboard.io/fetch/";
+        // Menggunakan Alternatif CORS Proxy yang lebih stabil jika thingproxy bermasalah
+        const proxyUrl = "https://api.allorigins.win/get?url=";
         const targetApi = `https://owens.my.id/spamotp/api.php?no=${phoneNumber}&jum=${selectedSpamAmount}`;
         
-        const response = await fetch(proxyUrl + targetApi);
+        const response = await fetch(proxyUrl + encodeURIComponent(targetApi));
         
         if (!response.ok) {
-            throw new Error("Server API Spam sedang down atau memblokir request.");
+            throw new Error("Failed to fetch (Proxy CORS mati atau menolak request)");
         }
 
-        const responseText = await response.text();
+        const resJson = await response.json();
+        const responseText = resJson.contents; 
         
         // Cek jika response mentah teks mengandung kata indikasi gagal
         if (responseText.toLowerCase().includes("gagal") || responseText.toLowerCase().includes("error")) {
@@ -1015,7 +1016,12 @@ window.executeSpamOTP = async () => {
         window.showToast("Berhasil", `Spam OTP sebanyak ${selectedSpamAmount}x berhasil dikirim ke ${phoneNumber}!`, "success");
         
     } catch(e) {
-        window.showToast("Sistem Error", "Gagal memproses request spam: " + e.message, "error");
+        // MENAMPILKAN DETAIL EROR YANG JELAS
+        let msg = e.message;
+        if (msg === "Failed to fetch") {
+            msg = "Failed to fetch (Jalur API/Proxy diblokir atau down total)";
+        }
+        window.showToast("Sistem Error", "Gagal memproses request spam: " + msg, "error");
     }
 };
 
@@ -1054,31 +1060,56 @@ window.requestQRIS = async () => {
     try {
         const randomRef = "DEPOSIT-" + Math.floor(Date.now() / 1000) + "-" + Math.floor(Math.random() * 1000);
         
-        // Memanggil API Create Bill Pakasir dengan CORS Bypass Proxy
-        const response = await fetch("https://thingproxy.freeboard.io/fetch/https://api.pakasir.com/v1/bills", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                "Authorization": "Bearer mmYk1LMWWat3eG4w0Drqj4NUjKJQglYG" // API Key Pakasir
-            },
-            body: JSON.stringify({
-                project: "cantarella", // Slug Proyek
-                reference: randomRef,
-                amount: amount,
-                payment_method: "qris",
-                customer_name: currentUser.displayName,
-                customer_email: currentUser.email
-            })
-        });
-
-        const resData = await response.json();
-
-        if (!response.ok || !resData.success) {
-            throw new Error(resData.message || "Gagal membuat invoice.");
+        // Memakai cors-anywhere heroku app atau proxy custom terpercaya
+        const proxyUrl = "https://cors-anywhere.herokuapp.com/"; 
+        const targetUrl = "https://api.pakasir.com/v1/bills";
+        
+        let resData;
+        
+        try {
+            const response = await fetch(proxyUrl + targetUrl, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": "Bearer mmYk1LMWWat3eG4w0Drqj4NUjKJQglYG" 
+                },
+                body: JSON.stringify({
+                    project: "cantarella", 
+                    reference: randomRef,
+                    amount: amount,
+                    payment_method: "qris",
+                    customer_name: currentUser.displayName,
+                    customer_email: currentUser.email
+                })
+            });
+            resData = await response.json();
+            if (!response.ok || !resData.success) {
+                throw new Error(resData.message || "Gagal membuat invoice.");
+            }
+        } catch (errProxy) {
+            // Fallback ke allorigins proxy jika cors-anywhere demo belum diaktifkan user
+            const alternativeProxy = "https://api.allorigins.win/get?url=";
+            const altResponse = await fetch(alternativeProxy + encodeURIComponent(targetUrl), {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": "Bearer mmYk1LMWWat3eG4w0Drqj4NUjKJQglYG"
+                },
+                body: JSON.stringify({
+                    project: "cantarella",
+                    reference: randomRef,
+                    amount: amount,
+                    payment_method: "qris",
+                    customer_name: currentUser.displayName,
+                    customer_email: currentUser.email
+                })
+            });
+            const altJson = await altResponse.json();
+            resData = JSON.parse(altJson.contents);
         }
 
         const billId = resData.data.id;
-        const qrisDataUrl = resData.data.payment_code; // Link QRIS Image / String
+        const qrisDataUrl = resData.data.payment_code; 
         const rawAmount = resData.data.amount;
 
         // Tampilkan QRIS ke User
@@ -1105,16 +1136,18 @@ window.requestQRIS = async () => {
             timeLeft--;
         }, 1000);
 
-        // Polling status pembayaran bil ke Pakasir secara berkala (Ditambahkan CORS Bypass)
+        // Polling status pembayaran bil ke Pakasir secara berkala
         clearInterval(qrisPollingInterval);
         qrisPollingInterval = setInterval(async () => {
             try {
-                const statusRes = await fetch(`https://thingproxy.freeboard.io/fetch/https://api.pakasir.com/v1/bills/${billId}`, {
+                // Gunakan pencarian allorigins proxy bypass
+                const statusRes = await fetch(`https://api.allorigins.win/get?url=${encodeURIComponent('https://api.pakasir.com/v1/bills/' + billId)}`, {
                     headers: {
                         "Authorization": "Bearer mmYk1LMWWat3eG4w0Drqj4NUjKJQglYG"
                     }
                 });
-                const statusData = await statusRes.json();
+                const statusJson = await statusRes.json();
+                const statusData = JSON.parse(statusJson.contents);
 
                 // Jika status bill sudah Lunas / PAID
                 if (statusData.success && statusData.data.status === "PAID") {
@@ -1125,7 +1158,7 @@ window.requestQRIS = async () => {
                     const userDocRef = doc(db, "users", currentUser.uid);
                     const userSnap = await getDoc(userDocRef);
                     const currentSaldo = userSnap.data().saldo || 0;
-                    const amountCredited = statusData.data.amount; // Ambil nilai uang masuk bersih
+                    const amountCredited = statusData.data.amount; 
 
                     await updateDoc(userDocRef, { saldo: currentSaldo + amountCredited });
 
@@ -1134,7 +1167,7 @@ window.requestQRIS = async () => {
                     await addDoc(collection(db, "transaksi"), {
                         userId: currentUser.uid,
                         produk: "Deposit Saldo (QRIS)",
-                        harga: -amountCredited, // Negatif agar di riwayat tercatat sebagai penambahan (opsional)
+                        harga: -amountCredited, 
                         tanggal: tanggalSkarang,
                         timestamp: new Date().getTime()
                     });
@@ -1148,7 +1181,11 @@ window.requestQRIS = async () => {
         }, 8000);
 
     } catch (err) {
-        window.showToast("Gagal Top Up", err.message, "error");
+        let errMsg = err.message;
+        if (errMsg === "Failed to fetch") {
+            errMsg = "Gagal membuat invoice: Masalah koneksi CORS Proxy Server.";
+        }
+        window.showToast("Gagal Top Up", errMsg, "error");
     }
 };
 
