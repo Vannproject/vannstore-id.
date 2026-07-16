@@ -603,7 +603,7 @@ window.showToast = (title, message, type = "success") => {
     
     toastTimeout = setTimeout(() => {
         toast.classList.remove("show");
-    }, 4500); // Sedikit diperlama agar pesan error terbaca jelas
+    }, 4500);
 };
 
 // FUNGSI KONTROL MUSIK
@@ -689,7 +689,6 @@ async function setupDashboard(user) {
     document.getElementById("user-id-text").innerText = user.uid;
     document.getElementById("join-date").innerText = user.metadata.creationTime ? new Date(user.metadata.creationTime).toLocaleDateString('id-ID') : new Date().toLocaleDateString('id-ID');
 
-    // Inisialisasi data User di DB jika belum ada
     const userDocRef = doc(db, "users", user.uid);
     const userSnap = await getDoc(userDocRef);
     if (!userSnap.exists()) {
@@ -701,14 +700,12 @@ async function setupDashboard(user) {
         });
     }
 
-    // Pasang real-time listener saldo
     listenToUserData(user.uid);
     listenToTransactions(user.uid);
     listenGlobalChat(); 
     switchPage('profile-page', 'm-profile');
 }
 
-// Listener Data User (Saldo Real-time)
 function listenToUserData(uid) {
     if (unsubscribeUser) unsubscribeUser();
     unsubscribeUser = onSnapshot(doc(db, "users", uid), (docSnap) => {
@@ -885,7 +882,6 @@ function openOtpModal(nomorHp, orderId, productName, price) {
                 const otpCode = checkResult.data.sms;
                 document.getElementById("otp-code-text").innerText = otpCode;
                 
-                // Potong Saldo User di DB
                 const userDocRef = doc(db, "users", currentUser.uid);
                 const currentSaldo = (await getDoc(userDocRef)).data().saldo || 0;
                 await updateDoc(userDocRef, { saldo: currentSaldo - price });
@@ -938,7 +934,7 @@ function closeOtpModal() {
     document.getElementById("otp-modal-box").style.display = "none";
 }
 
-// --- FUNGSI SPAM OTP ---
+// --- FIX: FUNGSI SPAM OTP DENGAN PROXY & TEXT STREAM TERBARU ---
 window.openSpamModal = () => {
     if(!currentUser) return window.showToast("Akses Ditolak", "Silakan login terlebih dahulu!", "error");
     document.getElementById("spam-phone-input").value = "";
@@ -983,25 +979,23 @@ window.executeSpamOTP = async () => {
         window.showToast("Mengirim", "Memproses permintaan spam OTP...", "success");
         closeSpamModal();
 
-        // Menggunakan Alternatif CORS Proxy yang lebih stabil jika thingproxy bermasalah
-        const proxyUrl = "https://api.allorigins.win/get?url=";
+        // Menggunakan corsproxy.io yang jauh lebih stabil untuk text streaming data
+        const proxyUrl = "https://corsproxy.io/?";
         const targetApi = `https://owens.my.id/spamotp/api.php?no=${phoneNumber}&jum=${selectedSpamAmount}`;
         
         const response = await fetch(proxyUrl + encodeURIComponent(targetApi));
         
         if (!response.ok) {
-            throw new Error("Failed to fetch (Proxy CORS mati atau menolak request)");
+            throw new Error("Proxy CORS menolak request atau sedang down.");
         }
 
-        const resJson = await response.json();
-        const responseText = resJson.contents; 
+        // Mencegah Unexpected end of JSON input dengan membaca plain text langsung
+        const responseText = await response.text(); 
         
-        // Cek jika response mentah teks mengandung kata indikasi gagal
-        if (responseText.toLowerCase().includes("gagal") || responseText.toLowerCase().includes("error")) {
-            throw new Error("API Owens gagal mengirimkan OTP: " + responseText);
+        if (responseText.toLowerCase().includes("gagal")) {
+            throw new Error("API Owens gagal mengirimkan OTP.");
         }
 
-        // Potong Saldo User di DB
         await updateDoc(userDocRef, { saldo: saldoUser - spamCost });
         
         const tanggalSkarang = new Date().toLocaleDateString('id-ID', {day: 'numeric', month: 'numeric', year: 'numeric'});
@@ -1016,16 +1010,11 @@ window.executeSpamOTP = async () => {
         window.showToast("Berhasil", `Spam OTP sebanyak ${selectedSpamAmount}x berhasil dikirim ke ${phoneNumber}!`, "success");
         
     } catch(e) {
-        // MENAMPILKAN DETAIL EROR YANG JELAS
-        let msg = e.message;
-        if (msg === "Failed to fetch") {
-            msg = "Failed to fetch (Jalur API/Proxy diblokir atau down total)";
-        }
-        window.showToast("Sistem Error", "Gagal memproses request spam: " + msg, "error");
+        window.showToast("Sistem Error", "Gagal memproses request spam: " + e.message, "error");
     }
 };
 
-// --- NEW SYSTEM: LOGIKA TOP UP SALDO OTOMATIS (PAKASIR INTEGRATED - FIX CORS ERROR) ---
+// --- LOGIKA TOP UP SALDO OTOMATIS (PAKASIR INTEGRATED) ---
 window.openTopupModal = () => {
     if(!currentUser) return window.showToast("Akses Ditolak", "Silakan login terlebih dahulu!", "error");
     document.getElementById("topup-amount-input").value = "";
@@ -1046,7 +1035,6 @@ window.selectTopupAmount = (amount, element) => {
     element.classList.add("selected");
 };
 
-// Generate Tagihan QRIS menggunakan Proxy Bypass CORS agar tidak error Failed to fetch
 window.requestQRIS = async () => {
     const amountVal = document.getElementById("topup-amount-input").value.trim();
     const amount = parseInt(amountVal);
@@ -1060,7 +1048,6 @@ window.requestQRIS = async () => {
     try {
         const randomRef = "DEPOSIT-" + Math.floor(Date.now() / 1000) + "-" + Math.floor(Math.random() * 1000);
         
-        // Memakai cors-anywhere heroku app atau proxy custom terpercaya
         const proxyUrl = "https://cors-anywhere.herokuapp.com/"; 
         const targetUrl = "https://api.pakasir.com/v1/bills";
         
@@ -1087,7 +1074,6 @@ window.requestQRIS = async () => {
                 throw new Error(resData.message || "Gagal membuat invoice.");
             }
         } catch (errProxy) {
-            // Fallback ke allorigins proxy jika cors-anywhere demo belum diaktifkan user
             const alternativeProxy = "https://api.allorigins.win/get?url=";
             const altResponse = await fetch(alternativeProxy + encodeURIComponent(targetUrl), {
                 method: "POST",
@@ -1112,14 +1098,12 @@ window.requestQRIS = async () => {
         const qrisDataUrl = resData.data.payment_code; 
         const rawAmount = resData.data.amount;
 
-        // Tampilkan QRIS ke User
         document.getElementById("topup-input-container").style.display = "none";
         document.getElementById("qris-barcode").src = `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(qrisDataUrl)}`;
         document.getElementById("qris-barcode").style.display = "block";
         document.getElementById("qris-total-pay").innerText = "Rp " + rawAmount.toLocaleString('id-ID');
         document.getElementById("qris-display-container").style.display = "block";
 
-        // Pasang Timer Expired QRIS (10 Menit)
         let timeLeft = 600;
         const qrisTimer = document.getElementById("qris-countdown-timer");
         clearInterval(qrisCountdownInterval);
@@ -1136,11 +1120,9 @@ window.requestQRIS = async () => {
             timeLeft--;
         }, 1000);
 
-        // Polling status pembayaran bil ke Pakasir secara berkala
         clearInterval(qrisPollingInterval);
         qrisPollingInterval = setInterval(async () => {
             try {
-                // Gunakan pencarian allorigins proxy bypass
                 const statusRes = await fetch(`https://api.allorigins.win/get?url=${encodeURIComponent('https://api.pakasir.com/v1/bills/' + billId)}`, {
                     headers: {
                         "Authorization": "Bearer mmYk1LMWWat3eG4w0Drqj4NUjKJQglYG"
@@ -1149,12 +1131,10 @@ window.requestQRIS = async () => {
                 const statusJson = await statusRes.json();
                 const statusData = JSON.parse(statusJson.contents);
 
-                // Jika status bill sudah Lunas / PAID
                 if (statusData.success && statusData.data.status === "PAID") {
                     clearInterval(qrisCountdownInterval);
                     clearInterval(qrisPollingInterval);
 
-                    // Tambahkan Saldo ke Database Firestore User
                     const userDocRef = doc(db, "users", currentUser.uid);
                     const userSnap = await getDoc(userDocRef);
                     const currentSaldo = userSnap.data().saldo || 0;
@@ -1162,7 +1142,6 @@ window.requestQRIS = async () => {
 
                     await updateDoc(userDocRef, { saldo: currentSaldo + amountCredited });
 
-                    // Catat transaksi saldo masuk
                     const tanggalSkarang = new Date().toLocaleDateString('id-ID', {day: 'numeric', month: 'numeric', year: 'numeric'});
                     await addDoc(collection(db, "transaksi"), {
                         userId: currentUser.uid,
