@@ -1041,37 +1041,35 @@ window.requestQRIS = async () => {
     window.showToast("Memproses", "Membuat tagihan QRIS...", "success");
 
     try {
-        const randomRef = "DEPOSIT-" + Math.floor(Date.now() / 1000) + "-" + Math.floor(Math.random() * 1000);
+        const orderId = "DEPOSIT" + Math.floor(Date.now() / 1000) + Math.floor(Math.random() * 1000);
 
         const response = await fetch(`/.netlify/functions/api-topup?action=create`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
-                project: "cantarella",
-                reference: randomRef,
                 amount: amount,
-                payment_method: "qris",
-                customer_name: currentUser.displayName,
-                customer_email: currentUser.email
+                order_id: orderId
             })
         });
 
         const resData = await response.json();
         if (!response.ok || !resData.success) {
-            throw new Error(resData.message || resData.error || "Gagal membuat invoice.");
+            throw new Error(resData.message || "Gagal membuat invoice.");
         }
 
-        const billId = resData.data.id;
-        const qrisDataUrl = resData.data.payment_code;
-        const rawAmount = resData.data.amount;
+        const qrisString = resData.data.payment_number;
+        const totalBayar = resData.data.total_payment;
+        const expiredAt = new Date(resData.data.expired_at).getTime();
 
         document.getElementById("topup-input-container").style.display = "none";
-        document.getElementById("qris-barcode").src = `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(qrisDataUrl)}`;
+        document.getElementById("qris-barcode").src = `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(qrisString)}`;
         document.getElementById("qris-barcode").style.display = "block";
-        document.getElementById("qris-total-pay").innerText = "Rp " + rawAmount.toLocaleString('id-ID');
+        document.getElementById("qris-total-pay").innerText = "Rp " + totalBayar.toLocaleString('id-ID');
         document.getElementById("qris-display-container").style.display = "block";
 
-        let timeLeft = 600;
+        let timeLeft = Math.floor((expiredAt - Date.now()) / 1000);
+        if (timeLeft <= 0 || isNaN(timeLeft)) timeLeft = 600;
+
         const qrisTimer = document.getElementById("qris-countdown-timer");
         clearInterval(qrisCountdownInterval);
         qrisCountdownInterval = setInterval(() => {
@@ -1090,10 +1088,10 @@ window.requestQRIS = async () => {
         clearInterval(qrisPollingInterval);
         qrisPollingInterval = setInterval(async () => {
             try {
-                const statusRes = await fetch(`/.netlify/functions/api-topup?action=status&id=${billId}`);
+                const statusRes = await fetch(`/.netlify/functions/api-topup?action=status&order_id=${orderId}&amount=${amount}`);
                 const statusData = await statusRes.json();
 
-                if (statusData.success && statusData.data.status === "PAID") {
+                if (statusData.success && statusData.data.status === "completed") {
                     clearInterval(qrisCountdownInterval);
                     clearInterval(qrisPollingInterval);
 
