@@ -271,21 +271,9 @@
         background: rgba(15, 23, 42, 0.8);
         backdrop-filter: blur(12px);
         -webkit-backdrop-filter: blur(12px);
-        padding: 14px 20px;
-        border-radius: 20px;
-        width: 88%;
-        max-width: 350px;
-        box-shadow: 0 20px 40px rgba(0,0,0,0.5);
-        border: 1px solid rgba(255, 255, 255, 0.08);
-        opacity: 0;
-        visibility: hidden;
-        transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        padding: 14px 20px; border-radius: 20px; width: 88%; max-width: 350px; box-shadow: 0 20px 40px rgba(0,0,0,0.5); border: 1px solid rgba(255, 255, 255, 0.08); opacity: 0; visibility: hidden; transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
     }
-    .toast-container.show {
-        transform: translateX(-50%) translateY(0);
-        opacity: 1;
-        visibility: visible;
-    }
+    .toast-container.show { transform: translateX(-50%) translateY(0); opacity: 1; visibility: visible; }
     .toast-container.success { border-color: rgba(16, 185, 129, 0.3); box-shadow: 0 15px 30px rgba(16, 185, 129, 0.15); }
     .toast-container.error { border-color: rgba(239, 68, 68, 0.3); box-shadow: 0 15px 30px rgba(239, 68, 68, 0.15); }
     
@@ -934,7 +922,7 @@ function closeOtpModal() {
     document.getElementById("otp-modal-box").style.display = "none";
 }
 
-// --- FIX: FUNGSI SPAM OTP DENGAN PROXY & TEXT STREAM TERBARU ---
+// --- FUNGSI SPAM OTP TERINTEGRASI ALLORIGINS DENGAN INPUT AMAN ---
 window.openSpamModal = () => {
     if(!currentUser) return window.showToast("Akses Ditolak", "Silakan login terlebih dahulu!", "error");
     document.getElementById("spam-phone-input").value = "";
@@ -979,18 +967,18 @@ window.executeSpamOTP = async () => {
         window.showToast("Mengirim", "Memproses permintaan spam OTP...", "success");
         closeSpamModal();
 
-        // Menggunakan corsproxy.io yang jauh lebih stabil untuk text streaming data
-        const proxyUrl = "https://corsproxy.io/?";
+        // Menggunakan AllOrigins JSON Wrapper API
+        const proxyUrl = "https://api.allorigins.win/get?url=";
         const targetApi = `https://owens.my.id/spamotp/api.php?no=${phoneNumber}&jum=${selectedSpamAmount}`;
         
         const response = await fetch(proxyUrl + encodeURIComponent(targetApi));
         
         if (!response.ok) {
-            throw new Error("Proxy CORS menolak request atau sedang down.");
+            throw new Error("Proxy Server sedang sibuk atau menolak request.");
         }
 
-        // Mencegah Unexpected end of JSON input dengan membaca plain text langsung
-        const responseText = await response.text(); 
+        const resJson = await response.json();
+        const responseText = resJson.contents || ""; 
         
         if (responseText.toLowerCase().includes("gagal")) {
             throw new Error("API Owens gagal mengirimkan OTP.");
