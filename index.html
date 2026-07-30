@@ -133,6 +133,7 @@
     }
     .info-trigger:hover { background: rgba(251, 191, 36, 0.2); color: white; box-shadow: 0 0 15px rgba(251, 191, 36, 0.5); }
     .info-trigger::after { content: ''; position: absolute; top: 8px; right: 10px; width: 8px; height: 8px; background: #ef4444; border-radius: 50%; box-shadow: 0 0 8px #ef4444; }
+    .info-trigger.seen::after { display: none; }
 
     /* --- JENDELA POPUP INFORMASI (MODAL) --- */
     .info-modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(2, 6, 23, 0.7); backdrop-filter: blur(8px); z-index: 99999; display: none; justify-content: center; align-items: center; }
@@ -289,11 +290,135 @@
     .userid-badge { display: inline-flex; align-items: center; gap: 6px; background: rgba(59, 130, 246, 0.12); border: 1px solid rgba(59, 130, 246, 0.25); color: #93c5fd; font-size: 11px; font-weight: 600; padding: 4px 10px; border-radius: 8px; margin-top: 5px; cursor: pointer; transition: all 0.2s; }
     .userid-badge:hover { background: rgba(59, 130, 246, 0.25); }
 
-    .info-box { background: rgba(0, 0, 0, 0.3); border: 1px solid rgba(255,255,255,0.05); padding: 14px 16px; border-radius: 16px; margin: 16px 0; text-align: left; font-size: 13.5px; }
-    .info-box p { text-align: center; }
-    .info-item { display: flex; justify-content: space-between; margin-bottom: 8px; color: #cbd5e1; }
-    .info-item:last-child { margin-bottom: 0; }
-    .info-item span:last-child { font-weight: 600; color: #60a5fa; }
+    .profile-status-dot{
+        position: absolute;
+        bottom: 3px;
+        right: 3px;
+        width: 16px;
+        height: 16px;
+        background: #10b981;
+        border: 3px solid #0f172a;
+        border-radius: 50%;
+        box-shadow: 0 0 8px rgba(16, 185, 129, 0.6);
+    }
+
+    /* --- TICKER PEMBARUAN BERJALAN --- */
+    .update-ticker{
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        background: linear-gradient(90deg, rgba(59,130,246,0.14), rgba(139,92,246,0.1));
+        border: 1px solid rgba(59, 130, 246, 0.22);
+        border-radius: 14px;
+        padding: 9px 12px;
+        margin-bottom: 16px;
+    }
+    .update-ticker-icon{
+        flex-shrink: 0;
+        width: 22px; height: 22px;
+        border-radius: 50%;
+        background: rgba(59, 130, 246, 0.25);
+        color: #93c5fd;
+        display: flex; align-items: center; justify-content: center;
+        font-size: 11px;
+    }
+    .update-ticker-viewport{
+        flex: 1;
+        overflow: hidden;
+        white-space: nowrap;
+        position: relative;
+    }
+    .update-ticker-track{
+        display: inline-block;
+        padding-left: 100%;
+        font-size: 12px;
+        font-weight: 600;
+        color: #bfdbfe;
+        animation: tickerScroll 16s linear infinite;
+    }
+    @keyframes tickerScroll{
+        0% { transform: translateX(0); }
+        100% { transform: translateX(-100%); }
+    }
+
+    /* --- BALANCE HERO CARD --- */
+    .balance-hero{
+        position: relative;
+        background: linear-gradient(135deg, rgba(59,130,246,0.22), rgba(139,92,246,0.2));
+        border: 1px solid rgba(255,255,255,0.12);
+        border-radius: 22px;
+        padding: 20px;
+        margin: 4px 0 14px;
+        overflow: hidden;
+        text-align: left;
+    }
+    .balance-hero::before{
+        content: '';
+        position: absolute;
+        width: 160px; height: 160px;
+        background: radial-gradient(circle, rgba(255,255,255,0.12), transparent 70%);
+        top: -70px; right: -50px;
+        pointer-events: none;
+    }
+    .balance-hero-top{
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        position: relative;
+        z-index: 2;
+    }
+    .balance-hero-label{
+        font-size: 12px;
+        color: #dbeafe;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+    }
+    .balance-hero-icon{
+        width: 30px; height: 30px;
+        border-radius: 10px;
+        background: rgba(255,255,255,0.14);
+        display: flex; align-items: center; justify-content: center;
+        color: #fff;
+        font-size: 13px;
+    }
+    .balance-hero-value{
+        font-size: 30px;
+        font-weight: 800;
+        color: #ffffff;
+        letter-spacing: -0.5px;
+        margin-top: 10px;
+        position: relative;
+        z-index: 2;
+    }
+    .balance-stats-row{
+        display: flex;
+        gap: 10px;
+        margin-top: 16px;
+        position: relative;
+        z-index: 2;
+    }
+    .balance-stat-pill{
+        flex: 1;
+        background: rgba(0,0,0,0.28);
+        border: 1px solid rgba(255,255,255,0.08);
+        border-radius: 14px;
+        padding: 10px 12px;
+    }
+    .balance-stat-pill .stat-label{
+        font-size: 10.5px;
+        color: #94a3b8;
+        margin-bottom: 3px;
+        display: flex;
+        align-items: center;
+        gap: 5px;
+    }
+    .balance-stat-pill .stat-value{
+        font-size: 13.5px;
+        font-weight: 700;
+        color: #e2e8f0;
+    }
 
     /* --- BOX RIWAYAT TRANSAKSI --- */
     .history-box { background: rgba(0, 0, 0, 0.2); border: 1px solid rgba(255, 255, 255, 0.04); border-radius: 16px; padding: 12px; margin-bottom: 15px; max-height: 140px; overflow-y: auto; }
@@ -547,27 +672,40 @@
         <div class="app-card">
             
             <div id="profile-page" class="page-content active">
+                <div class="update-ticker">
+                    <div class="update-ticker-icon"><i class="fa-solid fa-bullhorn"></i></div>
+                    <div class="update-ticker-viewport">
+                        <span class="update-ticker-track">🎉 Top Up Saldo otomatis via QRIS sudah aktif &nbsp;•&nbsp; 🛍️ Produk baru segera hadir &nbsp;•&nbsp; 💬 Yuk gabung Chat Global VannStore &nbsp;•&nbsp; 🎉 Top Up Saldo otomatis via QRIS sudah aktif</span>
+                    </div>
+                </div>
+
                 <div class="profile-promo-banner"></div>
-                <div class="profile-container"><img id="user-photo" src="" alt="Profile"></div>
+                <div class="profile-container">
+                    <img id="user-photo" src="" alt="Profile">
+                    <div class="profile-status-dot"></div>
+                </div>
                 <h2 id="user-name">Nama</h2>
                 <p id="user-email">email@gmail.com</p>
                 
                 <div class="userid-badge" id="btn-copy-id" onclick="copyUserID()">
                     <i class="fa-solid fa-fingerprint"></i> ID: <span id="user-id-text">Loading...</span>
                 </div>
-                
-                <div class="info-box">
-                    <div class="info-item">
-                        <span><i class="fa-solid fa-wallet" style="margin-right:5px; color:#10b981;"></i> Saldo Anda</span>
-                        <span id="user-saldo-text" style="color:#10b981; font-weight:800;">Rp 0</span>
+
+                <div class="balance-hero">
+                    <div class="balance-hero-top">
+                        <span class="balance-hero-label"><i class="fa-solid fa-wallet"></i> Saldo Anda</span>
+                        <div class="balance-hero-icon"><i class="fa-solid fa-coins"></i></div>
                     </div>
-                    <div class="info-item">
-                        <span><i class="fa-solid fa-calendar-days" style="margin-right:5px;"></i> Terdaftar</span>
-                        <span id="join-date">-</span>
-                    </div>
-                    <div class="info-item">
-                        <span><i class="fa-solid fa-hand-holding-dollar" style="margin-right:5px;"></i> Pengeluaran</span>
-                        <span id="total-transaksi">Rp 0</span>
+                    <div class="balance-hero-value" id="user-saldo-text">Rp 0</div>
+                    <div class="balance-stats-row">
+                        <div class="balance-stat-pill">
+                            <div class="stat-label"><i class="fa-solid fa-calendar-days"></i> Terdaftar</div>
+                            <div class="stat-value" id="join-date">-</div>
+                        </div>
+                        <div class="balance-stat-pill">
+                            <div class="stat-label"><i class="fa-solid fa-hand-holding-dollar"></i> Pengeluaran</div>
+                            <div class="stat-value" id="total-transaksi">Rp 0</div>
+                        </div>
                     </div>
                 </div>
 
@@ -713,6 +851,11 @@ window.addEventListener("DOMContentLoaded", () => {
         splash.classList.add("exit");
         setTimeout(() => { splash.style.setProperty("display", "none", "important"); }, 800); 
     }, 3200); 
+
+    // Cek status notifikasi info yang sudah pernah dilihat
+    if (localStorage.getItem("vannstore_info_seen") === "1") {
+        document.getElementById("info-btn").classList.add("seen");
+    }
 });
 
 onAuthStateChanged(auth, (user) => {
@@ -1223,7 +1366,12 @@ window.copyUserID = () => {
 window.toggleSidebar = () => { document.getElementById("sidebar-menu").classList.toggle("active"); };
 window.toggleInfoModal = () => {
     const modal = document.getElementById("info-modal-box");
-    modal.style.display = (modal.style.display === "flex") ? "none" : "flex";
+    const wasClosed = modal.style.display !== "flex";
+    modal.style.display = wasClosed ? "flex" : "none";
+    if (wasClosed) {
+        localStorage.setItem("vannstore_info_seen", "1");
+        document.getElementById("info-btn").classList.add("seen");
+    }
 };
 
 window.switchPage = (pageId, menuId) => {
