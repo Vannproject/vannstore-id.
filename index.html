@@ -439,7 +439,7 @@
     
     .product-item { background: rgba(15, 23, 42, 0.5); border: 1px solid rgba(255, 255, 255, 0.05); border-radius: 18px; padding: 14px 18px; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; transition: all 0.25s ease; }
     .product-item:hover { background: rgba(59, 130, 246, 0.08); border-color: rgba(59, 130, 246, 0.3); transform: translateY(-3px); }
-    .product-item Dino h4 { font-size: 14.5px; font-weight: 600; color: #f8fafc; text-align: left; }
+    .product-item .product-info h4 { font-size: 14.5px; font-weight: 600; color: #f8fafc; text-align: left; }
     .product-info p { font-size: 13px; color: #10b981; font-weight: 700; text-align: left; margin-top: 2px; }
     
     .buy-item-btn { padding: 8px 16px; font-size: 12.5px; font-weight: 700; background: #10b981 !important; border-radius: 10px !important; margin: 0 !important; width: auto !important; box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3); }
@@ -507,6 +507,16 @@
     .cancel-otp-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(239, 68, 68, 0.5); }
     @keyframes pulseGlow { 0%, 100% { opacity: 0.8; } 50% { opacity: 1; transform: scale(1.02); } }
 
+    /* --- JENDELA POPUP ALIGHT MOTION --- */
+    .alight-modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(2, 6, 23, 0.8); backdrop-filter: blur(10px); z-index: 999997; display: none; justify-content: center; align-items: center; }
+    .alight-modal-content { background: #0f172a; border: 1px solid rgba(139, 92, 246, 0.3); box-shadow: 0 25px 50px rgba(0, 0, 0, 0.7); padding: 24px; border-radius: 28px; width: 90%; max-width: 380px; text-align: center; animation: modalSlideUp 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) forwards; }
+    .alight-modal-content .spam-input { width: 100%; background: rgba(15, 23, 42, 0.6); border: 1px solid rgba(255, 255, 255, 0.08); padding: 12px 16px; border-radius: 14px; color: white; font-size: 14px; text-align: center; outline: none; transition: border 0.2s; margin-top: 15px; margin-bottom: 10px; }
+    .alight-modal-content .spam-input:focus { border-color: #8b5cf6; }
+    .alight-status-box { background: rgba(0,0,0,0.3); border-radius: 12px; padding: 12px; margin: 10px 0; font-size: 13px; color: #cbd5e1; line-height: 1.6; }
+    .alight-status-box .success { color: #10b981; }
+    .alight-status-box .error { color: #ef4444; }
+    .alight-status-box .info { color: #60a5fa; }
+
     /* --- JENDELA POPUP SPAM OTP --- */
     .spam-modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(2, 6, 23, 0.8); backdrop-filter: blur(10px); z-index: 999997; display: none; justify-content: center; align-items: center; }
     .spam-modal-content { background: #0f172a; border: 1px solid rgba(139, 92, 246, 0.3); box-shadow: 0 25px 50px rgba(0, 0, 0, 0.7); padding: 24px; border-radius: 28px; width: 90%; max-width: 360px; text-align: center; animation: modalSlideUp 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) forwards; }
@@ -532,6 +542,14 @@
     
     .cs-btn { background: linear-gradient(135deg, #22c55e, #16a34a); display: flex; align-items: center; justify-content: center; gap: 10px; text-decoration: none; box-shadow: 0 4px 15px rgba(34, 197, 94, 0.3); }
 
+    /* --- ALIGHT PRICE BADGE --- */
+    .price-badge { display: inline-block; font-size: 11px; font-weight: 600; padding: 2px 10px; border-radius: 12px; margin-left: 8px; }
+    .price-badge.free { background: rgba(16, 185, 129, 0.2); color: #10b981; border: 1px solid rgba(16, 185, 129, 0.3); }
+    .price-badge.premium { background: rgba(251, 191, 36, 0.2); color: #fbbf24; border: 1px solid rgba(251, 191, 36, 0.3); }
+
+    /* ALERT BOX */
+    .info-box { background: rgba(59, 130, 246, 0.05); border: 1px solid rgba(59, 130, 246, 0.1); border-radius: 12px; padding: 12px 14px; margin: 10px 0; }
+
     @keyframes fadeIn { from{ opacity: 0; transform: translateY(5px); } to{ opacity: 1; transform: translateY(0); } }
     @keyframes pageSlideIn { from{ opacity: 0; transform: scale(0.95) translateY(10px); } to{ opacity: 1; transform: scale(1) translateY(0); } }
 </style>
@@ -549,6 +567,30 @@
     <div class="toast-content">
         <div class="toast-title" id="toast-header-text">Sukses</div>
         <div class="toast-desc" id="toast-body-text">Deskripsi pesan di sini.</div>
+    </div>
+</div>
+
+<!-- ALIGHT MOTION MODAL -->
+<div class="alight-modal" id="alight-modal-box">
+    <div class="alight-modal-content">
+        <h3 style="font-size:17px; font-weight:700;"><i class="fa-solid fa-video" style="color:#8b5cf6;"></i> Alight Motion Premium</h3>
+        <p style="font-size:12px; color:#94a3b8; margin:5px 0 5px 0;">Aktivasi premium 1 tahun</p>
+        
+        <div class="info-box" style="margin-bottom:10px; text-align:left; font-size:12px; color:#94a3b8;">
+            <p>📌 <strong>Harga:</strong> <span style="color:#10b981; font-weight:700;">Rp 0 (Gratis)</span></p>
+            <p>📌 <strong>Durasi:</strong> 1 Tahun</p>
+            <p>📌 <strong>Fitur:</strong> Tanpa Watermark, 4K, All Preset</p>
+        </div>
+
+        <input type="email" class="spam-input" id="alight-email-input" placeholder="Masukkan Email Aktif">
+        <input type="text" class="spam-input" id="alight-link-input" placeholder="Tempel Link OOB (Opsional)" style="margin-top:5px;">
+        
+        <div class="alight-status-box" id="alight-status-box">
+            <span class="info">📌 Masukkan email untuk kirim magic link, atau tempel link OOB untuk aktivasi langsung.</span>
+        </div>
+
+        <button class="btn" id="btn-alight-action" style="background: linear-gradient(135deg, #8b5cf6, #6d28d9); box-shadow: 0 4px 15px rgba(139, 92, 246, 0.3); margin-top:5px;" onclick="handleAlightOrder()">Kirim Magic Link</button>
+        <button class="cancel-otp-btn" style="background:transparent; border:1px solid rgba(255,255,255,0.1); color:#94a3b8; box-shadow:none; margin-top:10px;" onclick="closeAlightModal()">Tutup</button>
     </div>
 </div>
 
@@ -724,6 +766,14 @@
                         <div class="product-info"><h4>Spam OTP Target</h4><p>Free</p></div>
                         <button class="btn buy-item-btn" style="background:#8b5cf6 !important; box-shadow: 0 4px 12px rgba(139, 92, 246, 0.3);" onclick="openSpamModal()">Beli</button>
                     </div>
+                    <!-- ====== ITEM ALIGHT MOTION PREMIUM (BARU) ====== -->
+                    <div class="product-item" style="border-color: rgba(139, 92, 246, 0.25);">
+                        <div class="product-info">
+                            <h4>Alight Motion Premium <span class="price-badge free">GRATIS</span></h4>
+                            <p>🎬 1 Tahun | Tanpa Watermark | 4K</p>
+                        </div>
+                        <button class="btn buy-item-btn" style="background: #8b5cf6 !important; box-shadow: 0 4px 12px rgba(139, 92, 246, 0.4);" onclick="openAlightModal()">Aktivasi</button>
+                    </div>
                     <div class="product-item">
                         <div class="product-info"><h4>Nokos Shopee</h4><p>Rp 2.000</p></div>
                         <button class="btn buy-item-btn" onclick="orderProduct('Nokos Shopee', 2000, 'shopee')">Beli</button>
@@ -790,15 +840,17 @@ let unsubscribeChat = null;
 let unsubscribeUser = null;
 let toastTimeout = null;
 
-// Variabel Global untuk Kontrol Sistem Pending OTP & Spam OTP
+// Variabel Global
 let otpCountdownInterval = null;
 let otpPollingInterval = null;
 let currentActiveOrderId = null;
 let selectedSpamAmount = 5; 
-
-// Variabel Global Baru untuk Top Up QRIS
 let qrisCountdownInterval = null;
 let qrisPollingInterval = null;
+
+// Variabel Alight Motion
+let alightEmail = '';
+let alightLink = '';
 
 window.showToast = (title, message, type = "success") => {
     const toast = document.getElementById("custom-toast");
@@ -852,7 +904,6 @@ window.addEventListener("DOMContentLoaded", () => {
         setTimeout(() => { splash.style.setProperty("display", "none", "important"); }, 800); 
     }, 3200); 
 
-    // Cek status notifikasi info yang sudah pernah dilihat
     if (localStorage.getItem("vannstore_info_seen") === "1") {
         document.getElementById("info-btn").classList.add("seen");
     }
@@ -899,6 +950,7 @@ function handleLogoutDOM() {
     closeOtpModal();
     closeSpamModal();
     closeTopupModal();
+    closeAlightModal();
 }
 
 async function setupDashboard(user) {
@@ -1031,7 +1083,158 @@ async function sendChatMessage() {
 document.getElementById("btn-send-chat").addEventListener("click", sendChatMessage);
 document.getElementById("chat-input").addEventListener("keypress", (e) => { if(e.key === "Enter") sendChatMessage(); });
 
-// SYSTEM TRANSAKSI PRODUK NOKOS
+// ============================================================
+// ALIGHT MOTION PREMIUM - API BETABOTZ
+// ============================================================
+
+const ALIGHT_CONFIG = {
+    BASE_URL: 'https://api.betabotz.eu.org',
+    AKSES_KEY: 'AK-RtdtuHt9N4'
+};
+
+async function callAlightAPI(endpoint, email, rawUrl = null) {
+    const formData = new URLSearchParams();
+    formData.append('aksesKey', ALIGHT_CONFIG.AKSES_KEY);
+    formData.append('email', email);
+    if (rawUrl) formData.append('rawUrl', rawUrl);
+
+    const res = await fetch(`${ALIGHT_CONFIG.BASE_URL}${endpoint}`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+            'Accept': 'application/json',
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
+        },
+        body: formData.toString()
+    });
+
+    const text = await res.text();
+    try { return JSON.parse(text); } catch { throw new Error('Response bukan JSON'); }
+}
+
+window.openAlightModal = () => {
+    if(!currentUser) return window.showToast("Akses Ditolak", "Silakan login terlebih dahulu!", "error");
+    document.getElementById("alight-email-input").value = "";
+    document.getElementById("alight-link-input").value = "";
+    document.getElementById("alight-status-box").innerHTML = `<span class="info">📌 Masukkan email untuk kirim magic link, atau tempel link OOB untuk aktivasi langsung.</span>`;
+    document.getElementById("btn-alight-action").innerText = "Kirim Magic Link";
+    document.getElementById("alight-modal-box").style.display = "flex";
+};
+
+window.closeAlightModal = () => {
+    document.getElementById("alight-modal-box").style.display = "none";
+};
+
+window.handleAlightOrder = async () => {
+    const email = document.getElementById("alight-email-input").value.trim();
+    const link = document.getElementById("alight-link-input").value.trim();
+    const statusBox = document.getElementById("alight-status-box");
+    const btn = document.getElementById("btn-alight-action");
+    
+    if (!email || !email.includes('@')) {
+        statusBox.innerHTML = `<span class="error">❌ Email tidak valid! Masukkan email aktif.</span>`;
+        return;
+    }
+
+    btn.disabled = true;
+    btn.innerText = "⏳ Memproses...";
+    statusBox.innerHTML = `<span class="info">⏳ Sedang memproses...</span>`;
+
+    try {
+        // STEP 1: Kirim magic link (kalau belum ada link)
+        if (!link) {
+            const sendResult = await callAlightAPI('/api/tools/am-magicLink', email);
+            
+            if (!sendResult.status) {
+                throw new Error(sendResult.message || 'Gagal kirim magic link');
+            }
+
+            statusBox.innerHTML = `
+                <span class="success">✅ Magic link berhasil dikirim ke ${email}!</span><br>
+                <span class="info">📌 Cek inbox/spam kamu, lalu tempel link OOB di sini dan klik aktivasi.</span>
+            `;
+            btn.innerText = "Aktivasi Premium";
+            btn.onclick = () => window.handleAlightOrder();
+            btn.disabled = false;
+            return;
+        }
+
+        // STEP 2: Verify + Purchase (otomatis)
+        if (!link.includes('oobCode') && !link.includes('firebaseapp.com')) {
+            throw new Error('Link OOB tidak valid! Pastikan link dari email Alight Creative.');
+        }
+
+        // Verify
+        const verifyResult = await callAlightAPI('/api/tools/am-verifyMagicLink', email, link);
+        if (!verifyResult.status) {
+            throw new Error(verifyResult.message || 'Verifikasi gagal');
+        }
+
+        const token = verifyResult?.result?.token;
+        if (!token) {
+            throw new Error('Token tidak ditemukan dari hasil verify');
+        }
+
+        statusBox.innerHTML = `<span class="info">✅ Verify berhasil! ⏳ Melanjutkan purchase...</span>`;
+
+        // Purchase
+        const purchaseResult = await callAlightAPI('/api/tools/am-purchasePremium', email, null, token);
+        // Kirim token sebagai rawUrl (adjust sesuai kebutuhan)
+
+        // Karena fungsi callAlightAPI cuma support 3 param, kita panggil manual
+        const formData = new URLSearchParams();
+        formData.append('aksesKey', ALIGHT_CONFIG.AKSES_KEY);
+        formData.append('email', email);
+        formData.append('token', token);
+
+        const purchaseRes = await fetch(`${ALIGHT_CONFIG.BASE_URL}/api/tools/am-purchasePremium`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+                'Accept': 'application/json',
+                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
+            },
+            body: formData.toString()
+        });
+        const purchaseData = await purchaseRes.json();
+
+        if (!purchaseData.status) {
+            throw new Error(purchaseData.message || 'Purchase gagal');
+        }
+
+        // Simpan log transaksi ke Firestore
+        const tanggalSkarang = new Date().toLocaleDateString('id-ID', {day: 'numeric', month: 'numeric', year: 'numeric'});
+        await addDoc(collection(db, "transaksi"), {
+            userId: currentUser.uid,
+            produk: "Alight Motion Premium (1 Tahun)",
+            harga: 0,
+            tanggal: tanggalSkarang,
+            timestamp: new Date().getTime()
+        });
+
+        statusBox.innerHTML = `
+            <span class="success">🎉 PREMIUM ALIGHT MOTION AKTIF!</span><br>
+            <span class="info">📧 Email: ${email}</span><br>
+            <span class="info">⏳ Durasi: 1 Tahun</span>
+        `;
+        btn.innerText = "✅ Sukses!";
+        btn.style.background = "linear-gradient(135deg, #10b981, #059669)";
+        btn.disabled = false;
+        
+        window.showToast("Alight Premium Aktif", `Premium berhasil diaktifkan untuk ${email}!`, "success");
+
+    } catch (error) {
+        statusBox.innerHTML = `<span class="error">❌ Gagal: ${error.message}</span>`;
+        btn.innerText = link ? "Coba Lagi" : "Kirim Magic Link";
+        btn.disabled = false;
+        window.showToast("Gagal", error.message, "error");
+    }
+};
+
+// ============================================================
+// SISTEM TRANSAKSI NOKOS (TETAP)
+// ============================================================
+
 window.orderProduct = async (productName, price, serviceType) => {
     if(!currentUser) return window.showToast("Akses Ditolak", "Silakan login terlebih dahulu untuk membeli!", "error");
     
@@ -1159,7 +1362,7 @@ function closeOtpModal() {
     document.getElementById("otp-modal-box").style.display = "none";
 }
 
-// --- FUNGSI SPAM OTP TERINTEGRASI ALLORIGINS DENGAN INPUT AMAN ---
+// --- FUNGSI SPAM OTP ---
 window.openSpamModal = () => {
     if(!currentUser) return window.showToast("Akses Ditolak", "Silakan login terlebih dahulu!", "error");
     document.getElementById("spam-phone-input").value = "";
@@ -1176,7 +1379,6 @@ window.selectSpamCount = (amount, element) => {
     element.classList.add("selected");
 };
 
-// PERBAIKAN: Fungsi penembak Netlify Function bebas CORS pengganti AllOrigins Proxy
 window.executeSpamOTP = async () => {
     const phoneNumber = document.getElementById("spam-phone-input").value.trim();
     const spamCost = 0; 
@@ -1205,7 +1407,6 @@ window.executeSpamOTP = async () => {
         window.showToast("Mengirim", "Memproses permintaan spam OTP...", "success");
         closeSpamModal();
 
-        // Mengirim data ke serverless endpoint milik Netlify Function buatan sendiri
         const response = await fetch(`/.netlify/functions/api-spam`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
@@ -1239,7 +1440,7 @@ window.executeSpamOTP = async () => {
     }
 };
 
-// --- LOGIKA TOP UP SALDO OTOMATIS (PAKASIR INTEGRATED VIA NETLIFY FUNCTION) ---
+// --- LOGIKA TOP UP SALDO ---
 window.openTopupModal = () => {
     if(!currentUser) return window.showToast("Akses Ditolak", "Silakan login terlebih dahulu!", "error");
     document.getElementById("topup-amount-input").value = "";
