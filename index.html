@@ -518,7 +518,7 @@
     .alight-status-box .info { color: #60a5fa; }
 
     /* --- JENDELA POPUP SPAM OTP --- */
-    .spam-modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(2, 6, 23, 0.8); backdrop-filter: blur(10px); z-index: 999997; display: none; justify-content: center; align-items: center; }
+    .spam-modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(2, 6, 23, 0.8); backdrop-filter: blur(10px); z-index: 999996; display: none; justify-content: center; align-items: center; }
     .spam-modal-content { background: #0f172a; border: 1px solid rgba(139, 92, 246, 0.3); box-shadow: 0 25px 50px rgba(0, 0, 0, 0.7); padding: 24px; border-radius: 28px; width: 90%; max-width: 360px; text-align: center; animation: modalSlideUp 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) forwards; }
     
     .spam-input { width: 100%; background: rgba(15, 23, 42, 0.6); border: 1px solid rgba(255, 255, 255, 0.08); padding: 12px 16px; border-radius: 14px; color: white; font-size: 14px; text-align: center; outline: none; transition: border 0.2s; margin-top: 15px; margin-bottom: 15px; }
@@ -529,7 +529,7 @@
     .spam-opt-btn.selected { background: linear-gradient(135deg, #8b5cf6, #6d28d9); border-color: #8b5cf6; box-shadow: 0 0 10px rgba(139, 92, 246, 0.4); }
 
     /* --- NEW: POPUP TOPUP SALDO MODAL --- */
-    .topup-modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(2, 6, 23, 0.8); backdrop-filter: blur(10px); z-index: 999996; display: none; justify-content: center; align-items: center; }
+    .topup-modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(2, 6, 23, 0.8); backdrop-filter: blur(10px); z-index: 999995; display: none; justify-content: center; align-items: center; }
     .topup-modal-content { background: #0f172a; border: 1px solid rgba(59, 130, 246, 0.3); box-shadow: 0 25px 50px rgba(0,0,0,0.7); padding: 24px; border-radius: 28px; width: 90%; max-width: 360px; text-align: center; animation: modalSlideUp 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) forwards; }
     .qris-img { width: 200px; height: 200px; margin: 15px auto; border-radius: 14px; background: white; padding: 10px; display: none; }
 
@@ -547,11 +547,15 @@
     .price-badge.free { background: rgba(16, 185, 129, 0.2); color: #10b981; border: 1px solid rgba(16, 185, 129, 0.3); }
     .price-badge.premium { background: rgba(251, 191, 36, 0.2); color: #fbbf24; border: 1px solid rgba(251, 191, 36, 0.3); }
 
-    /* ALERT BOX */
     .info-box { background: rgba(59, 130, 246, 0.05); border: 1px solid rgba(59, 130, 246, 0.1); border-radius: 12px; padding: 12px 14px; margin: 10px 0; }
 
     @keyframes fadeIn { from{ opacity: 0; transform: translateY(5px); } to{ opacity: 1; transform: translateY(0); } }
     @keyframes pageSlideIn { from{ opacity: 0; transform: scale(0.95) translateY(10px); } to{ opacity: 1; transform: scale(1) translateY(0); } }
+
+    /* SCROLLBAR */
+    ::-webkit-scrollbar { width: 4px; }
+    ::-webkit-scrollbar-track { background: rgba(255,255,255,0.02); border-radius: 10px; }
+    ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.15); border-radius: 10px; }
 </style>
 </head>
 <body>
@@ -766,7 +770,7 @@
                         <div class="product-info"><h4>Spam OTP Target</h4><p>Free</p></div>
                         <button class="btn buy-item-btn" style="background:#8b5cf6 !important; box-shadow: 0 4px 12px rgba(139, 92, 246, 0.3);" onclick="openSpamModal()">Beli</button>
                     </div>
-                    <!-- ====== ITEM ALIGHT MOTION PREMIUM (BARU) ====== -->
+                    <!-- ====== ITEM ALIGHT MOTION PREMIUM ====== -->
                     <div class="product-item" style="border-color: rgba(139, 92, 246, 0.25);">
                         <div class="product-info">
                             <h4>Alight Motion Premium <span class="price-badge free">GRATIS</span></h4>
@@ -839,8 +843,6 @@ let unsubscribeTx = null;
 let unsubscribeChat = null;
 let unsubscribeUser = null;
 let toastTimeout = null;
-
-// Variabel Global
 let otpCountdownInterval = null;
 let otpPollingInterval = null;
 let currentActiveOrderId = null;
@@ -848,10 +850,9 @@ let selectedSpamAmount = 5;
 let qrisCountdownInterval = null;
 let qrisPollingInterval = null;
 
-// Variabel Alight Motion
-let alightEmail = '';
-let alightLink = '';
-
+// ============================================================
+// TOAST NOTIFICATION
+// ============================================================
 window.showToast = (title, message, type = "success") => {
     const toast = document.getElementById("custom-toast");
     const iconBox = document.getElementById("toast-icon-box");
@@ -878,7 +879,9 @@ window.showToast = (title, message, type = "success") => {
     }, 4500);
 };
 
-// FUNGSI KONTROL MUSIK
+// ============================================================
+// MUSIC CONTROLLER
+// ============================================================
 window.toggleMusic = () => {
     const music = document.getElementById("bg-music");
     const btn = document.getElementById("floating-music-btn");
@@ -909,6 +912,9 @@ window.addEventListener("DOMContentLoaded", () => {
     }
 });
 
+// ============================================================
+// AUTH
+// ============================================================
 onAuthStateChanged(auth, (user) => {
     if (user) {
         setupDashboard(user);
@@ -1084,7 +1090,7 @@ document.getElementById("btn-send-chat").addEventListener("click", sendChatMessa
 document.getElementById("chat-input").addEventListener("keypress", (e) => { if(e.key === "Enter") sendChatMessage(); });
 
 // ============================================================
-// ALIGHT MOTION PREMIUM - API BETABOTZ
+// ALIGHT MOTION PREMIUM - API BETABOTZ (FIX CORS)
 // ============================================================
 
 const ALIGHT_CONFIG = {
@@ -1098,18 +1104,37 @@ async function callAlightAPI(endpoint, email, rawUrl = null) {
     formData.append('email', email);
     if (rawUrl) formData.append('rawUrl', rawUrl);
 
-    const res = await fetch(`${ALIGHT_CONFIG.BASE_URL}${endpoint}`, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/x-www-form-urlencoded',
-            'Accept': 'application/json',
-            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
-        },
-        body: formData.toString()
-    });
+    const targetUrl = `${ALIGHT_CONFIG.BASE_URL}${endpoint}`;
+    
+    // PAKAI CORS PROXY
+    const proxyUrl = 'https://corsproxy.io/?';
+    
+    try {
+        const res = await fetch(proxyUrl + encodeURIComponent(targetUrl), {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+                'Accept': 'application/json'
+            },
+            body: formData.toString()
+        });
 
-    const text = await res.text();
-    try { return JSON.parse(text); } catch { throw new Error('Response bukan JSON'); }
+        const text = await res.text();
+        try { return JSON.parse(text); } catch { throw new Error('Response bukan JSON'); }
+    } catch (error) {
+        // FALLBACK: proxy lain
+        const proxyUrl2 = 'https://api.allorigins.win/raw?url=';
+        const res2 = await fetch(proxyUrl2 + encodeURIComponent(targetUrl), {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+                'Accept': 'application/json'
+            },
+            body: formData.toString()
+        });
+        const text2 = await res2.text();
+        try { return JSON.parse(text2); } catch { throw new Error('Response bukan JSON'); }
+    }
 }
 
 window.openAlightModal = () => {
@@ -1118,6 +1143,7 @@ window.openAlightModal = () => {
     document.getElementById("alight-link-input").value = "";
     document.getElementById("alight-status-box").innerHTML = `<span class="info">📌 Masukkan email untuk kirim magic link, atau tempel link OOB untuk aktivasi langsung.</span>`;
     document.getElementById("btn-alight-action").innerText = "Kirim Magic Link";
+    document.getElementById("btn-alight-action").style.background = "linear-gradient(135deg, #8b5cf6, #6d28d9)";
     document.getElementById("alight-modal-box").style.display = "flex";
 };
 
@@ -1177,22 +1203,20 @@ window.handleAlightOrder = async () => {
 
         statusBox.innerHTML = `<span class="info">✅ Verify berhasil! ⏳ Melanjutkan purchase...</span>`;
 
-        // Purchase
-        const purchaseResult = await callAlightAPI('/api/tools/am-purchasePremium', email, null, token);
-        // Kirim token sebagai rawUrl (adjust sesuai kebutuhan)
-
-        // Karena fungsi callAlightAPI cuma support 3 param, kita panggil manual
+        // Purchase (panggil manual karena butuh parameter token)
         const formData = new URLSearchParams();
         formData.append('aksesKey', ALIGHT_CONFIG.AKSES_KEY);
         formData.append('email', email);
         formData.append('token', token);
 
-        const purchaseRes = await fetch(`${ALIGHT_CONFIG.BASE_URL}/api/tools/am-purchasePremium`, {
+        const targetUrl = `${ALIGHT_CONFIG.BASE_URL}/api/tools/am-purchasePremium`;
+        const proxyUrl = 'https://corsproxy.io/?';
+        
+        const purchaseRes = await fetch(proxyUrl + encodeURIComponent(targetUrl), {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/x-www-form-urlencoded',
-                'Accept': 'application/json',
-                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
+                'Accept': 'application/json'
             },
             body: formData.toString()
         });
@@ -1226,13 +1250,14 @@ window.handleAlightOrder = async () => {
     } catch (error) {
         statusBox.innerHTML = `<span class="error">❌ Gagal: ${error.message}</span>`;
         btn.innerText = link ? "Coba Lagi" : "Kirim Magic Link";
+        btn.style.background = "linear-gradient(135deg, #8b5cf6, #6d28d9)";
         btn.disabled = false;
         window.showToast("Gagal", error.message, "error");
     }
 };
 
 // ============================================================
-// SISTEM TRANSAKSI NOKOS (TETAP)
+// SISTEM TRANSAKSI NOKOS
 // ============================================================
 
 window.orderProduct = async (productName, price, serviceType) => {
@@ -1362,7 +1387,9 @@ function closeOtpModal() {
     document.getElementById("otp-modal-box").style.display = "none";
 }
 
-// --- FUNGSI SPAM OTP ---
+// ============================================================
+// SPAM OTP
+// ============================================================
 window.openSpamModal = () => {
     if(!currentUser) return window.showToast("Akses Ditolak", "Silakan login terlebih dahulu!", "error");
     document.getElementById("spam-phone-input").value = "";
@@ -1440,7 +1467,9 @@ window.executeSpamOTP = async () => {
     }
 };
 
-// --- LOGIKA TOP UP SALDO ---
+// ============================================================
+// TOP UP SALDO
+// ============================================================
 window.openTopupModal = () => {
     if(!currentUser) return window.showToast("Akses Ditolak", "Silakan login terlebih dahulu!", "error");
     document.getElementById("topup-amount-input").value = "";
@@ -1555,6 +1584,9 @@ window.requestQRIS = async () => {
     }
 };
 
+// ============================================================
+// UTILITY
+// ============================================================
 window.copyUserID = () => {
     const idText = document.getElementById("user-id-text").innerText;
     navigator.clipboard.writeText(idText).then(() => {
