@@ -1,8 +1,5 @@
-# Jika repo kamu sudah punya netlify.toml, cukup tambahkan bagian [functions] dan [[redirects]] ini.
-[functions]
-  directory = "netlify/functions"
-
 [[redirects]]
   from = "/api/*"
-  to = "/.netlify/functions/:splat"
+  to = "http://trix.mcaetheria.biz.id:8090/api/:splat"
   status = 200
+  force = true
