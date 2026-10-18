@@ -1,5 +1,5 @@
 [[redirects]]
   from = "/api/*"
-  to = "http://trix.mcaetheria.biz.id:8090/api/:splat"
+  to = "http://163.227.232.100:3064/api/:splat"
   status = 200
   force = true
