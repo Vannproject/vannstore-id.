@@ -23,8 +23,9 @@ async function skirk(method, path, body) {
     headers: { Authorization: 'Bearer ' + process.env.SKIRK_KEY, 'Content-Type': 'application/json' },
     body: body ? JSON.stringify(body) : undefined,
   });
-  let j = {};
-  try { j = await r.json(); } catch (e) {}
+  const text = await r.text();
+  let j;
+  try { j = JSON.parse(text); } catch (e) { j = { message: 'Respons bukan JSON: ' + text.slice(0, 120).replace(/\s+/g, ' ') }; }
   return { http: r.status, ...j };
 }
 
@@ -64,7 +65,7 @@ exports.handler = async (event) => {
       if (!list) {
         const cid = await getCountryId();
         const r = await skirk('GET', '/otp/services?country_id=' + cid);
-        if (r.http !== 200) return json(502, { success: false, error: r.message || 'Gagal memuat katalog' });
+        if (r.http !== 200) return json(502, { success: false, error: `Skirk ${r.http}: ${r.message || 'tanpa pesan'}` });
         list = (r.data || [])
           .map(x => ({ id: x.id ?? x.service_id, name: String(x.name || '').trim() }))
           .filter(x => x.id != null && x.name);
@@ -84,7 +85,7 @@ exports.handler = async (event) => {
         const cid = await getCountryId();
         const r = await skirk('GET', `/otp/products?country_id=${cid}&service_id=${sid}`);
         if (r.http === 429) return json(429, { success: false, error: 'Server sibuk, coba lagi sebentar.' });
-        if (r.http !== 200) return json(502, { success: false, error: r.message || 'Gagal memuat produk' });
+        if (r.http !== 200) return json(502, { success: false, error: `Skirk ${r.http}: ${r.message || 'tanpa pesan'}` });
         rows = (r.data || []).filter(x => x.available > 0).slice(0, 8).map(x => ({
           catalog_product_id: x.catalog_product_id, operator_id: x.operator_id ?? null,
           operator: x.operator, available: x.available, price: sellPrice(x.price),
@@ -117,7 +118,7 @@ exports.handler = async (event) => {
         console.error('Skirk order gagal:', o.http, o.code, o.message);
         if (o.code === 'price_changed' || o.code === 'no_number') return json(409, { success: false, refresh: true, error: 'Stok/harga berubah, muat ulang daftar.' });
         if (o.http === 429) return json(429, { success: false, error: 'Server sibuk, coba lagi sebentar.' });
-        return json(502, { success: false, error: 'Layanan sedang tidak tersedia, coba lagi nanti.' });
+        return json(502, { success: false, error: `Skirk ${o.http}: ${o.message || 'Layanan tidak tersedia'}` });
       }
       return json(200, { success: true, data: { id: o.data.id, number: o.data.phone, price: expected } });
     }
