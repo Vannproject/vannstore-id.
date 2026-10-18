@@ -11,8 +11,9 @@ async function skirk(method, path, body) {
     headers: { Authorization: 'Bearer ' + process.env.SKIRK_KEY, 'Content-Type': 'application/json' },
     body: body ? JSON.stringify(body) : undefined,
   });
-  let j = {};
-  try { j = await r.json(); } catch (e) {}
+  const text = await r.text();
+  let j;
+  try { j = JSON.parse(text); } catch (e) { j = { message: 'Respons bukan JSON: ' + text.slice(0, 120).replace(/\s+/g, ' ') }; }
   return { http: r.status, ...j };
 }
 
@@ -43,7 +44,7 @@ exports.handler = async (event) => {
       const r = await skirk('POST', '/qris', {
         amount, order_id: `DEP_${uid}_${Date.now()}`, name: (user.displayName || 'User').slice(0, 40), message: 'Top up VannStore',
       });
-      if (![200, 201].includes(r.http)) return json(502, { success: false, message: r.message || 'Gagal membuat QRIS' });
+      if (![200, 201].includes(r.http)) return json(502, { success: false, message: `Skirk ${r.http}: ${r.message || 'tanpa pesan'}` });
       const d = r.data;
       return json(200, { success: true, data: { code: d.code, payment_number: d.qris, total_payment: d.amount, expired_at: d.expires_at } });
     }
