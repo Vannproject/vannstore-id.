@@ -177,19 +177,19 @@
     
     /* --- TOMBOL KIRI & KANAN ATAS --- */
     .menu-trigger { 
-        position: absolute; top: 25px; left: 20px; z-index: 100; font-size: 20px; cursor: pointer; display: none; color: #60a5fa; 
-        background: rgba(255, 255, 255, 0.05); padding: 10px 14px; border-radius: 12px; border: 1px solid rgba(255, 255, 255, 0.1);
+        position: absolute; top: 22px; left: 20px; z-index: 100; width: 46px; height: 46px; align-items: center; justify-content: center; font-size: 20px; cursor: pointer; display: none; color: #60a5fa; 
+        background: rgba(255, 255, 255, 0.05); border-radius: 14px; border: 1px solid rgba(255, 255, 255, 0.1);
         backdrop-filter: blur(5px); transition: all 0.3s ease; 
     }
     .menu-trigger:hover { background: rgba(96, 165, 250, 0.2); color: white; box-shadow: 0 0 15px rgba(96, 165, 250, 0.5); }
 
     .info-trigger {
-        position: absolute; top: 25px; right: 20px; z-index: 100; font-size: 20px; cursor: pointer; display: none; color: #fbbf24; 
-        background: rgba(255, 255, 255, 0.05); padding: 10px 13px; border-radius: 12px; border: 1px solid rgba(255, 255, 255, 0.1);
+        position: absolute; top: 22px; right: 20px; z-index: 100; width: 46px; height: 46px; align-items: center; justify-content: center; font-size: 19px; cursor: pointer; display: none; color: #fbbf24; 
+        background: rgba(255, 255, 255, 0.05); border-radius: 14px; border: 1px solid rgba(255, 255, 255, 0.1);
         backdrop-filter: blur(5px); transition: all 0.3s ease;
     }
     .info-trigger:hover { background: rgba(251, 191, 36, 0.2); color: white; box-shadow: 0 0 15px rgba(251, 191, 36, 0.5); }
-    .info-trigger::after { content: ''; position: absolute; top: 8px; right: 10px; width: 8px; height: 8px; background: #ef4444; border-radius: 50%; box-shadow: 0 0 8px #ef4444; }
+    .info-trigger::after { content: ''; position: absolute; top: 9px; right: 11px; width: 8px; height: 8px; background: #ef4444; border-radius: 50%; box-shadow: 0 0 8px #ef4444; }
     .info-trigger.seen::after { display: none; }
 
     /* --- JENDELA POPUP INFORMASI (MODAL) --- */
@@ -614,28 +614,48 @@
     ::-webkit-scrollbar-track { background: rgba(255,255,255,0.02); border-radius: 10px; }
     ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.15); border-radius: 10px; }
 
-    /* --- TOMBOL TOGGLE TEMA (DIATUR SUPAYA TIDAK MEPET) --- */
-    .theme-toggle-btn {
-        position: absolute;
-        top: 25px;
-        left: 75px;
-        z-index: 100;
-        width: 42px;
-        height: 42px;
-        display: none;
-        align-items: center;
-        justify-content: center;
-        background: rgba(255,255,255,0.05);
-        border: 1px solid rgba(255,255,255,0.1);
-        border-radius: 12px;
-        color: #fbbf24;
-        font-size: 16px;
-        cursor: pointer;
-        backdrop-filter: blur(5px);
-        transition: all 0.3s ease;
+    /* --- SAKLAR TEMA (gelap/terang) --- */
+    .theme-switch {
+        position: absolute; top: 25px; right: 84px; z-index: 100;
+        width: 76px; height: 40px; display: none; align-items: center;
+        border-radius: 20px; cursor: pointer; user-select: none; -webkit-tap-highlight-color: transparent;
+        background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.12);
+        backdrop-filter: blur(5px); transition: background .35s ease, border-color .35s ease, box-shadow .35s ease;
     }
-    .theme-toggle-btn:hover { background: rgba(251,191,36,0.15); color: white; box-shadow: 0 0 15px rgba(251,191,36,0.5); }
-    [data-theme="light"] .theme-toggle-btn { color: #6366f1; background: rgba(99,102,241,0.08); border-color: rgba(99,102,241,0.2); }
+    .theme-switch .track-ic { position: absolute; top: 50%; transform: translateY(-50%); font-size: 13px; opacity: .45; color: var(--text-secondary); }
+    .theme-switch .track-ic.l { left: 12px; }
+    .theme-switch .track-ic.r { right: 12px; }
+    .theme-switch .knob {
+        position: absolute; top: 4px; left: 4px; width: 30px; height: 30px; border-radius: 50%;
+        display: flex; align-items: center; justify-content: center; font-size: 14px; color: #fff;
+        background: linear-gradient(135deg, #6366f1, #3b82f6);
+        box-shadow: 0 2px 8px rgba(0,0,0,.35);
+        transition: transform .4s cubic-bezier(.34,1.56,.64,1), background .35s ease;
+    }
+    .theme-switch .knob i { transition: transform .4s ease; }
+    .theme-switch:active .knob { width: 34px; }
+    [data-theme="light"] .theme-switch { background: rgba(99,102,241,0.1); border-color: rgba(99,102,241,0.25); }
+    [data-theme="light"] .theme-switch .knob { transform: translateX(36px); background: linear-gradient(135deg, #fbbf24, #f59e0b); }
+    [data-theme="light"] .theme-switch .knob i { transform: rotate(360deg); }
+    .theme-anim, .theme-anim *, .theme-anim *::before, .theme-anim *::after {
+        transition: background-color .35s ease, color .35s ease, border-color .35s ease, box-shadow .35s ease !important;
+    }
+
+    /* --- TIKET: tambahan --- */
+    .ticket-item .t-meta { font-size: 11px; color: var(--text-muted); margin-top: 6px; display: block; word-break: break-all; }
+    .ticket-reply { margin-top: 8px; padding: 8px 10px; border-radius: 10px; background: rgba(59,130,246,0.1); border: 1px solid rgba(59,130,246,0.25); font-size: 12px; color: var(--text-primary); }
+    .ticket-reply b { color: #60a5fa; }
+    .ticket-actions { display: flex; gap: 6px; margin-top: 10px; flex-wrap: wrap; }
+    .ticket-actions button { flex: 1; min-width: 70px; border: 1px solid var(--card-border); background: var(--input-bg); color: var(--text-primary); font-size: 11.5px; font-weight: 600; padding: 7px 8px; border-radius: 10px; cursor: pointer; font-family: inherit; }
+    .ticket-actions button.ok { color: #10b981; border-color: rgba(16,185,129,.35); }
+    .ticket-actions button.del { color: #ef4444; border-color: rgba(239,68,68,.35); }
+    .ticket-admin-head { font-size: 12.5px; font-weight: 700; color: #f59e0b; margin-bottom: 10px; }
+    .menu-badge { margin-left: auto; background: #ef4444; color: #fff; font-size: 11px; font-weight: 700; padding: 2px 8px; border-radius: 10px; }
+    .ai-chips { display: flex; gap: 6px; overflow-x: auto; padding: 8px 0 2px; scrollbar-width: none; }
+    .ai-chips::-webkit-scrollbar { display: none; }
+    .ai-chip { flex: 0 0 auto; font-size: 11.5px; font-weight: 600; padding: 6px 12px; border-radius: 14px; border: 1px solid var(--card-border); background: var(--input-bg); color: var(--text-secondary); cursor: pointer; font-family: inherit; }
+    .ai-chip:active { transform: scale(.96); }
+    .ai-action-btn { margin-top: 8px; display: inline-block; background: linear-gradient(135deg,#f59e0b,#d97706); color: #fff; border: none; padding: 7px 14px; border-radius: 10px; font-size: 12px; font-weight: 700; cursor: pointer; font-family: inherit; }
 
     /* --- AI CS CHAT --- */
     .ai-chat-container { display: flex; flex-direction: column; height: 48vh; background: var(--chat-bg); border: 1px solid var(--history-border); border-radius: 20px; padding: 10px; margin-top: 10px; }
@@ -643,10 +663,10 @@
     .ai-bubble { max-width: 85%; animation: fadeIn 0.25s ease; }
     .ai-bubble.user { align-self: flex-end; }
     .ai-bubble.bot { align-self: flex-start; }
-    .ai-bubble-inner { padding: 10px 14px; border-radius: 16px; font-size: 13px; line-height: 1.5; text-align: left; }
+    .ai-bubble-inner { padding: 10px 14px; border-radius: 16px; font-size: 13px; line-height: 1.5; }
     .ai-bubble.user .ai-bubble-inner { background: linear-gradient(135deg, #1e3a8a, #3b82f6); color: #fff; border-bottom-right-radius: 4px; }
     .ai-bubble.bot .ai-bubble-inner { background: var(--bubble-other); color: var(--text-primary); border: 1px solid var(--card-border); border-bottom-left-radius: 4px; }
-    .ai-bubble-label { font-size: 10px; font-weight: 600; color: var(--text-muted); margin-bottom: 3px; padding: 0 4px; text-align: left; }
+    .ai-bubble-label { font-size: 10px; font-weight: 600; color: var(--text-muted); margin-bottom: 3px; padding: 0 4px; }
     .ai-typing { display: flex; gap: 4px; align-items: center; padding: 10px 14px; }
     .ai-typing span { width: 6px; height: 6px; background: #3b82f6; border-radius: 50%; animation: typingBounce 1s infinite; }
     .ai-typing span:nth-child(2) { animation-delay: 0.15s; }
@@ -675,6 +695,7 @@
 
     [data-theme="light"] .ticket-form option { background: #f1f5f9; color: #1e293b; }
 </style>
+<script>try{var _t=localStorage.getItem('vannstore_theme');if(_t)document.documentElement.setAttribute('data-theme',_t);}catch(e){}</script>
 </head>
 <body>
 
@@ -770,7 +791,7 @@
 </div>
 
 <div class="menu-trigger" id="menu-btn" onclick="toggleSidebar()"><i class="fa-solid fa-bars"></i></div>
-<div class="theme-toggle-btn" id="theme-toggle-btn" onclick="toggleTheme()"><i class="fa-solid fa-moon" id="theme-icon"></i></div>
+<div class="theme-switch" id="theme-toggle-btn" role="switch" aria-checked="false" aria-label="Ganti mode gelap atau terang" tabindex="0" onclick="toggleTheme()"><i class="fa-solid fa-moon track-ic l"></i><i class="fa-solid fa-sun track-ic r"></i><span class="knob"><i class="fa-solid fa-moon" id="theme-icon"></i></span></div>
 <div class="info-trigger" id="info-btn" onclick="toggleInfoModal()"><i class="fa-solid fa-bell"></i></div>
 
 <div class="info-modal" id="info-modal-box">
@@ -790,7 +811,7 @@
     <a href="#" id="m-shop" onclick="switchPage('shop-page', 'm-shop')"><i class="fa-solid fa-cart-shopping"></i> Beli Produk</a>
     <a href="#" id="m-chat" onclick="switchPage('chat-page', 'm-chat')"><i class="fa-solid fa-comments"></i> Chat Global</a>
     <a href="#" id="m-cs" onclick="switchPage('cs-page', 'm-cs')"><i class="fa-solid fa-robot"></i> AI Support</a>
-    <a href="#" id="m-ticket" onclick="switchPage('ticket-page', 'm-ticket')"><i class="fa-solid fa-ticket"></i> Tiket Dukungan</a>
+    <a href="#" id="m-ticket" onclick="switchPage('ticket-page', 'm-ticket')"><i class="fa-solid fa-ticket"></i> Tiket Dukungan <span class="menu-badge" id="ticket-count-badge" style="display:none">0</span></a>
     <a href="#" id="menu-logout" style="color: #f87171; margin-top: 40px;"><i class="fa-solid fa-right-from-bracket"></i> Keluar</a>
 </div>
 
@@ -906,6 +927,13 @@
                             <div class="ai-bubble-inner">Halo! Saya AI Support VannStore 👋 Ada yang bisa saya bantu? Kamu bisa tanya soal produk, cara top up, atau masalah transaksi.</div>
                         </div>
                     </div>
+                    <div class="ai-chips" id="ai-chips">
+                        <button class="ai-chip" data-q="Harga produk">💰 Harga produk</button>
+                        <button class="ai-chip" data-q="Cara top up saldo">💳 Cara top up</button>
+                        <button class="ai-chip" data-q="Saldo belum masuk">⏳ Saldo belum masuk</button>
+                        <button class="ai-chip" data-q="OTP tidak muncul">📱 OTP tidak muncul</button>
+                        <button class="ai-chip" data-q="Hubungi admin">👤 Hubungi admin</button>
+                    </div>
                     <div class="chat-input-area">
                         <input type="text" class="chat-input-field" id="ai-chat-input" placeholder="Ketik pertanyaan kamu..." maxlength="300">
                         <button class="chat-send-btn" id="btn-send-ai"><i class="fa-solid fa-paper-plane"></i></button>
@@ -928,8 +956,8 @@
                         <option value="Lainnya">❓ Lainnya</option>
                     </select>
                     <p style="font-size:12px; font-weight:600; color:var(--text-secondary); text-align:left; margin-bottom:6px;">Deskripsi Masalah</p>
-                    <textarea id="ticket-deskripsi" rows="4" placeholder="Jelaskan masalah kamu secara detail (misal: sudah bayar Rp 10.000 jam 14:30, saldo belum bertambah)..."></textarea>
-                    <button class="btn" style="margin-top:0; padding:12px; background:linear-gradient(135deg,#f59e0b,#d97706); box-shadow:0 4px 15px rgba(245,158,11,0.3);" onclick="submitTicket()"><i class="fa-solid fa-paper-plane" style="margin-right:6px;"></i> Kirim Tiket</button>
+                    <textarea id="ticket-deskripsi" rows="4" maxlength="500" placeholder="Jelaskan masalah kamu secara detail (misal: sudah bayar Rp 10.000 jam 14:30, saldo belum bertambah)..."></textarea>
+                    <button class="btn" id="btn-submit-ticket" style="margin-top:0; padding:12px; background:linear-gradient(135deg,#f59e0b,#d97706); box-shadow:0 4px 15px rgba(245,158,11,0.3);" onclick="submitTicket()"><i class="fa-solid fa-paper-plane" style="margin-right:6px;"></i> Kirim Tiket</button>
                 </div>
                 <div class="ticket-list" id="ticket-list-container">
                     <p style="font-size:12.5px; color:var(--text-muted); text-align:center; padding:15px 0; font-style:italic;">Belum ada tiket</p>
@@ -943,7 +971,7 @@
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
 import { getAuth, signInWithPopup, GoogleAuthProvider, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-import { getFirestore, collection, addDoc, query, where, orderBy, limit, onSnapshot, doc, getDoc, updateDoc, setDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+import { getFirestore, collection, addDoc, query, where, orderBy, limit, onSnapshot, doc, getDoc, updateDoc, setDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyBTxQROsHI1X2t5HoMrWYAsrKSYByhptjQ",
@@ -959,8 +987,6 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
 const provider = new GoogleAuthProvider();
-
-const ADMIN_EMAIL = "jaenajaemin316@gmail.com";
 
 let currentUser = null;
 let unsubscribeTx = null;
@@ -1070,6 +1096,9 @@ function handleLogoutDOM() {
     if(unsubscribeTx) { unsubscribeTx(); unsubscribeTx = null; }
     if(unsubscribeChat) { unsubscribeChat(); unsubscribeChat = null; }
     if(unsubscribeUser) { unsubscribeUser(); unsubscribeUser = null; }
+    if(typeof unsubscribeTicket === "function") { unsubscribeTicket(); unsubscribeTicket = null; }
+    const tl = document.getElementById("ticket-list-container");
+    if (tl) tl.innerHTML = "";
     currentUser = null;
     document.getElementById("login-section").style.display = "block";
     document.getElementById("main-dashboard").style.display = "none";
@@ -1086,8 +1115,8 @@ async function setupDashboard(user) {
     currentUser = user;
     document.getElementById("login-section").style.display = "none";
     document.getElementById("main-dashboard").style.display = "flex";
-    document.getElementById("menu-btn").style.display = "block";
-    document.getElementById("info-btn").style.display = "block";
+    document.getElementById("menu-btn").style.display = "flex";
+    document.getElementById("info-btn").style.display = "flex";
     document.getElementById("theme-toggle-btn").style.display = "flex";
     
     document.getElementById("user-name").innerText = user.displayName;
@@ -1097,24 +1126,20 @@ async function setupDashboard(user) {
     document.getElementById("join-date").innerText = user.metadata.creationTime ? new Date(user.metadata.creationTime).toLocaleDateString('id-ID') : new Date().toLocaleDateString('id-ID');
 
     const userDocRef = doc(db, "users", user.uid);
-    try {
-        const userSnap = await getDoc(userDocRef);
-        if (!userSnap.exists()) {
-            await setDoc(userDocRef, {
-                displayName: user.displayName,
-                email: user.email,
-                saldo: 0,
-                uid: user.uid
-            });
-        }
-    } catch(e) {
-        console.warn("User doc setup warning:", e);
+    const userSnap = await getDoc(userDocRef);
+    if (!userSnap.exists()) {
+        await setDoc(userDocRef, {
+            displayName: user.displayName,
+            email: user.email,
+            saldo: 0,
+            uid: user.uid
+        });
     }
 
     listenToUserData(user.uid);
     listenToTransactions(user.uid);
     listenGlobalChat(); 
-    listenToTickets(user.uid);
+    listenToTickets(user);
     switchPage('profile-page', 'm-profile');
 }
 
@@ -1126,7 +1151,7 @@ function listenToUserData(uid) {
             const saldo = data.saldo || 0;
             document.getElementById("user-saldo-text").innerText = "Rp " + saldo.toLocaleString('id-ID');
         }
-    }, (err) => console.warn("User data listener error:", err));
+    });
 }
 
 function listenToTransactions(uid) {
@@ -1150,13 +1175,13 @@ function listenToTransactions(uid) {
             totalPengeluaran += data.harga;
             const itemHTML = `
                 <div class="tx-item">
-                    <div class="tx-info"><h5>${data.produk}</h5><span>${data.tanggal}</span></div>
+                    <div class="tx-info"><h5>${escHtml(data.produk)}</h5><span>${escHtml(data.tanggal)}</span></div>
                     <div class="tx-price">Rp ${data.harga.toLocaleString('id-ID')}</div>
                 </div>`;
             container.innerHTML += itemHTML;
         });
         document.getElementById("total-transaksi").innerText = "Rp " + totalPengeluaran.toLocaleString('id-ID');
-    }, (err) => console.warn("Tx listener error:", err));
+    });
 }
 
 function listenGlobalChat() {
@@ -1176,14 +1201,14 @@ function listenGlobalChat() {
         snapshot.forEach((docSnap) => {
             const chat = docSnap.data();
             const isMe = chat.senderId === currentUser?.uid;
-            const isAdmin = chat.role === "admin" || chat.senderEmail === ADMIN_EMAIL;
+            const isAdmin = chat.role === "admin" || chat.senderEmail === "jaenajaemin316@gmail.com";
             const adminBadge = isAdmin ? `<span style="background:#ef4444;color:white;font-size:9px;padding:2px 6px;border-radius:4px;margin-left:6px;font-weight:800;text-transform:uppercase;letter-spacing:0.5px;display:inline-block;vertical-align:middle;">👑 Admin</span>` : '';
             const chatHTML = `
                 <div class="chat-bubble ${isMe ? 'my-chat' : ''}">
-                    <img class="chat-avatar" src="${chat.senderPhoto || 'https://ui-avatars.com/api/?name=' + encodeURIComponent(chat.senderName || 'U')}" alt="Avatar" onerror="this.src='https://ui-avatars.com/api/?name=U'">
+                    <img class="chat-avatar" src="${escHtml(chat.senderPhoto) || 'https://ui-avatars.com/api/?name=' + encodeURIComponent(chat.senderName || 'U')}" alt="Avatar" onerror="this.src='https://ui-avatars.com/api/?name=U'">
                     <div class="app-card chat-content-box">
-                        <span class="chat-sender-name" style="display:flex;align-items:center;gap:2px;">${chat.senderName}${adminBadge}</span>
-                        <p class="chat-msg-text">${chat.pesan}</p>
+                        <span class="chat-sender-name" style="display:flex;align-items:center;gap:2px;">${escHtml(chat.senderName)}${adminBadge}</span>
+                        <p class="chat-msg-text">${escHtml(chat.pesan)}</p>
                     </div>
                 </div>`;
             box.innerHTML += chatHTML;
@@ -1193,7 +1218,7 @@ function listenGlobalChat() {
         const box = document.getElementById("chat-messages-box");
         console.error("Chat error:", error.code, error.message);
         box.innerHTML = `<div style="font-size:12px;color:#ef4444;padding:20px;text-align:center;">
-            ⚠️ Gagal memuat chat: Akses dibatasi.
+            ⚠️ Gagal memuat chat: ${error.code === 'permission-denied' ? 'Akses ditolak Firestore.' : error.message}
             <br><button onclick="listenGlobalChat()" style="margin-top:8px;background:#3b82f6;color:white;border:none;padding:6px 14px;border-radius:8px;cursor:pointer;font-size:12px;">Coba Lagi</button>
         </div>`;
     });
@@ -1206,7 +1231,7 @@ async function sendChatMessage() {
     
     try {
         input.value = ""; 
-        const isOwner = currentUser.email === ADMIN_EMAIL;
+        const isOwner = currentUser.email === "jaenajaemin316@gmail.com";
         
         await addDoc(collection(db, "obrolan"), {
             senderId: currentUser.uid,
@@ -1226,8 +1251,9 @@ document.getElementById("btn-send-chat").addEventListener("click", sendChatMessa
 document.getElementById("chat-input").addEventListener("keypress", (e) => { if(e.key === "Enter") sendChatMessage(); });
 
 // ============================================================
-// ALIGHT MOTION PREMIUM - API BETABOTZ
+// ALIGHT MOTION PREMIUM - API BETABOTZ (FIX CORS)
 // ============================================================
+
 const ALIGHT_CONFIG = {
     BASE_URL: 'https://api.betabotz.eu.org',
     AKSES_KEY: 'AK-RtdtuHt9N4'
@@ -1240,6 +1266,8 @@ async function callAlightAPI(endpoint, email, rawUrl = null) {
     if (rawUrl) formData.append('rawUrl', rawUrl);
 
     const targetUrl = `${ALIGHT_CONFIG.BASE_URL}${endpoint}`;
+    
+    // PAKAI CORS PROXY
     const proxyUrl = 'https://corsproxy.io/?';
     
     try {
@@ -1255,6 +1283,7 @@ async function callAlightAPI(endpoint, email, rawUrl = null) {
         const text = await res.text();
         try { return JSON.parse(text); } catch { throw new Error('Response bukan JSON'); }
     } catch (error) {
+        // FALLBACK: proxy lain
         const proxyUrl2 = 'https://api.allorigins.win/raw?url=';
         const res2 = await fetch(proxyUrl2 + encodeURIComponent(targetUrl), {
             method: 'POST',
@@ -1299,8 +1328,10 @@ window.handleAlightOrder = async () => {
     statusBox.innerHTML = `<span class="info">⏳ Sedang memproses...</span>`;
 
     try {
+        // STEP 1: Kirim magic link (kalau belum ada link)
         if (!link) {
             const sendResult = await callAlightAPI('/api/tools/am-magicLink', email);
+            
             if (!sendResult.status) {
                 throw new Error(sendResult.message || 'Gagal kirim magic link');
             }
@@ -1315,10 +1346,12 @@ window.handleAlightOrder = async () => {
             return;
         }
 
+        // STEP 2: Verify + Purchase (otomatis)
         if (!link.includes('oobCode') && !link.includes('firebaseapp.com')) {
             throw new Error('Link OOB tidak valid! Pastikan link dari email Alight Creative.');
         }
 
+        // Verify
         const verifyResult = await callAlightAPI('/api/tools/am-verifyMagicLink', email, link);
         if (!verifyResult.status) {
             throw new Error(verifyResult.message || 'Verifikasi gagal');
@@ -1331,6 +1364,7 @@ window.handleAlightOrder = async () => {
 
         statusBox.innerHTML = `<span class="info">✅ Verify berhasil! ⏳ Melanjutkan purchase...</span>`;
 
+        // Purchase (panggil manual karena butuh parameter token)
         const formData = new URLSearchParams();
         formData.append('aksesKey', ALIGHT_CONFIG.AKSES_KEY);
         formData.append('email', email);
@@ -1353,6 +1387,7 @@ window.handleAlightOrder = async () => {
             throw new Error(purchaseData.message || 'Purchase gagal');
         }
 
+        // Simpan log transaksi ke Firestore
         const tanggalSkarang = new Date().toLocaleDateString('id-ID', {day: 'numeric', month: 'numeric', year: 'numeric'});
         await addDoc(collection(db, "transaksi"), {
             userId: currentUser.uid,
@@ -1385,6 +1420,7 @@ window.handleAlightOrder = async () => {
 // ============================================================
 // SISTEM TRANSAKSI NOKOS
 // ============================================================
+
 window.orderProduct = async (productName, price, serviceType) => {
     if(!currentUser) return window.showToast("Akses Ditolak", "Silakan login terlebih dahulu untuk membeli!", "error");
     
@@ -1511,6 +1547,8 @@ function closeOtpModal() {
     clearInterval(otpPollingInterval);
     document.getElementById("otp-modal-box").style.display = "none";
 }
+
+
 
 // ============================================================
 // TOP UP SALDO
@@ -1666,136 +1704,207 @@ window.switchPage = (pageId, menuId) => {
 // ============================================================
 // TOGGLE TEMA GELAP / TERANG
 // ============================================================
+function applyThemeUI() {
+    const isLight = document.documentElement.getAttribute('data-theme') === 'light';
+    const icon = document.getElementById('theme-icon');
+    if (icon) icon.className = isLight ? 'fa-solid fa-sun' : 'fa-solid fa-moon';
+    const sw = document.getElementById('theme-toggle-btn');
+    if (sw) sw.setAttribute('aria-checked', isLight ? 'true' : 'false');
+}
 window.toggleTheme = () => {
-    const isDark = document.documentElement.getAttribute('data-theme') !== 'light';
-    document.documentElement.setAttribute('data-theme', isDark ? 'light' : 'dark');
-    document.getElementById('theme-icon').className = isDark ? 'fa-solid fa-sun' : 'fa-solid fa-moon';
-    localStorage.setItem('vannstore_theme', isDark ? 'light' : 'dark');
+    const root = document.documentElement;
+    const toLight = root.getAttribute('data-theme') !== 'light';
+    root.classList.add('theme-anim');
+    root.setAttribute('data-theme', toLight ? 'light' : 'dark');
+    try { localStorage.setItem('vannstore_theme', toLight ? 'light' : 'dark'); } catch(e) {}
+    applyThemeUI();
+    setTimeout(() => root.classList.remove('theme-anim'), 450);
 };
-
-(function() {
-    const saved = localStorage.getItem('vannstore_theme');
-    if (saved) {
-        document.documentElement.setAttribute('data-theme', saved);
-        window.addEventListener('DOMContentLoaded', () => {
-            const icon = document.getElementById('theme-icon');
-            if (icon) icon.className = saved === 'light' ? 'fa-solid fa-sun' : 'fa-solid fa-moon';
-        });
-    }
-})();
+document.getElementById('theme-toggle-btn').addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); window.toggleTheme(); }
+});
+applyThemeUI();
 
 // ============================================================
-// AI SUPPORT CS (LOKAL ENGINE TANPA API LUAR - TANPA FAILED TO FETCH)
+// UTIL
 // ============================================================
-function generateLocalAIResponse(prompt) {
-    const q = prompt.toLowerCase();
+const ADMIN_EMAIL = "jaenajaemin316@gmail.com";
+const escHtml = (str) => String(str ?? "").replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 
-    if (q.includes("halo") || q.includes("hi") || q.includes("p") || q.includes("tes")) {
-        return "Halo! Ada yang bisa saya bantu terkait layanan VannStore? 👋";
-    }
-    if (q.includes("saldo") || q.includes("top up") || q.includes("topup") || q.includes("qris") || q.includes("isi saldo")) {
-        return "Untuk mengisi saldo, klik tombol **'Top Up Saldo Otomatis'** di menu Profile. Pembayaran menggunakan QRIS dan saldo akan otomatis bertambah!";
-    }
-    if (q.includes("nokos") || q.includes("produk") || q.includes("shopee") || q.includes("whatsapp") || q.includes("dana") || q.includes("wa")) {
-        return "Kami menyediakan layanan Nokos Shopee (Rp 2.000), Nokos WhatsApp (Rp 3.500), Nokos DANA (Rp 4.000), dan Alight Motion Premium (Gratis!). Kamu bisa membelinya di menu **Beli Produk**.";
-    }
-    if (q.includes("alight") || q.includes("motion") || q.includes("am")) {
-        return "Aktivasi Alight Motion Premium 1 Tahun tersedia secara **GRATIS**! Buka menu Beli Produk, lalu tekan tombol Aktivasi pada item Alight Motion.";
-    }
-    if (q.includes("masalah") || q.includes("gagal") || q.includes("lama") || q.includes("error") || q.includes("belum masuk") || q.includes("bantuan")) {
-        return "Jika kamu mengalami kendala transaksi atau saldo belum masuk, silakan buat **Tiket Dukungan** pada menu sidebar agar admin kami dapat langsung mengeceknya.";
-    }
-    if (q.includes("admin") || q.includes("owner") || q.includes("cs")) {
-        return `Admin VannStore dapat dihubungi melalui Tiket Dukungan atau email resmi kami di **${ADMIN_EMAIL}**.`;
-    }
+// ============================================================
+// AI SUPPORT CS (bot bawaan web, tanpa API eksternal)
+// ============================================================
+const AI_PRODUK = "• Alight Motion Premium 1 Tahun — GRATIS\n• Nokos Shopee — Rp 2.000\n• Nokos WhatsApp — Rp 3.500\n• Nokos DANA — Rp 4.000\n• Top Up Saldo via QRIS (otomatis, minimal Rp 1.000)";
 
-    return "Terima kasih telah bertanya! Untuk informasi lebih rinci mengenai transaksi atau saldo, kamu juga bisa membuat Tiket Dukungan agar dicek langsung oleh admin.";
+const AI_KB = [
+    { id: "masalah", ticket: true, kw: ["saldo tidak masuk","saldo belum masuk","saldo ga masuk","saldo gak masuk","belum masuk","tidak masuk","gak masuk","ga masuk","belum bertambah","tidak bertambah","transaksi gagal","sudah bayar","udah bayar","sudah transfer","terpotong","kepotong","refund","komplain","otp tidak","otp ga","otp gak","otp belum","tidak muncul","gak muncul","ga muncul","bermasalah","error","bug","gagal","penipuan","tertipu"],
+      reply: "Maaf ya atas kendalanya 🙏 Untuk masalah saldo/transaksi/OTP, admin perlu cek manual.\n\nSilakan buat Tiket Dukungan dan tulis: nominal, jam transaksi, dan kronologi singkat. Tiketmu langsung masuk ke admin." },
+    { id: "topup", kw: ["top up","topup","isi saldo","tambah saldo","qris","deposit","bayar","pembayaran"],
+      reply: "Cara top up saldo 💳\n1. Buka halaman Profile Akun\n2. Pilih Top Up, masukkan nominal (minimal Rp 1.000)\n3. Scan QRIS yang muncul lalu bayar\n4. Saldo masuk otomatis setelah pembayaran terdeteksi\n\nJangan tutup halaman sampai status berhasil ya." },
+    { id: "alight", kw: ["alight","motion","am premium","preset","xml"],
+      reply: "Alight Motion Premium 1 Tahun saat ini GRATIS 🎬\nBuka menu Beli Produk, pilih Alight Motion, lalu ikuti langkah di layar. Kalau ada error, buat Tiket Dukungan." },
+    { id: "nokos", kw: ["nokos","nomor kosong","shopee","whatsapp","dana","otp","nomor virtual","verifikasi"],
+      reply: "Layanan Nokos (nomor OTP) 📱\n• Shopee — Rp 2.000\n• WhatsApp — Rp 3.500\n• DANA — Rp 4.000\n\nBuka Beli Produk → pilih layanan → nomor akan muncul, lalu minta kode OTP di aplikasi tujuan dan tunggu kodenya tampil di layar. Pastikan saldo cukup dulu ya." },
+    { id: "harga", kw: ["harga","produk","jual","katalog","daftar","apa saja","ada apa","list"],
+      reply: "Produk VannStore saat ini 🛍️\n" + AI_PRODUK },
+    { id: "cara", kw: ["cara beli","cara order","cara pesan","gimana beli","bagaimana beli","cara pakai","cara menggunakan","tutorial"],
+      reply: "Cara beli ✅\n1. Pastikan saldo cukup (top up via QRIS kalau perlu)\n2. Buka menu Beli Produk\n3. Pilih produk lalu ikuti instruksi\n4. Riwayat transaksi tampil di Profile Akun" },
+    { id: "admin", ticket: true, kw: ["admin","owner","kontak","hubungi","customer service","manusia","petugas","operator"],
+      reply: "Untuk bicara dengan admin, kirim Tiket Dukungan 🎫 Tiketmu masuk langsung ke dashboard admin dan akan dibalas di halaman tiket." },
+    { id: "chat", kw: ["chat global","obrolan","ngobrol","grup"],
+      reply: "Chat Global ada di menu samping 💬 Di sana kamu bisa ngobrol dengan pengguna lain. Mohon jaga sopan santun ya." },
+    { id: "tema", kw: ["mode gelap","mode terang","dark mode","light mode","tema","gelap","terang"],
+      reply: "Ganti tampilan gelap/terang lewat saklar matahari-bulan di pojok kanan atas 🌗" },
+    { id: "siapa", kw: ["kamu siapa","siapa kamu","siapa lu","bot","robot","kamu ai","ai ya"],
+      reply: "Aku asisten otomatis VannStore 🤖 Aku bisa jawab soal produk, harga, top up, dan arahan tiket. Untuk masalah akun/saldo, admin yang cek manual lewat Tiket Dukungan." },
+    { id: "terimakasih", kw: ["makasih","terima kasih","thanks","thx","tq","mantap","oke makasih"],
+      reply: "Sama-sama! 😊 Kalau ada yang lain, tanya aja." },
+    { id: "salam", kw: ["halo","hai","hi","hello","pagi","siang","sore","malam","assalamualaikum","tes","test","tess","p","min","kak"],
+      reply: "Halo! 👋 Mau tanya soal produk, harga, top up, atau ada kendala transaksi? Tinggal ketik atau pilih tombol di bawah." }
+];
+
+function aiAnswer(raw) {
+    const text = " " + raw.toLowerCase().replace(/[^a-z0-9\s]/g, " ").replace(/\s+/g, " ").trim() + " ";
+    const tokens = text.trim().split(" ");
+    let best = null, bestScore = 0;
+    for (const item of AI_KB) {
+        let score = 0;
+        for (const k of item.kw) {
+            const hit = (k.length <= 3 || !k.includes(" ") && k.length <= 4) ? tokens.includes(k) : text.includes(k);
+            if (hit) score += k.includes(" ") ? 2 : 1;
+        }
+        if (score > bestScore) { best = item; bestScore = score; }
+    }
+    if (!best) {
+        return { reply: "Maaf, aku belum paham pertanyaannya 🙏 Coba tanya soal harga produk, cara top up, atau OTP. Kalau butuh dibantu admin, buat Tiket Dukungan.", ticket: true };
+    }
+    return best;
 }
 
-function sendAIMessage() {
+function addAIBubble(role, innerHtml, id) {
+    const box = document.getElementById("ai-chat-messages");
+    const label = role === "user" ? `<div class="ai-bubble-label" style="text-align:right;">Kamu</div>` : `<div class="ai-bubble-label">🤖 AI VannStore</div>`;
+    box.insertAdjacentHTML("beforeend", `<div class="ai-bubble ${role}" ${id ? `id="${id}"` : ""}>${label}<div class="ai-bubble-inner">${innerHtml}</div></div>`);
+    box.scrollTop = box.scrollHeight;
+}
+
+function sendAIMessage(preset) {
     const input = document.getElementById("ai-chat-input");
-    const text = input.value.trim();
+    const text = (typeof preset === "string" ? preset : input.value).trim();
     if (!text) return;
     input.value = "";
 
-    const box = document.getElementById("ai-chat-messages");
-
-    box.innerHTML += `
-        <div class="ai-bubble user">
-            <div class="ai-bubble-label" style="text-align:right;">Kamu</div>
-            <div class="ai-bubble-inner">${text}</div>
-        </div>`;
-
+    addAIBubble("user", escHtml(text));
     const typingId = "ai-typing-" + Date.now();
-    box.innerHTML += `
-        <div class="ai-bubble bot" id="${typingId}">
-            <div class="ai-bubble-label">🤖 AI VannStore</div>
-            <div class="ai-bubble-inner"><div class="ai-typing"><span></span><span></span><span></span></div></div>
-        </div>`;
-    box.scrollTop = box.scrollHeight;
+    addAIBubble("bot", `<div class="ai-typing"><span></span><span></span><span></span></div>`, typingId);
 
+    const ans = aiAnswer(text);
     setTimeout(() => {
         document.getElementById(typingId)?.remove();
-        const reply = generateLocalAIResponse(text);
-        box.innerHTML += `
-            <div class="ai-bubble bot">
-                <div class="ai-bubble-label">🤖 AI VannStore</div>
-                <div class="ai-bubble-inner">${reply.replace(/\n/g, '<br>')}</div>
-            </div>`;
-        box.scrollTop = box.scrollHeight;
-    }, 600);
+        let html = escHtml(ans.reply).replace(/\n/g, "<br>");
+        if (ans.ticket) html += `<br><button class="ai-action-btn" onclick="switchPage('ticket-page','m-ticket')">🎫 Buat Tiket Dukungan</button>`;
+        addAIBubble("bot", html);
+    }, 500 + Math.random() * 400);
 }
 
-document.getElementById("btn-send-ai").addEventListener("click", sendAIMessage);
-document.getElementById("ai-chat-input").addEventListener("keypress", (e) => { if(e.key === "Enter") sendAIMessage(); });
+document.getElementById("btn-send-ai").addEventListener("click", () => sendAIMessage());
+document.getElementById("ai-chat-input").addEventListener("keypress", (e) => { if (e.key === "Enter") sendAIMessage(); });
+document.getElementById("ai-chips").addEventListener("click", (e) => {
+    const chip = e.target.closest(".ai-chip");
+    if (chip) sendAIMessage(chip.dataset.q);
+});
 
 // ============================================================
-// TIKET DUKUNGAN (PERBAIKAN PERMISSION & NOTIFIKASI AKUN ADMIN)
+// TIKET DUKUNGAN
+//  - User biasa: hanya melihat tiket miliknya sendiri
+//  - Admin (ADMIN_EMAIL): melihat SEMUA tiket, bisa balas / selesaikan / hapus
 // ============================================================
 let unsubscribeTicket = null;
-let localTickets = [];
 
-function renderTickets() {
+function ticketEmpty(msg) {
+    return `<p style="font-size:12.5px;color:var(--text-muted);text-align:center;padding:15px 0;font-style:italic;">${msg}</p>`;
+}
+
+function listenToTickets(user) {
+    if (unsubscribeTicket) { unsubscribeTicket(); unsubscribeTicket = null; }
+    const admin = user.email === ADMIN_EMAIL;
     const container = document.getElementById("ticket-list-container");
-    if (!localTickets || localTickets.length === 0) {
-        container.innerHTML = `<p style="font-size:12.5px;color:var(--text-muted);text-align:center;padding:15px 0;font-style:italic;">Belum ada tiket</p>`;
-        return;
-    }
-    container.innerHTML = `<p style="font-size:12px;font-weight:600;color:var(--text-secondary);margin-bottom:8px;">Tiket Kamu</p>`;
-    localTickets.forEach((t) => {
-        container.innerHTML += `
-            <div class="ticket-item">
-                <div class="ticket-item-header">
-                    <h5>${t.kategori}</h5>
-                    <span class="ticket-badge ${t.status === 'closed' ? 'closed' : 'open'}">${t.status === 'closed' ? '✅ Selesai' : '🕐 Menunggu'}</span>
-                </div>
-                <p>${t.deskripsi}</p>
-                <span class="ticket-date">${t.tanggal}</span>
-            </div>`;
+    const badge = document.getElementById("ticket-count-badge");
+    container.innerHTML = ticketEmpty("Memuat tiket...");
+
+    const ref = collection(db, "tiket");
+    // Tanpa orderBy supaya tidak butuh composite index (diurutkan di sisi client)
+    const q = admin ? query(ref) : query(ref, where("userId", "==", user.uid));
+
+    unsubscribeTicket = onSnapshot(q, (snapshot) => {
+        const list = snapshot.docs.map(d => ({ id: d.id, ...d.data() })).sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
+        const openCount = list.filter(t => t.status !== "closed").length;
+
+        if (admin && badge) {
+            badge.textContent = openCount;
+            badge.style.display = openCount > 0 ? "inline-block" : "none";
+        }
+
+        if (list.length === 0) {
+            container.innerHTML = ticketEmpty(admin ? "Belum ada tiket masuk" : "Belum ada tiket");
+            return;
+        }
+
+        const head = admin
+            ? `<p class="ticket-admin-head">📥 Semua Tiket Masuk · ${openCount} menunggu / ${list.length} total</p>`
+            : `<p style="font-size:12px;font-weight:600;color:var(--text-secondary);margin-bottom:8px;">Tiket Kamu</p>`;
+
+        container.innerHTML = head + list.map(t => {
+            const closed = t.status === "closed";
+            const meta = admin ? `<span class="t-meta">👤 ${escHtml(t.nama)} · ${escHtml(t.email)}</span>` : "";
+            const reply = t.balasan ? `<div class="ticket-reply"><b>Balasan admin:</b> ${escHtml(t.balasan)}</div>` : "";
+            const actions = admin ? `
+                <div class="ticket-actions">
+                    <button data-act="reply" data-id="${t.id}">💬 Balas</button>
+                    <button class="ok" data-act="toggle" data-id="${t.id}" data-status="${closed ? 'open' : 'closed'}">${closed ? '↩️ Buka lagi' : '✅ Selesai'}</button>
+                    <button class="del" data-act="delete" data-id="${t.id}">🗑️</button>
+                </div>` : "";
+            return `
+                <div class="ticket-item">
+                    <div class="ticket-item-header">
+                        <h5>${escHtml(t.kategori)}</h5>
+                        <span class="ticket-badge ${closed ? 'closed' : 'open'}">${closed ? '✅ Selesai' : '🕐 Menunggu'}</span>
+                    </div>
+                    <p>${escHtml(t.deskripsi)}</p>
+                    <span class="ticket-date">${escHtml(t.tanggal)}</span>
+                    ${meta}${reply}${actions}
+                </div>`;
+        }).join("");
+    }, (err) => {
+        console.error("Ticket error:", err.code, err.message);
+        container.innerHTML = ticketEmpty(err.code === "permission-denied"
+            ? "⚠️ Akses ditolak Firestore. Pastikan Rules koleksi “tiket” sudah diperbarui."
+            : "⚠️ Gagal memuat tiket: " + escHtml(err.message));
     });
 }
 
-function listenToTickets(uid) {
-    if (unsubscribeTicket) unsubscribeTicket();
+// Aksi admin (event delegation)
+document.getElementById("ticket-list-container").addEventListener("click", async (e) => {
+    const btn = e.target.closest("button[data-act]");
+    if (!btn || !currentUser || currentUser.email !== ADMIN_EMAIL) return;
+    const id = btn.dataset.id;
+    const ref = doc(db, "tiket", id);
     try {
-        const ticketRef = collection(db, "tiket");
-        const q = query(ticketRef, where("userId", "==", uid), orderBy("timestamp", "desc"));
-
-        unsubscribeTicket = onSnapshot(q, (snapshot) => {
-            localTickets = [];
-            snapshot.forEach((docSnap) => {
-                localTickets.push(docSnap.data());
-            });
-            renderTickets();
-        }, (err) => {
-            console.warn("Firestore Ticket Query Limited, using local fallback state.");
-            renderTickets();
-        });
-    } catch(e) {
-        console.warn("Ticket listener init fallback.");
-        renderTickets();
+        if (btn.dataset.act === "toggle") {
+            await updateDoc(ref, { status: btn.dataset.status });
+        } else if (btn.dataset.act === "reply") {
+            const text = prompt("Tulis balasan untuk user:");
+            if (text && text.trim()) {
+                await updateDoc(ref, { balasan: text.trim().slice(0, 500), balasanAt: new Date().getTime() });
+                window.showToast("Terkirim", "Balasan tersimpan.", "success");
+            }
+        } else if (btn.dataset.act === "delete") {
+            if (confirm("Hapus tiket ini permanen?")) await deleteDoc(ref);
+        }
+    } catch (err) {
+        window.showToast("Gagal", err.message, "error");
     }
-}
+});
 
 window.submitTicket = async () => {
     if (!currentUser) return window.showToast("Akses Ditolak", "Silakan login terlebih dahulu!", "error");
@@ -1805,53 +1914,27 @@ window.submitTicket = async () => {
     if (!kategori) return window.showToast("Pilih Kategori", "Pilih kategori masalah terlebih dahulu.", "error");
     if (!deskripsi || deskripsi.length < 10) return window.showToast("Deskripsi Terlalu Singkat", "Jelaskan masalah kamu minimal 10 karakter.", "error");
 
-    const tgl = new Date().toLocaleDateString('id-ID', {day:'numeric', month:'long', year:'numeric'});
-    const ticketData = {
-        userId: currentUser.uid,
-        nama: currentUser.displayName,
-        email: currentUser.email,
-        adminTarget: ADMIN_EMAIL,
-        kategori,
-        deskripsi,
-        status: "open",
-        tanggal: tgl,
-        timestamp: new Date().getTime()
-    };
-
-    let sent = false;
-
-    // OPSI 1: Kirim ke Firestore koleksi "tiket"
+    const btn = document.getElementById("btn-submit-ticket");
+    btn.disabled = true; btn.style.opacity = "0.6";
     try {
-        await addDoc(collection(db, "tiket"), ticketData);
-        sent = true;
+        await addDoc(collection(db, "tiket"), {
+            userId: currentUser.uid,
+            nama: currentUser.displayName || "Tanpa Nama",
+            email: currentUser.email,
+            kategori,
+            deskripsi: deskripsi.slice(0, 500),
+            status: "open",
+            tanggal: new Date().toLocaleDateString('id-ID', {day:'numeric', month:'long', year:'numeric'}),
+            timestamp: new Date().getTime()
+        });
+        document.getElementById("ticket-kategori").value = "";
+        document.getElementById("ticket-deskripsi").value = "";
+        window.showToast("Tiket Dikirim! 🎉", "Tiket kamu sudah masuk ke admin.", "success");
     } catch(e) {
-        console.warn("Firestore tiket blocked by rules, attempting chat fallback...");
+        window.showToast("Gagal Kirim Tiket", e.code === "permission-denied" ? "Akses ditolak. Perbarui Firestore Rules (lihat firestore.rules)." : e.message, "error");
+    } finally {
+        btn.disabled = false; btn.style.opacity = "";
     }
-
-    // OPSI 2: Fallback otomatis ke obrolan admin agar tiket selalu terproses tanpa terhalang permission
-    if (!sent) {
-        try {
-            await addDoc(collection(db, "obrolan"), {
-                senderId: currentUser.uid,
-                senderName: `[TIKET - ${kategori}] ${currentUser.displayName}`,
-                senderEmail: currentUser.email,
-                senderPhoto: currentUser.photoURL,
-                pesan: `📌 TIKET DUKUNGAN UNTUK ADMIN (${ADMIN_EMAIL}):\nEmail User: ${currentUser.email}\nDeskripsi: ${deskripsi}`,
-                timestamp: new Date().getTime(),
-                role: "user"
-            });
-            sent = true;
-        } catch(err) {
-            console.error("Gagal mengirim tiket ke obrolan:", err);
-        }
-    }
-
-    localTickets.unshift(ticketData);
-    renderTickets();
-
-    document.getElementById("ticket-kategori").value = "";
-    document.getElementById("ticket-deskripsi").value = "";
-    window.showToast("Tiket Dikirim! 🎉", `Tiket berhasil dikirim ke akun admin (${ADMIN_EMAIL}).`, "success");
 };
 </script>
 </body>
