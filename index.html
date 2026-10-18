@@ -564,16 +564,6 @@
     .cancel-otp-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(239, 68, 68, 0.5); }
     @keyframes pulseGlow { 0%, 100% { opacity: 0.8; } 50% { opacity: 1; transform: scale(1.02); } }
 
-    /* --- JENDELA POPUP ALIGHT MOTION --- */
-    .alight-modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(2, 6, 23, 0.8); backdrop-filter: blur(10px); z-index: 999997; display: none; justify-content: center; align-items: center; }
-    .alight-modal-content { background: var(--modal-bg); border: 1px solid rgba(139,92,246,0.3); box-shadow: 0 25px 50px rgba(0,0,0,0.5); padding: 24px; border-radius: 28px; width: 90%; max-width: 380px; text-align: center; animation: modalSlideUp 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) forwards; }
-    .alight-modal-content .spam-input { width: 100%; background: rgba(15, 23, 42, 0.6); border: 1px solid rgba(255, 255, 255, 0.08); padding: 12px 16px; border-radius: 14px; color: white; font-size: 14px; text-align: center; outline: none; transition: border 0.2s; margin-top: 15px; margin-bottom: 10px; }
-    .alight-modal-content .spam-input:focus { border-color: #8b5cf6; }
-    .alight-status-box { background: rgba(0,0,0,0.3); border-radius: 12px; padding: 12px; margin: 10px 0; font-size: 13px; color: #cbd5e1; line-height: 1.6; }
-    .alight-status-box .success { color: #10b981; }
-    .alight-status-box .error { color: #ef4444; }
-    .alight-status-box .info { color: #60a5fa; }
-
     /* --- JENDELA POPUP SPAM OTP --- */
     .spam-modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(2, 6, 23, 0.8); backdrop-filter: blur(10px); z-index: 999996; display: none; justify-content: center; align-items: center; }
     .spam-modal-content { background: var(--modal-bg); border: 1px solid rgba(139,92,246,0.3); box-shadow: 0 25px 50px rgba(0,0,0,0.5); padding: 24px; border-radius: 28px; width: 90%; max-width: 360px; text-align: center; animation: modalSlideUp 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) forwards; }
@@ -598,6 +588,20 @@
     .logout-btn:hover { background: #ef4444; color: white; box-shadow: 0 6px 15px rgba(239, 68, 68, 0.4); }
     
     .cs-btn { background: linear-gradient(135deg, #22c55e, #16a34a); display: flex; align-items: center; justify-content: center; gap: 10px; text-decoration: none; box-shadow: 0 4px 15px rgba(34, 197, 94, 0.3); }
+
+    /* --- KATALOG OTP --- */
+    .shop-search { width: 100%; margin-top: 12px; }
+    .shop-svc { flex-direction: column; align-items: stretch !important; }
+    .shop-svc-head { display: flex; justify-content: space-between; align-items: center; cursor: pointer; }
+    .shop-svc-head h4 { font-size: 14.5px; font-weight: 600; text-align: left; color: var(--text-primary); }
+    .shop-svc-head i { color: var(--text-muted); transition: transform .25s; }
+    .shop-svc.open .shop-svc-head i { transform: rotate(180deg); }
+    .shop-opts { margin-top: 10px; border-top: 1px solid var(--product-border); padding-top: 6px; }
+    .shop-opt { display: flex; align-items: center; gap: 10px; padding: 8px 0; }
+    .shop-opt-info { flex: 1; text-align: left; }
+    .shop-opt-info b { font-size: 13px; color: var(--text-primary); }
+    .shop-opt-info span { display: block; font-size: 11px; color: var(--text-muted); }
+    .shop-opt-price { font-size: 13px; font-weight: 700; color: #10b981; }
 
     /* --- ALIGHT PRICE BADGE --- */
     .price-badge { display: inline-block; font-size: 11px; font-weight: 600; padding: 2px 10px; border-radius: 12px; margin-left: 8px; }
@@ -713,30 +717,6 @@
     </div>
 </div>
 
-<!-- ALIGHT MOTION MODAL -->
-<div class="alight-modal" id="alight-modal-box">
-    <div class="alight-modal-content">
-        <h3 style="font-size:17px; font-weight:700;"><i class="fa-solid fa-video" style="color:#8b5cf6;"></i> Alight Motion Premium</h3>
-        <p style="font-size:12px; color:#94a3b8; margin:5px 0 5px 0;">Aktivasi premium 1 tahun</p>
-        
-        <div class="info-box" style="margin-bottom:10px; text-align:left; font-size:12px; color:#94a3b8;">
-            <p>📌 <strong>Harga:</strong> <span style="color:#10b981; font-weight:700;">Rp 0 (Gratis)</span></p>
-            <p>📌 <strong>Durasi:</strong> 1 Tahun</p>
-            <p>📌 <strong>Fitur:</strong> Tanpa Watermark, 4K, All Preset</p>
-        </div>
-
-        <input type="email" class="spam-input" id="alight-email-input" placeholder="Masukkan Email Aktif">
-        <input type="text" class="spam-input" id="alight-link-input" placeholder="Tempel Link OOB (Opsional)" style="margin-top:5px;">
-        
-        <div class="alight-status-box" id="alight-status-box">
-            <span class="info">📌 Masukkan email untuk kirim magic link, atau tempel link OOB untuk aktivasi langsung.</span>
-        </div>
-
-        <button class="btn" id="btn-alight-action" style="background: linear-gradient(135deg, #8b5cf6, #6d28d9); box-shadow: 0 4px 15px rgba(139, 92, 246, 0.3); margin-top:5px;" onclick="handleAlightOrder()">Kirim Magic Link</button>
-        <button class="cancel-otp-btn" style="background:transparent; border:1px solid rgba(255,255,255,0.1); color:#94a3b8; box-shadow:none; margin-top:10px;" onclick="closeAlightModal()">Tutup</button>
-    </div>
-</div>
-
 <div class="otp-modal" id="otp-modal-box">
     <div class="otp-modal-content">
         <div class="otp-timer" id="otp-countdown-timer"><i class="fa-solid fa-clock"></i> 15:00</div>
@@ -829,7 +809,7 @@
                 <div class="login-feature-chip"><i class="fa-solid fa-headset"></i> CS Responsif</div>
             </div>
         </div>
-    </div>   
+    </div>
 
     <div id="main-dashboard" style="display: none; width: 100%;">
         <div class="app-card">
@@ -838,7 +818,7 @@
                 <div class="update-ticker">
                     <div class="update-ticker-icon"><i class="fa-solid fa-bullhorn"></i></div>
                     <div class="update-ticker-viewport">
-                        <span class="update-ticker-track"> 🚧 web sedang maintenance &nbsp;•&nbsp; 🛍️ Produk baru segera hadir &nbsp;•&nbsp; 💬 Yuk gabung Chat Global VannStore &nbsp;•&nbsp; 🚧 web sedang maintenance</span>
+                        <span class="update-ticker-track">🎉 Top Up Saldo otomatis via QRIS sudah aktif &nbsp;•&nbsp; 🛍️ Produk baru segera hadir &nbsp;•&nbsp; 💬 Yuk gabung Chat Global VannStore &nbsp;•&nbsp; 🎉 Top Up Saldo otomatis via QRIS sudah aktif</span>
                     </div>
                 </div>
 
@@ -881,29 +861,10 @@
             </div>
 
             <div id="shop-page" class="page-content">
-                <h3 style="font-weight: 700; font-size: 18px;"><i class="fa-solid fa-tags" style="color:#60a5fa; margin-right:8px;"></i> Produk Pilihan</h3>
-                <div class="product-list">
-                    <!-- ====== ITEM ALIGHT MOTION PREMIUM ====== -->
-                    <div class="product-item" style="border-color: rgba(139, 92, 246, 0.25);">
-                        <div class="product-info">
-                            <h4>Alight Motion Premium <span class="price-badge free">GRATIS</span></h4>
-                            <p>🎬 1 Tahun | Tanpa Watermark | 4K</p>
-                        </div>
-                        <button class="btn buy-item-btn" style="background: #8b5cf6 !important; box-shadow: 0 4px 12px rgba(139, 92, 246, 0.4);" onclick="openAlightModal()">Aktivasi</button>
-                    </div>
-                    <div class="product-item">
-                        <div class="product-info"><h4>Nokos Shopee</h4><p>Rp 2.000</p></div>
-                        <button class="btn buy-item-btn" onclick="orderProduct('Nokos Shopee', 2000, 'shopee')">Beli</button>
-                    </div>
-                    <div class="product-item">
-                        <div class="product-info"><h4>Nokos WhatsApp</h4><p>Rp 3.500</p></div>
-                        <button class="btn buy-item-btn" onclick="orderProduct('Nokos WhatsApp', 3500, 'wa')">Beli</button>
-                    </div>
-                    <div class="product-item">
-                        <div class="product-info"><h4>Nokos DANA</h4><p>Rp 4.000</p></div>
-                        <button class="btn buy-item-btn" onclick="orderProduct('Nokos DANA', 4000, 'dana')">Beli</button>
-                    </div>
-                </div>
+                <h3 style="font-weight: 700; font-size: 18px;"><i class="fa-solid fa-tags" style="color:#60a5fa; margin-right:8px;"></i> Nomor OTP</h3>
+                <p style="color:var(--text-secondary); font-size:12.5px; margin:4px 0 0; line-height:1.5;">Stok dan harga diambil langsung dari katalog. Pilih aplikasi, lalu pilih operator.</p>
+                <input type="text" class="chat-input-field shop-search" id="shop-search" placeholder="Cari aplikasi (WhatsApp, Shopee...)">
+                <div class="product-list" id="shop-list"><div class="history-empty">Memuat katalog...</div></div>
             </div>
 
             <div id="chat-page" class="page-content">
@@ -989,6 +950,8 @@ const db = getFirestore(app);
 const provider = new GoogleAuthProvider();
 
 let currentUser = null;
+let shopServices = [];
+let shopLoaded = false;
 let unsubscribeTx = null;
 let unsubscribeChat = null;
 let unsubscribeUser = null;
@@ -1100,6 +1063,7 @@ function handleLogoutDOM() {
     const tl = document.getElementById("ticket-list-container");
     if (tl) tl.innerHTML = "";
     currentUser = null;
+    shopServices = []; shopLoaded = false;
     document.getElementById("login-section").style.display = "block";
     document.getElementById("main-dashboard").style.display = "none";
     document.getElementById("menu-btn").style.display = "none";
@@ -1108,7 +1072,6 @@ function handleLogoutDOM() {
     document.getElementById("sidebar-menu").classList.remove("active");
     closeOtpModal();
     closeTopupModal();
-    closeAlightModal();
 }
 
 async function setupDashboard(user) {
@@ -1251,215 +1214,103 @@ document.getElementById("btn-send-chat").addEventListener("click", sendChatMessa
 document.getElementById("chat-input").addEventListener("keypress", (e) => { if(e.key === "Enter") sendChatMessage(); });
 
 // ============================================================
-// ALIGHT MOTION PREMIUM - API BETABOTZ (FIX CORS)
-// ============================================================
-
-const ALIGHT_CONFIG = {
-    BASE_URL: 'https://api.betabotz.eu.org',
-    AKSES_KEY: 'AK-RtdtuHt9N4'
-};
-
-async function callAlightAPI(endpoint, email, rawUrl = null) {
-    const formData = new URLSearchParams();
-    formData.append('aksesKey', ALIGHT_CONFIG.AKSES_KEY);
-    formData.append('email', email);
-    if (rawUrl) formData.append('rawUrl', rawUrl);
-
-    const targetUrl = `${ALIGHT_CONFIG.BASE_URL}${endpoint}`;
-    
-    // PAKAI CORS PROXY
-    const proxyUrl = 'https://corsproxy.io/?';
-    
-    try {
-        const res = await fetch(proxyUrl + encodeURIComponent(targetUrl), {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/x-www-form-urlencoded',
-                'Accept': 'application/json'
-            },
-            body: formData.toString()
-        });
-
-        const text = await res.text();
-        try { return JSON.parse(text); } catch { throw new Error('Response bukan JSON'); }
-    } catch (error) {
-        // FALLBACK: proxy lain
-        const proxyUrl2 = 'https://api.allorigins.win/raw?url=';
-        const res2 = await fetch(proxyUrl2 + encodeURIComponent(targetUrl), {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/x-www-form-urlencoded',
-                'Accept': 'application/json'
-            },
-            body: formData.toString()
-        });
-        const text2 = await res2.text();
-        try { return JSON.parse(text2); } catch { throw new Error('Response bukan JSON'); }
-    }
-}
-
-window.openAlightModal = () => {
-    if(!currentUser) return window.showToast("Akses Ditolak", "Silakan login terlebih dahulu!", "error");
-    document.getElementById("alight-email-input").value = "";
-    document.getElementById("alight-link-input").value = "";
-    document.getElementById("alight-status-box").innerHTML = `<span class="info">📌 Masukkan email untuk kirim magic link, atau tempel link OOB untuk aktivasi langsung.</span>`;
-    document.getElementById("btn-alight-action").innerText = "Kirim Magic Link";
-    document.getElementById("btn-alight-action").style.background = "linear-gradient(135deg, #8b5cf6, #6d28d9)";
-    document.getElementById("alight-modal-box").style.display = "flex";
-};
-
-window.closeAlightModal = () => {
-    document.getElementById("alight-modal-box").style.display = "none";
-};
-
-window.handleAlightOrder = async () => {
-    const email = document.getElementById("alight-email-input").value.trim();
-    const link = document.getElementById("alight-link-input").value.trim();
-    const statusBox = document.getElementById("alight-status-box");
-    const btn = document.getElementById("btn-alight-action");
-    
-    if (!email || !email.includes('@')) {
-        statusBox.innerHTML = `<span class="error">❌ Email tidak valid! Masukkan email aktif.</span>`;
-        return;
-    }
-
-    btn.disabled = true;
-    btn.innerText = "⏳ Memproses...";
-    statusBox.innerHTML = `<span class="info">⏳ Sedang memproses...</span>`;
-
-    try {
-        // STEP 1: Kirim magic link (kalau belum ada link)
-        if (!link) {
-            const sendResult = await callAlightAPI('/api/tools/am-magicLink', email);
-            
-            if (!sendResult.status) {
-                throw new Error(sendResult.message || 'Gagal kirim magic link');
-            }
-
-            statusBox.innerHTML = `
-                <span class="success">✅ Magic link berhasil dikirim ke ${email}!</span><br>
-                <span class="info">📌 Cek inbox/spam kamu, lalu tempel link OOB di sini dan klik aktivasi.</span>
-            `;
-            btn.innerText = "Aktivasi Premium";
-            btn.onclick = () => window.handleAlightOrder();
-            btn.disabled = false;
-            return;
-        }
-
-        // STEP 2: Verify + Purchase (otomatis)
-        if (!link.includes('oobCode') && !link.includes('firebaseapp.com')) {
-            throw new Error('Link OOB tidak valid! Pastikan link dari email Alight Creative.');
-        }
-
-        // Verify
-        const verifyResult = await callAlightAPI('/api/tools/am-verifyMagicLink', email, link);
-        if (!verifyResult.status) {
-            throw new Error(verifyResult.message || 'Verifikasi gagal');
-        }
-
-        const token = verifyResult?.result?.token;
-        if (!token) {
-            throw new Error('Token tidak ditemukan dari hasil verify');
-        }
-
-        statusBox.innerHTML = `<span class="info">✅ Verify berhasil! ⏳ Melanjutkan purchase...</span>`;
-
-        // Purchase (panggil manual karena butuh parameter token)
-        const formData = new URLSearchParams();
-        formData.append('aksesKey', ALIGHT_CONFIG.AKSES_KEY);
-        formData.append('email', email);
-        formData.append('token', token);
-
-        const targetUrl = `${ALIGHT_CONFIG.BASE_URL}/api/tools/am-purchasePremium`;
-        const proxyUrl = 'https://corsproxy.io/?';
-        
-        const purchaseRes = await fetch(proxyUrl + encodeURIComponent(targetUrl), {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/x-www-form-urlencoded',
-                'Accept': 'application/json'
-            },
-            body: formData.toString()
-        });
-        const purchaseData = await purchaseRes.json();
-
-        if (!purchaseData.status) {
-            throw new Error(purchaseData.message || 'Purchase gagal');
-        }
-
-        // Simpan log transaksi ke Firestore
-        const tanggalSkarang = new Date().toLocaleDateString('id-ID', {day: 'numeric', month: 'numeric', year: 'numeric'});
-        await addDoc(collection(db, "transaksi"), {
-            userId: currentUser.uid,
-            produk: "Alight Motion Premium (1 Tahun)",
-            harga: 0,
-            tanggal: tanggalSkarang,
-            timestamp: new Date().getTime()
-        });
-
-        statusBox.innerHTML = `
-            <span class="success">🎉 PREMIUM ALIGHT MOTION AKTIF!</span><br>
-            <span class="info">📧 Email: ${email}</span><br>
-            <span class="info">⏳ Durasi: 1 Tahun</span>
-        `;
-        btn.innerText = "✅ Sukses!";
-        btn.style.background = "linear-gradient(135deg, #10b981, #059669)";
-        btn.disabled = false;
-        
-        window.showToast("Alight Premium Aktif", `Premium berhasil diaktifkan untuk ${email}!`, "success");
-
-    } catch (error) {
-        statusBox.innerHTML = `<span class="error">❌ Gagal: ${error.message}</span>`;
-        btn.innerText = link ? "Coba Lagi" : "Kirim Magic Link";
-        btn.style.background = "linear-gradient(135deg, #8b5cf6, #6d28d9)";
-        btn.disabled = false;
-        window.showToast("Gagal", error.message, "error");
-    }
-};
-
-// ============================================================
 // SISTEM TRANSAKSI NOKOS
 // ============================================================
 
-window.orderProduct = async (productName, price, serviceType) => {
-    if(!currentUser) return window.showToast("Akses Ditolak", "Silakan login terlebih dahulu untuk membeli!", "error");
-    
+async function loadShopCatalog(force) {
+    if (!currentUser) return;
+    const box = document.getElementById("shop-list");
+    if (shopLoaded && !force) return renderShop();
+    box.innerHTML = `<div class="history-empty">Memuat katalog...</div>`;
     try {
-        const userDocRef = doc(db, "users", currentUser.uid);
-        const userDocSnap = await getDoc(userDocRef);
-        
-        let saldoUser = 0;
-        if (userDocSnap.exists()) {
-            saldoUser = userDocSnap.data().saldo || 0;
-        }
-        
+        const r = await authFetch("/api/otp?action=catalog");
+        const j = await r.json();
+        if (!r.ok || !j.success) throw new Error(j.error || "Gagal memuat katalog");
+        shopServices = j.data; shopLoaded = true;
+        renderShop();
+    } catch (e) {
+        box.innerHTML = `<div class="history-empty" style="color:#ef4444;">⚠️ ${escHtml(e.message)}<br><button class="ai-action-btn" id="shop-retry">Coba Lagi</button></div>`;
+    }
+}
+
+function renderShop() {
+    const box = document.getElementById("shop-list");
+    const term = document.getElementById("shop-search").value.trim().toLowerCase();
+    const list = shopServices.filter(x => x.name.toLowerCase().includes(term)).slice(0, 60);
+    if (list.length === 0) { box.innerHTML = `<div class="history-empty">Aplikasi tidak ditemukan</div>`; return; }
+    box.innerHTML = list.map(x => `
+        <div class="product-item shop-svc" data-sid="${escHtml(x.id)}" data-name="${escHtml(x.name)}">
+            <div class="shop-svc-head"><h4>${escHtml(x.name)}</h4><i class="fa-solid fa-chevron-down"></i></div>
+            <div class="shop-opts" style="display:none;"></div>
+        </div>`).join("");
+}
+
+async function loadShopOptions(card) {
+    const opts = card.querySelector(".shop-opts");
+    opts.innerHTML = `<div class="history-empty">Memuat stok...</div>`;
+    try {
+        const r = await authFetch(`/api/otp?action=products&service_id=${encodeURIComponent(card.dataset.sid)}`);
+        const j = await r.json();
+        if (!r.ok || !j.success) throw new Error(j.error || "Gagal memuat produk");
+        if (j.data.length === 0) { opts.innerHTML = `<div class="history-empty">Stok habis</div>`; return; }
+        opts.innerHTML = j.data.map(o => `
+            <div class="shop-opt">
+                <div class="shop-opt-info"><b>${escHtml(o.operator)}</b><span>Stok ${Number(o.available).toLocaleString('id-ID')}</span></div>
+                <div class="shop-opt-price">Rp ${Number(o.price).toLocaleString('id-ID')}</div>
+                <button class="btn buy-item-btn" data-sid="${escHtml(card.dataset.sid)}" data-name="${escHtml(card.dataset.name)}" data-cpid="${o.catalog_product_id}" data-opid="${o.operator_id ?? ''}" data-op="${escHtml(o.operator)}" data-price="${o.price}">Beli</button>
+            </div>`).join("");
+    } catch (e) {
+        opts.innerHTML = `<div class="history-empty" style="color:#ef4444;">⚠️ ${escHtml(e.message)}</div>`;
+    }
+}
+
+document.getElementById("shop-search").addEventListener("input", renderShop);
+document.getElementById("shop-list").addEventListener("click", (e) => {
+    if (e.target.closest("#shop-retry")) return loadShopCatalog(true);
+    const buy = e.target.closest("button[data-cpid]");
+    if (buy) return orderOtpProduct(buy.dataset);
+    const head = e.target.closest(".shop-svc-head");
+    if (head) {
+        const card = head.parentElement;
+        const opts = card.querySelector(".shop-opts");
+        const open = card.classList.toggle("open");
+        opts.style.display = open ? "block" : "none";
+        if (open) loadShopOptions(card);
+    }
+});
+
+async function orderOtpProduct(ds) {
+    if (!currentUser) return window.showToast("Akses Ditolak", "Silakan login terlebih dahulu untuk membeli!", "error");
+    const price = parseInt(ds.price, 10);
+    const productName = `Nokos ${ds.name}`;
+    try {
+        const userSnap = await getDoc(doc(db, "users", currentUser.uid));
+        const saldoUser = userSnap.exists() ? (userSnap.data().saldo || 0) : 0;
         if (saldoUser < price) {
-            return window.showToast(
-                "Saldo Tidak Cukup", 
-                `Gagal membeli ${productName}. Saldo Anda saat ini Rp ${saldoUser.toLocaleString('id-ID')}, kurang Rp ${(price - saldoUser).toLocaleString('id-ID')} lagi.`, 
-                "error"
-            );
+            return window.showToast("Saldo Tidak Cukup",
+                `Gagal membeli ${productName}. Saldo Anda saat ini Rp ${saldoUser.toLocaleString('id-ID')}, kurang Rp ${(price - saldoUser).toLocaleString('id-ID')} lagi.`, "error");
         }
-        
         window.showToast("Memproses", "Sedang mengambil nomor OTP...", "success");
-        
-        const response = await fetch(`/api/rumahotp?action=order&service=${serviceType}`);
+
+        const response = await authFetch(`/api/otp?action=order`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                service_id: ds.sid, catalog_product_id: ds.cpid,
+                operator_id: ds.opid === "" ? null : ds.opid, expected_price: price
+            })
+        });
         const result = await response.json();
-        
         if (!response.ok || !result.success) {
+            if (result.refresh) { document.querySelectorAll(".shop-svc.open").forEach(c => loadShopOptions(c)); }
             throw new Error(result.error || "Gagal mengambil nomor dari provider.");
         }
-        
-        const orderId = result.data.id;
-        const nomorHp = result.data.number;
-        currentActiveOrderId = orderId;
-
-        openOtpModal(nomorHp, orderId, productName, price);
-        
-    } catch (e) { 
-        window.showToast("Transaksi Gagal", e.message, "error"); 
+        currentActiveOrderId = result.data.id;
+        openOtpModal(result.data.number, result.data.id, productName, result.data.price);
+    } catch (e) {
+        window.showToast("Transaksi Gagal", e.message, "error");
     }
-};
+}
 
 function openOtpModal(nomorHp, orderId, productName, price) {
     document.getElementById("otp-number-text").innerText = nomorHp;
@@ -1486,7 +1337,7 @@ function openOtpModal(nomorHp, orderId, productName, price) {
     clearInterval(otpPollingInterval);
     otpPollingInterval = setInterval(async () => {
         try {
-            const checkResponse = await fetch(`/api/rumahotp?action=status&id=${orderId}`);
+            const checkResponse = await authFetch(`/api/otp?action=status&id=${orderId}`);
             const checkResult = await checkResponse.json();
             
             if (checkResult.success && checkResult.data.sms) {
@@ -1533,7 +1384,7 @@ async function handleCancelProcess(orderId, toastTitle, toastMsg) {
     clearInterval(otpPollingInterval);
     
     try {
-        await fetch(`/api/rumahotp?action=cancel&id=${orderId}`);
+        await authFetch(`/api/otp?action=cancel&id=${orderId}`);
     } catch(e) {
         console.error("Gagal mengirim cancel ke server:", e);
     }
@@ -1586,7 +1437,7 @@ window.requestQRIS = async () => {
     try {
         const orderId = "DEPOSIT" + Math.floor(Date.now() / 1000) + Math.floor(Math.random() * 1000);
 
-        const response = await fetch(`/api/topup?action=create`, {
+        const response = await authFetch(`/api/topup?action=create`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
@@ -1601,6 +1452,7 @@ window.requestQRIS = async () => {
         }
 
         const qrisString = resData.data.payment_number;
+        const qrisCode = resData.data.code;
         const totalBayar = resData.data.total_payment;
         const expiredAt = new Date(resData.data.expired_at).getTime();
 
@@ -1631,7 +1483,7 @@ window.requestQRIS = async () => {
         clearInterval(qrisPollingInterval);
         qrisPollingInterval = setInterval(async () => {
             try {
-                const statusRes = await fetch(`/api/topup?action=status&order_id=${orderId}&amount=${amount}`);
+                const statusRes = await authFetch(`/api/topup?action=status&code=${qrisCode}`);
                 const statusData = await statusRes.json();
 
                 if (statusData.success && statusData.data.status === "completed") {
@@ -1696,6 +1548,7 @@ window.switchPage = (pageId, menuId) => {
     document.getElementById(pageId).classList.add('active');
     if(menuId) document.getElementById(menuId).classList.add('active-menu');
     document.getElementById("sidebar-menu").classList.remove("active");
+    if(pageId === 'shop-page') loadShopCatalog();
     if(pageId === 'chat-page') {
         setTimeout(() => { document.getElementById("chat-messages-box").scrollTop = 9999; }, 100);
     }
@@ -1729,22 +1582,24 @@ applyThemeUI();
 // UTIL
 // ============================================================
 const ADMIN_EMAIL = "jaenajaemin316@gmail.com";
+async function authFetch(url, opts = {}) {
+    const token = await currentUser.getIdToken();
+    return fetch(url, { ...opts, headers: { ...(opts.headers || {}), Authorization: "Bearer " + token } });
+}
 const escHtml = (str) => String(str ?? "").replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 
 // ============================================================
 // AI SUPPORT CS (bot bawaan web, tanpa API eksternal)
 // ============================================================
-const AI_PRODUK = "• Alight Motion Premium 1 Tahun — GRATIS\n• Nokos Shopee — Rp 2.000\n• Nokos WhatsApp — Rp 3.500\n• Nokos DANA — Rp 4.000\n• Top Up Saldo via QRIS (otomatis, minimal Rp 1.000)";
+const AI_PRODUK = "Daftar aplikasi, stok, dan harga terbaru ada di menu Beli Produk (diambil langsung dari katalog, jadi selalu update).\nTop Up Saldo via QRIS otomatis, minimal Rp 1.000.";
 
 const AI_KB = [
     { id: "masalah", ticket: true, kw: ["saldo tidak masuk","saldo belum masuk","saldo ga masuk","saldo gak masuk","belum masuk","tidak masuk","gak masuk","ga masuk","belum bertambah","tidak bertambah","transaksi gagal","sudah bayar","udah bayar","sudah transfer","terpotong","kepotong","refund","komplain","otp tidak","otp ga","otp gak","otp belum","tidak muncul","gak muncul","ga muncul","bermasalah","error","bug","gagal","penipuan","tertipu"],
       reply: "Maaf ya atas kendalanya 🙏 Untuk masalah saldo/transaksi/OTP, admin perlu cek manual.\n\nSilakan buat Tiket Dukungan dan tulis: nominal, jam transaksi, dan kronologi singkat. Tiketmu langsung masuk ke admin." },
     { id: "topup", kw: ["top up","topup","isi saldo","tambah saldo","qris","deposit","bayar","pembayaran"],
       reply: "Cara top up saldo 💳\n1. Buka halaman Profile Akun\n2. Pilih Top Up, masukkan nominal (minimal Rp 1.000)\n3. Scan QRIS yang muncul lalu bayar\n4. Saldo masuk otomatis setelah pembayaran terdeteksi\n\nJangan tutup halaman sampai status berhasil ya." },
-    { id: "alight", kw: ["alight","motion","am premium","preset","xml"],
-      reply: "Alight Motion Premium 1 Tahun saat ini GRATIS 🎬\nBuka menu Beli Produk, pilih Alight Motion, lalu ikuti langkah di layar. Kalau ada error, buat Tiket Dukungan." },
-    { id: "nokos", kw: ["nokos","nomor kosong","shopee","whatsapp","dana","otp","nomor virtual","verifikasi"],
-      reply: "Layanan Nokos (nomor OTP) 📱\n• Shopee — Rp 2.000\n• WhatsApp — Rp 3.500\n• DANA — Rp 4.000\n\nBuka Beli Produk → pilih layanan → nomor akan muncul, lalu minta kode OTP di aplikasi tujuan dan tunggu kodenya tampil di layar. Pastikan saldo cukup dulu ya." },
+    { id: "nokos", kw: ["nokos","nomor kosong","otp","nomor virtual","verifikasi"],
+      reply: "Layanan Nomor OTP 📱\nBuka Beli Produk → cari aplikasi → pilih operator dan harga. Nomor akan muncul, lalu minta kode OTP di aplikasi tujuan dan tunggu kodenya tampil di layar. Pastikan saldo cukup dulu ya." },
     { id: "harga", kw: ["harga","produk","jual","katalog","daftar","apa saja","ada apa","list"],
       reply: "Produk VannStore saat ini 🛍️\n" + AI_PRODUK },
     { id: "cara", kw: ["cara beli","cara order","cara pesan","gimana beli","bagaimana beli","cara pakai","cara menggunakan","tutorial"],
