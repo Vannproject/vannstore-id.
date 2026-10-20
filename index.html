@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- VANNSTORE-BUILD: katalog-skirk + kelola-saldo (19-okt-2026) -->
+<!-- VANNSTORE-BUILD: saldo-server-v2 (19-okt-2026) -->
  
 <html lang="id">
 <head>
@@ -1403,24 +1403,16 @@ function openOtpModal(nomorHp, orderId, productName, price) {
                 const otpCode = checkResult.data.sms;
                 document.getElementById("otp-code-text").innerText = otpCode;
                 
-                const userDocRef = doc(db, "users", currentUser.uid);
-                const currentSaldo = (await getDoc(userDocRef)).data().saldo || 0;
-                await updateDoc(userDocRef, { saldo: currentSaldo - price });
-
-                const tanggalSkarang = new Date().toLocaleDateString('id-ID', {day: 'numeric', month: 'numeric', year: 'numeric'});
-                await addDoc(collection(db, "transaksi"), {
-                    userId: currentUser.uid,
-                    produk: `${productName} (${nomorHp})`,
-                    harga: price,
-                    tanggal: tanggalSkarang,
-                    timestamp: new Date().getTime()
-                });
-                
                 window.showToast("Transaksi Sukses", `Kode OTP berhasil didapatkan: ${otpCode}`, "success");
                 
                 document.getElementById("btn-cancel-otp").innerText = "Tutup Jendela";
                 document.getElementById("btn-cancel-otp").onclick = closeOtpModal;
                 document.getElementById("btn-cancel-otp").style.background = "linear-gradient(135deg, #10b981, #059669)";
+            } else if (checkResult.success && (checkResult.data.state === "refunded" || ["canceled", "expired", "failed"].includes(checkResult.data.status))) {
+                clearInterval(otpCountdownInterval);
+                clearInterval(otpPollingInterval);
+                closeOtpModal();
+                window.showToast("Pesanan Berakhir", "Nomor tidak menerima kode. Saldo kamu sudah dikembalikan.", "error");
             }
         } catch (err) {
             console.error("Gagal melakukan polling status:", err);
@@ -1430,21 +1422,26 @@ function openOtpModal(nomorHp, orderId, productName, price) {
     document.getElementById("btn-cancel-otp").innerText = "Batalkan Pesanan";
     document.getElementById("btn-cancel-otp").style.background = "linear-gradient(135deg, #ef4444, #b91c1c)";
     document.getElementById("btn-cancel-otp").onclick = () => {
-        handleCancelProcess(orderId, "Dibatalkan", "Pesanan nomor berhasil dibatalkan.");
+        handleCancelProcess(orderId, "Dibatalkan", "Pesanan nomor dibatalkan. Saldo kamu dikembalikan.", true);
     };
 }
 
-async function handleCancelProcess(orderId, toastTitle, toastMsg) {
+async function handleCancelProcess(orderId, toastTitle, toastMsg, manual) {
     window.showToast("Memproses", "Sedang membatalkan nomor...", "success");
-    clearInterval(otpCountdownInterval);
-    clearInterval(otpPollingInterval);
-    
     try {
-        await authFetch(`/api/otp?action=cancel&id=${orderId}`);
+        const r = await authFetch(`/api/otp?action=cancel&id=${orderId}`);
+        const j = await r.json();
+        if (manual && !j.success) {
+            // belum bisa dibatalkan (misalnya jeda ±2 menit): jendela tetap terbuka, pemeriksaan OTP jalan terus
+            window.showToast("Belum Bisa Dibatalkan", j.error || "Coba lagi sekitar 2 menit setelah memesan.", "error");
+            return;
+        }
     } catch(e) {
         console.error("Gagal mengirim cancel ke server:", e);
+        if (manual) return window.showToast("Gagal", "Tidak bisa menghubungi server. Coba lagi.", "error");
     }
-    
+    clearInterval(otpCountdownInterval);
+    clearInterval(otpPollingInterval);
     closeOtpModal();
     window.showToast(toastTitle, toastMsg, "error");
 }
@@ -1546,21 +1543,7 @@ window.requestQRIS = async () => {
                     clearInterval(qrisCountdownInterval);
                     clearInterval(qrisPollingInterval);
 
-                    const userDocRef = doc(db, "users", currentUser.uid);
-                    const userSnap = await getDoc(userDocRef);
-                    const currentSaldo = userSnap.data().saldo || 0;
                     const amountCredited = statusData.data.amount;
-
-                    await updateDoc(userDocRef, { saldo: currentSaldo + amountCredited });
-
-                    const tanggalSkarang = new Date().toLocaleDateString('id-ID', {day: 'numeric', month: 'numeric', year: 'numeric'});
-                    await addDoc(collection(db, "transaksi"), {
-                        userId: currentUser.uid,
-                        produk: "Deposit Saldo (QRIS)",
-                        harga: -amountCredited,
-                        tanggal: tanggalSkarang,
-                        timestamp: new Date().getTime()
-                    });
 
                     closeTopupModal();
                     window.showToast("Top Up Berhasil!", `Selamat! Saldo sebesar Rp ${amountCredited.toLocaleString('id-ID')} telah ditambahkan ke akunmu!`, "success");
