@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- VANNSTORE-BUILD: saldo-server-v2 (19-okt-2026) -->
+<!-- VANNSTORE-BUILD: beranda-riwayat-v3 (20-okt-2026) -->
  
 <html lang="id">
 <head>
@@ -605,6 +605,72 @@
     .shop-opt-info span { display: block; font-size: 11px; color: var(--text-muted); }
     .shop-opt-price { font-size: 13px; font-weight: 700; color: #10b981; }
 
+    /* --- BERANDA BARU --- */
+    .home-head { display: flex; align-items: center; gap: 12px; text-align: left; margin-bottom: 14px; }
+    .home-avatar { position: relative; width: 56px; height: 56px; flex-shrink: 0; }
+    .home-avatar #user-photo { width: 56px; height: 56px; border-radius: 50%; border: 2px solid #3b82f6; box-shadow: 0 0 0 3px rgba(59,130,246,0.18); object-fit: cover; }
+    .home-avatar .profile-status-dot { width: 13px; height: 13px; bottom: 0; right: 0; border-width: 2px; }
+    .home-hello { flex: 1; min-width: 0; }
+    .home-hello-sub { font-size: 11px; color: var(--text-muted); }
+    .home-hello #user-name { font-size: 17px; margin: 1px 0 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .home-hello #user-email { font-size: 11.5px; margin: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .home-head .userid-badge { margin-top: 0; max-width: 92px; padding: 6px 9px; }
+    .home-head .userid-badge span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 56px; }
+
+    .wallet-card { position: relative; overflow: hidden; text-align: left; border-radius: 22px; padding: 18px 18px 16px; margin-bottom: 14px; color: #fff;
+        background: linear-gradient(135deg, #2563eb 0%, #6d28d9 60%, #9333ea 100%); box-shadow: 0 14px 30px -10px rgba(79,70,229,0.55); }
+    .wallet-card::before { content: ''; position: absolute; width: 190px; height: 190px; border-radius: 50%; top: -80px; right: -60px; background: radial-gradient(circle, rgba(255,255,255,0.28), transparent 70%); }
+    .wallet-card::after { content: ''; position: absolute; width: 150px; height: 150px; border-radius: 50%; bottom: -90px; left: -40px; background: radial-gradient(circle, rgba(255,255,255,0.14), transparent 70%); }
+    .wallet-card > * { position: relative; z-index: 2; }
+    .wallet-top { display: flex; justify-content: space-between; align-items: center; font-size: 12px; font-weight: 600; color: rgba(255,255,255,0.85); }
+    .wallet-chip { font-size: 10px; font-weight: 700; letter-spacing: .6px; padding: 4px 10px; border-radius: 999px; background: rgba(255,255,255,0.18); border: 1px solid rgba(255,255,255,0.25); }
+    .wallet-value { font-size: 31px; font-weight: 800; letter-spacing: -0.5px; margin: 10px 0 14px; }
+    .wallet-meta { display: flex; gap: 10px; }
+    .wallet-meta > div { flex: 1; padding: 9px 11px; border-radius: 13px; background: rgba(0,0,0,0.22); border: 1px solid rgba(255,255,255,0.1); }
+    .wallet-meta span { display: block; font-size: 10.5px; color: rgba(255,255,255,0.7); margin-bottom: 2px; }
+    .wallet-meta b { font-size: 13px; font-weight: 700; }
+
+    .quick-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-bottom: 14px; }
+    .quick-item { display: flex; flex-direction: column; align-items: center; gap: 7px; padding: 11px 4px 9px; border-radius: 16px; cursor: pointer; border: 1px solid var(--card-border); background: var(--product-bg);
+        color: var(--text-secondary); font-size: 11px; font-weight: 600; font-family: inherit; transition: transform .15s ease, background .2s; }
+    .quick-item:active { transform: scale(.95); }
+    .q-ic { width: 38px; height: 38px; border-radius: 13px; display: flex; align-items: center; justify-content: center; font-size: 16px; color: #fff; background: var(--c); box-shadow: 0 6px 14px -6px var(--c); }
+
+    .hist-section { text-align: left; margin-top: 6px; }
+    .hist-head h3 { font-size: 15px; font-weight: 700; color: var(--text-primary); margin-bottom: 10px; }
+    .hist-head h3 i { color: #60a5fa; margin-right: 6px; }
+    .hist-chips { display: flex; gap: 6px; margin-bottom: 10px; }
+    .hist-chip { font-size: 12px; font-weight: 700; padding: 7px 14px; border-radius: 999px; border: 1px solid var(--card-border); background: var(--input-bg); color: var(--text-secondary); cursor: pointer; font-family: inherit; }
+    .hist-chip.active { background: linear-gradient(135deg, #3b82f6, #2563eb); color: #fff; border-color: transparent; }
+    .hist-list { display: flex; flex-direction: column; gap: 8px; }
+    .hist-item { display: flex; align-items: center; gap: 11px; width: 100%; padding: 11px 12px; border-radius: 16px; cursor: pointer; text-align: left;
+        border: 1px solid var(--product-border); background: var(--product-bg); color: var(--text-primary); font-family: inherit; transition: transform .15s ease; }
+    .hist-item:active { transform: scale(.985); }
+    .hist-item.active-order { border-color: rgba(245,158,11,0.5); background: linear-gradient(135deg, rgba(245,158,11,0.12), rgba(245,158,11,0.04)); margin-bottom: 8px; }
+    .hist-ic { width: 38px; height: 38px; border-radius: 12px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 15px; color: #fff; }
+    .hist-ic.nokos { background: linear-gradient(135deg, #3b82f6, #6366f1); }
+    .hist-ic.topup { background: linear-gradient(135deg, #10b981, #059669); }
+    .hist-main { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+    .hist-main b { font-size: 13px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .hist-main small { font-size: 11px; color: var(--text-muted); margin-top: 2px; }
+    .hist-side { display: flex; flex-direction: column; align-items: flex-end; gap: 4px; flex-shrink: 0; }
+    .hist-side .amt { font-size: 13px; font-weight: 800; }
+    .hist-side .amt.plus { color: #10b981; }
+    .hist-side .amt.minus { color: var(--text-primary); }
+    .hist-badge { font-style: normal; font-size: 10px; font-weight: 700; padding: 2px 8px; border-radius: 999px; }
+    .hist-badge.wait { background: rgba(251,191,36,0.15); color: #fbbf24; }
+    .hist-badge.done { background: rgba(16,185,129,0.15); color: #10b981; }
+    .hist-badge.fail { background: rgba(148,163,184,0.18); color: #94a3b8; }
+    .hist-more { width: 100%; margin-top: 10px; padding: 10px; border-radius: 12px; border: 1px dashed var(--card-border); background: transparent; color: var(--text-secondary); font-size: 12px; font-weight: 600; cursor: pointer; font-family: inherit; }
+    .hist-cta { font-size: 10.5px; font-weight: 700; color: #f59e0b; margin-top: 2px; }
+    .hd-title { font-size: 17px; font-weight: 800; margin-bottom: 4px; }
+    .hd-row { display: flex; justify-content: space-between; gap: 10px; padding: 9px 0; border-bottom: 1px solid var(--history-border); font-size: 12.5px; text-align: left; }
+    .hd-row span { color: var(--text-muted); }
+    .hd-row b { color: var(--text-primary); text-align: right; word-break: break-all; }
+    .hd-code { font-size: 26px; font-weight: 900; letter-spacing: 4px; color: #10b981; background: rgba(16,185,129,0.1); border: 2px dashed #10b981; padding: 12px; border-radius: 14px; margin: 12px 0 6px; }
+    .hd-btn { width: 100%; margin-top: 8px; padding: 11px; border-radius: 12px; border: 1px solid var(--card-border); background: var(--input-bg); color: var(--text-primary); font-weight: 700; font-size: 13px; cursor: pointer; font-family: inherit; }
+    .hd-btn.primary { background: linear-gradient(135deg, #3b82f6, #2563eb); color: #fff; border-color: transparent; }
+
     /* --- ADMIN: KELOLA SALDO --- */
     .adm-summary { display: flex; gap: 10px; margin: 12px 0 4px; }
     .adm-summary > div { flex: 1; background: var(--product-bg); border: 1px solid var(--product-border); border-radius: 14px; padding: 10px 12px; text-align: left; }
@@ -750,6 +816,10 @@
     </div>
 </div>
 
+<div class="topup-modal" id="hist-modal-box">
+    <div class="topup-modal-content" id="hist-modal-content"></div>
+</div>
+
 <div class="otp-modal" id="otp-modal-box">
     <div class="otp-modal-content">
         <div class="otp-timer" id="otp-countdown-timer"><i class="fa-solid fa-clock"></i> 15:00</div>
@@ -849,48 +919,55 @@
         <div class="app-card">
             
             <div id="profile-page" class="page-content active">
+                <div class="home-head">
+                    <div class="home-avatar">
+                        <img id="user-photo" src="" alt="Profile">
+                        <span class="profile-status-dot"></span>
+                    </div>
+                    <div class="home-hello">
+                        <span class="home-hello-sub">Selamat datang 👋</span>
+                        <h2 id="user-name">Nama</h2>
+                        <p id="user-email">email@gmail.com</p>
+                    </div>
+                    <div class="userid-badge" id="btn-copy-id" onclick="copyUserID()" title="Salin ID"><i class="fa-regular fa-copy"></i><span id="user-id-text">Loading...</span></div>
+                </div>
+
+                <div class="wallet-card">
+                    <div class="wallet-top">
+                        <span><i class="fa-solid fa-wallet"></i> Saldo Anda</span>
+                        <span class="wallet-chip">VannStore</span>
+                    </div>
+                    <div class="wallet-value" id="user-saldo-text">Rp 0</div>
+                    <div class="wallet-meta">
+                        <div><span>Terdaftar</span><b id="join-date">-</b></div>
+                        <div><span>Total belanja</span><b id="total-transaksi">Rp 0</b></div>
+                    </div>
+                </div>
+
+                <div class="quick-grid">
+                    <button class="quick-item" onclick="openTopupModal()"><span class="q-ic" style="--c:#10b981;"><i class="fa-solid fa-plus"></i></span><span>Top Up</span></button>
+                    <button class="quick-item" onclick="switchPage('shop-page','m-shop')"><span class="q-ic" style="--c:#3b82f6;"><i class="fa-solid fa-sim-card"></i></span><span>Beli Nomor</span></button>
+                    <button class="quick-item" onclick="switchPage('chat-page','m-chat')"><span class="q-ic" style="--c:#8b5cf6;"><i class="fa-solid fa-comments"></i></span><span>Chat</span></button>
+                    <button class="quick-item" onclick="switchPage('ticket-page','m-ticket')"><span class="q-ic" style="--c:#f59e0b;"><i class="fa-solid fa-headset"></i></span><span>Bantuan</span></button>
+                </div>
+
                 <div class="update-ticker">
                     <div class="update-ticker-icon"><i class="fa-solid fa-bullhorn"></i></div>
                     <div class="update-ticker-viewport">
-                        <span class="update-ticker-track">🎉 Top Up Saldo otomatis via QRIS sudah aktif &nbsp;•&nbsp; 🛍️ Produk baru segera hadir &nbsp;•&nbsp; 💬 Yuk gabung Chat Global VannStore &nbsp;•&nbsp; 🎉 Top Up Saldo otomatis via QRIS sudah aktif</span>
+                        <span class="update-ticker-track">🎉 Top Up Saldo otomatis via QRIS sudah aktif &nbsp;•&nbsp; 📱 Nomor OTP dari katalog terbaru &nbsp;•&nbsp; 🧾 Riwayat transaksi kamu tersimpan aman &nbsp;•&nbsp; 🎉 Top Up Saldo otomatis via QRIS sudah aktif</span>
                     </div>
                 </div>
 
-                <div class="profile-promo-banner"></div>
-                <div class="profile-container">
-                    <img id="user-photo" src="" alt="Profile">
-                    <div class="profile-status-dot"></div>
-                </div>
-                <h2 id="user-name">Nama</h2>
-                <p id="user-email">email@gmail.com</p>
-                
-                <div class="userid-badge" id="btn-copy-id" onclick="copyUserID()">
-                    <i class="fa-solid fa-fingerprint"></i> ID: <span id="user-id-text">Loading...</span>
-                </div>
-
-                <div class="balance-hero">
-                    <div class="balance-hero-top">
-                        <span class="balance-hero-label"><i class="fa-solid fa-wallet"></i> Saldo Anda</span>
-                        <div class="balance-hero-icon"><i class="fa-solid fa-coins"></i></div>
+                <div class="hist-section">
+                    <div class="hist-head"><h3><i class="fa-solid fa-clock-rotate-left"></i> Riwayat</h3></div>
+                    <div class="hist-chips" id="hist-chips">
+                        <button class="hist-chip active" data-f="all">Semua</button>
+                        <button class="hist-chip" data-f="nokos">Nokos</button>
+                        <button class="hist-chip" data-f="topup">Top Up</button>
                     </div>
-                    <div class="balance-hero-value" id="user-saldo-text">Rp 0</div>
-                    <div class="balance-stats-row">
-                        <div class="balance-stat-pill">
-                            <div class="stat-label"><i class="fa-solid fa-calendar-days"></i> Terdaftar</div>
-                            <div class="stat-value" id="join-date">-</div>
-                        </div>
-                        <div class="balance-stat-pill">
-                            <div class="stat-label"><i class="fa-solid fa-hand-holding-dollar"></i> Pengeluaran</div>
-                            <div class="stat-value" id="total-transaksi">Rp 0</div>
-                        </div>
-                    </div>
-                </div>
-
-                <button class="btn" style="background: linear-gradient(135deg, #3b82f6, #1d4ed8); padding: 12px; border-radius: 14px; margin-top:5px; margin-bottom:15px;" onclick="openTopupModal()"><i class="fa-solid fa-money-bill-transfer"></i> Top Up Saldo Otomatis</button>
-
-                <div class="history-box">
-                    <div class="history-title"><i class="fa-solid fa-clock-rotate-left" style="color: #60a5fa;"></i> Riwayat Transaksi</div>
-                    <div id="tx-history-container" class="history-empty">Belum ada riwayat transaksi</div>
+                    <div id="hist-active"></div>
+                    <div id="hist-list" class="hist-list"><div class="history-empty">Memuat riwayat...</div></div>
+                    <button class="hist-more" id="hist-more" style="display:none;">Muat lebih banyak</button>
                 </div>
             </div>
 
@@ -1104,7 +1181,7 @@ const handleLogout = () => {
 document.getElementById("menu-logout").addEventListener("click", handleLogout);
 
 function handleLogoutDOM() {
-    if(unsubscribeTx) { unsubscribeTx(); unsubscribeTx = null; }
+    stopHistory();
     if(unsubscribeChat) { unsubscribeChat(); unsubscribeChat = null; }
     if(unsubscribeUser) { unsubscribeUser(); unsubscribeUser = null; }
     if(typeof unsubscribeTicket === "function") { unsubscribeTicket(); unsubscribeTicket = null; }
@@ -1173,35 +1250,178 @@ function listenToUserData(uid) {
     });
 }
 
-function listenToTransactions(uid) {
-    if(unsubscribeTx) unsubscribeTx();
-    const txRef = collection(db, "transaksi");
-    const q = query(txRef, where("userId", "==", uid), orderBy("timestamp", "desc"));
-    
-    unsubscribeTx = onSnapshot(q, (snapshot) => {
-        const container = document.getElementById("tx-history-container");
-        let totalPengeluaran = 0;
-        if(snapshot.empty) {
-            container.innerHTML = "Belum ada riwayat transaksi";
-            container.className = "history-empty";
-            document.getElementById("total-transaksi").innerText = "Rp 0";
-            return;
-        }
-        container.innerHTML = "";
-        container.className = ""; 
-        snapshot.forEach((doc) => {
-            const data = doc.data();
-            totalPengeluaran += data.harga;
-            const itemHTML = `
-                <div class="tx-item">
-                    <div class="tx-info"><h5>${escHtml(data.produk)}</h5><span>${escHtml(data.tanggal)}</span></div>
-                    <div class="tx-price">Rp ${data.harga.toLocaleString('id-ID')}</div>
-                </div>`;
-            container.innerHTML += itemHTML;
-        });
-        document.getElementById("total-transaksi").innerText = "Rp " + totalPengeluaran.toLocaleString('id-ID');
-    });
+// ============================================================
+// RIWAYAT: pesanan nokos + top up (disimpan di server, jadi tetap ada walau web tertutup)
+// ============================================================
+let histOrders = [], histDeposits = [], histLegacy = [], histFilter = "all", histLimit = 30, histItems = [];
+let histReady = { o: false, d: false, t: false };
+let unsubscribeOrders = null, unsubscribeDeposits = null;
+
+function stopHistory() {
+    if (unsubscribeTx) { unsubscribeTx(); unsubscribeTx = null; }
+    if (unsubscribeOrders) { unsubscribeOrders(); unsubscribeOrders = null; }
+    if (unsubscribeDeposits) { unsubscribeDeposits(); unsubscribeDeposits = null; }
+    histOrders = []; histDeposits = []; histLegacy = []; histItems = [];
+    histReady = { o: false, d: false, t: false };
 }
+
+function listenToTransactions(uid) {
+    stopHistory();
+    // transaksi lama (sebelum riwayat baru): hanya yang tidak ditandai via:'server', supaya tidak dobel
+    unsubscribeTx = onSnapshot(query(collection(db, "transaksi"), where("userId", "==", uid)), (snap) => {
+        histLegacy = snap.docs.map(d => ({ id: d.id, ...d.data() })).filter(t => t.via !== "server");
+        histReady.t = true; renderHistory();
+    }, (err) => { console.warn("Tx listener error:", err); histReady.t = true; renderHistory(); });
+
+    unsubscribeOrders = onSnapshot(query(collection(db, "pesanan"), where("uid", "==", uid)), (snap) => {
+        histOrders = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+        histReady.o = true; renderHistory();
+    }, (err) => { console.warn("Pesanan listener error:", err.code); histReady.o = true; renderHistory(); });
+
+    unsubscribeDeposits = onSnapshot(query(collection(db, "deposits"), where("uid", "==", uid)), (snap) => {
+        histDeposits = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+        histReady.d = true; renderHistory();
+    }, (err) => { console.warn("Deposits listener error:", err.code); histReady.d = true; renderHistory(); });
+}
+
+function fmtWaktu(ts) {
+    return new Date(ts).toLocaleString("id-ID", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" });
+}
+
+function buildHistoryItems() {
+    const now = Date.now();
+    const items = [];
+    histOrders.forEach(o => {
+        const berakhir = o.expiresAt && now > o.expiresAt;
+        let st = "wait", label = berakhir ? "Memproses" : "Menunggu OTP";
+        if (o.status === "done") { st = "done"; label = "Berhasil"; }
+        else if (o.status === "refunded") { st = "fail"; label = "Dibatalkan"; }
+        items.push({ key: "o:" + o.id, kind: "nokos", ts: o.createdAt || 0, title: o.produk || "Nokos", sub: o.phone || "", amount: -(o.price || 0), st, label,
+            active: st === "wait" && !berakhir, raw: o, type: "order" });
+    });
+    histDeposits.forEach(d => {
+        const lewat = d.expiresAt && now > d.expiresAt;
+        let st = "wait", label = "Menunggu bayar";
+        if (d.status === "credited") { st = "done"; label = "Berhasil"; }
+        else if (d.status === "expired" || (d.status === "pending" && lewat)) { st = "fail"; label = "Kedaluwarsa"; }
+        items.push({ key: "d:" + d.id, kind: "topup", ts: d.createdAt || 0, title: "Top Up QRIS", sub: "", amount: d.amount || 0, st, label,
+            active: st === "wait" && !!d.qris, raw: d, type: "deposit" });
+    });
+    histLegacy.forEach(t => {
+        const topup = t.harga < 0;
+        items.push({ key: "t:" + t.id, kind: topup ? "topup" : "nokos", ts: t.timestamp || 0, title: t.produk || "Transaksi", sub: "", amount: topup ? Math.abs(t.harga) : -t.harga,
+            st: "done", label: "Berhasil", active: false, raw: t, type: "legacy" });
+    });
+    return items.sort((a, b) => b.ts - a.ts);
+}
+
+function histItemHTML(it) {
+    const plus = it.amount > 0;
+    const amt = (plus ? "+" : "-") + rupiah(Math.abs(it.amount));
+    const sub = [it.sub, fmtWaktu(it.ts)].filter(Boolean).join(" · ");
+    const cta = it.active ? `<span class="hist-cta">${it.type === "order" ? "Ketuk untuk lihat nomor &amp; OTP" : "Ketuk untuk lanjut bayar"}</span>` : "";
+    return `<button class="hist-item ${it.active ? "active-order" : ""}" data-key="${escHtml(it.key)}">
+        <span class="hist-ic ${it.kind}"><i class="fa-solid ${it.kind === "nokos" ? "fa-sim-card" : "fa-wallet"}"></i></span>
+        <span class="hist-main"><b>${escHtml(it.title)}</b><small>${escHtml(sub)}</small>${cta}</span>
+        <span class="hist-side"><b class="amt ${plus ? "plus" : "minus"}">${amt}</b><em class="hist-badge ${it.st}">${it.label}</em></span>
+    </button>`;
+}
+
+function renderHistory() {
+    const listBox = document.getElementById("hist-list");
+    const activeBox = document.getElementById("hist-active");
+    if (!listBox) return;
+    histItems = buildHistoryItems();
+
+    // total belanja: pesanan nokos yang berhasil + transaksi lama bernilai positif
+    const spend = histOrders.filter(o => o.status === "done").reduce((a, o) => a + (o.price || 0), 0)
+        + histLegacy.filter(t => t.harga > 0).reduce((a, t) => a + t.harga, 0);
+    document.getElementById("total-transaksi").innerText = rupiah(spend);
+
+    if (!histReady.o && !histReady.d && !histReady.t) { listBox.innerHTML = `<div class="history-empty">Memuat riwayat...</div>`; activeBox.innerHTML = ""; return; }
+
+    const filtered = histItems.filter(it => histFilter === "all" || it.kind === histFilter);
+    const active = filtered.filter(it => it.active);
+    const rest = filtered.filter(it => !it.active);
+    activeBox.innerHTML = active.map(histItemHTML).join("");
+    if (filtered.length === 0) {
+        listBox.innerHTML = `<div class="history-empty">Belum ada riwayat${histFilter === "all" ? "" : " untuk kategori ini"}</div>`;
+        document.getElementById("hist-more").style.display = "none";
+        return;
+    }
+    listBox.innerHTML = rest.slice(0, histLimit).map(histItemHTML).join("");
+    document.getElementById("hist-more").style.display = rest.length > histLimit ? "block" : "none";
+}
+
+document.getElementById("hist-chips").addEventListener("click", (e) => {
+    const c = e.target.closest(".hist-chip");
+    if (!c) return;
+    histFilter = c.dataset.f; histLimit = 30;
+    document.querySelectorAll("#hist-chips .hist-chip").forEach(x => x.classList.toggle("active", x === c));
+    renderHistory();
+});
+document.getElementById("hist-more").addEventListener("click", () => { histLimit += 30; renderHistory(); });
+const onHistClick = (e) => {
+    const b = e.target.closest(".hist-item");
+    if (!b) return;
+    const it = histItems.find(x => x.key === b.dataset.key);
+    if (it) openHistItem(it);
+};
+document.getElementById("hist-list").addEventListener("click", onHistClick);
+document.getElementById("hist-active").addEventListener("click", onHistClick);
+
+// ----- membuka lagi pesanan / tagihan dari riwayat -----
+function openHistItem(it) {
+    if (it.type === "order" && it.active && it.raw.skirkId) {
+        const left = Math.floor((it.raw.createdAt + 20 * 60 * 1000 - Date.now()) / 1000);
+        if (left > 5) {
+            currentActiveOrderId = it.raw.skirkId;
+            return openOtpModal(it.raw.phone, it.raw.skirkId, it.raw.produk, it.raw.price, left);
+        }
+    }
+    if (it.type === "deposit" && it.active && it.raw.qris) {
+        document.getElementById("topup-modal-box").style.display = "flex";
+        return showQrisPayment(it.raw.id, it.raw.qris, it.raw.total || it.raw.amount, it.raw.expiresAt);
+    }
+    showHistDetail(it);
+}
+
+function showHistDetail(it) {
+    const r = it.raw;
+    const rows = [];
+    const row = (k, v) => rows.push(`<div class="hd-row"><span>${k}</span><b>${v}</b></div>`);
+    let extra = "";
+    row("Status", escHtml(it.label));
+    row("Waktu", escHtml(new Date(it.ts).toLocaleString("id-ID")));
+    row(it.amount > 0 ? "Saldo masuk" : "Harga", rupiah(Math.abs(it.amount)));
+    if (it.type === "order") {
+        if (r.phone) row("Nomor", `<span style="color:var(--text-primary)">${escHtml(r.phone)}</span>`);
+        if (r.operator) row("Operator", escHtml(r.operator));
+        if (r.status === "done") {
+            extra = r.otp ? `<div class="hd-code">${escHtml(r.otp)}</div><button class="hd-btn" data-copy="${escHtml(r.otp)}">📋 Salin kode OTP</button>`
+                          : `<p style="font-size:11.5px;color:var(--text-muted);margin-top:10px;">Kode OTP tidak tersimpan untuk pesanan ini.</p>`;
+        } else if (r.status === "refunded") {
+            extra = `<p style="font-size:11.5px;color:var(--text-muted);margin-top:10px;">Pesanan tidak menerima kode. Saldo sudah dikembalikan.</p>`;
+        } else {
+            extra = `<p style="font-size:11.5px;color:var(--text-muted);margin-top:10px;">Pesanan sedang diproses. Hasilnya akan muncul di sini otomatis.</p>`;
+        }
+        if (r.phone) extra += `<button class="hd-btn" data-copy="${escHtml(r.phone)}">📋 Salin nomor</button>`;
+    } else if (it.type === "deposit") {
+        if (r.total) row("Total dibayar", rupiah(r.total));
+        extra = it.st === "fail" ? `<p style="font-size:11.5px;color:var(--text-muted);margin-top:10px;">Tagihan ini sudah kedaluwarsa. Buat tagihan baru dari tombol Top Up.</p>` : "";
+    }
+    document.getElementById("hist-modal-content").innerHTML = `
+        <div class="hd-title">${escHtml(it.title)}</div>${rows.join("")}${extra}
+        <button class="hd-btn primary" onclick="closeHistModal()">Tutup</button>`;
+    document.getElementById("hist-modal-box").style.display = "flex";
+}
+window.closeHistModal = () => { document.getElementById("hist-modal-box").style.display = "none"; };
+document.getElementById("hist-modal-content").addEventListener("click", (e) => {
+    const b = e.target.closest("[data-copy]");
+    if (!b) return;
+    navigator.clipboard.writeText(b.dataset.copy).then(() => window.showToast("Tersalin", "Berhasil disalin.", "success"))
+        .catch(() => window.showToast("Gagal", "Tidak bisa menyalin otomatis.", "error"));
+});
 
 function listenGlobalChat() {
     if(unsubscribeChat) unsubscribeChat();
@@ -1368,12 +1588,12 @@ async function orderOtpProduct(ds) {
     }
 }
 
-function openOtpModal(nomorHp, orderId, productName, price) {
+function openOtpModal(nomorHp, orderId, productName, price, secondsLeft) {
     document.getElementById("otp-number-text").innerText = nomorHp;
     document.getElementById("otp-code-text").innerText = "MENUNGGU OTP...";
     document.getElementById("otp-modal-box").style.display = "flex";
     
-    let timeLeft = 900; 
+    let timeLeft = secondsLeft || 900; 
     const timerElement = document.getElementById("otp-countdown-timer");
     
     clearInterval(otpCountdownInterval);
@@ -1477,6 +1697,52 @@ window.selectTopupAmount = (amount, element) => {
     element.classList.add("selected");
 };
 
+function showQrisPayment(qrisCode, qrisString, totalBayar, expiredAt) {
+    document.getElementById("topup-input-container").style.display = "none";
+    document.getElementById("qris-barcode").src = `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(qrisString)}`;
+    document.getElementById("qris-barcode").style.display = "block";
+    document.getElementById("qris-total-pay").innerText = "Rp " + totalBayar.toLocaleString('id-ID');
+    document.getElementById("qris-display-container").style.display = "block";
+
+    let timeLeft = Math.floor((expiredAt - Date.now()) / 1000);
+    if (timeLeft <= 0 || isNaN(timeLeft)) timeLeft = 600;
+
+    const qrisTimer = document.getElementById("qris-countdown-timer");
+    clearInterval(qrisCountdownInterval);
+    qrisCountdownInterval = setInterval(() => {
+        let mins = Math.floor(timeLeft / 60);
+        let secs = timeLeft % 60;
+        secs = secs < 10 ? '0' + secs : secs;
+        qrisTimer.innerHTML = `<i class="fa-solid fa-clock"></i> ${mins}:${secs}`;
+        if (timeLeft <= 0) {
+            clearInterval(qrisCountdownInterval);
+            closeTopupModal();
+            window.showToast("Tagihan Expired", "Waktu pembayaran telah habis.", "error");
+        }
+        timeLeft--;
+    }, 1000);
+
+    clearInterval(qrisPollingInterval);
+    qrisPollingInterval = setInterval(async () => {
+        try {
+            const statusRes = await authFetch(`/api/topup?action=status&code=${qrisCode}`);
+            const statusData = await statusRes.json();
+
+            if (statusData.success && statusData.data.status === "completed") {
+                clearInterval(qrisCountdownInterval);
+                clearInterval(qrisPollingInterval);
+
+                const amountCredited = statusData.data.amount;
+
+                closeTopupModal();
+                window.showToast("Top Up Berhasil!", `Selamat! Saldo sebesar Rp ${amountCredited.toLocaleString('id-ID')} telah ditambahkan ke akunmu!`, "success");
+            }
+        } catch(err) {
+            console.error("Gagal memeriksa status deposit:", err);
+        }
+    }, 8000);
+}
+
 window.requestQRIS = async () => {
     const amountVal = document.getElementById("topup-amount-input").value.trim();
     const amount = parseInt(amountVal);
@@ -1509,49 +1775,7 @@ window.requestQRIS = async () => {
         const totalBayar = resData.data.total_payment;
         const expiredAt = new Date(resData.data.expired_at).getTime();
 
-        document.getElementById("topup-input-container").style.display = "none";
-        document.getElementById("qris-barcode").src = `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(qrisString)}`;
-        document.getElementById("qris-barcode").style.display = "block";
-        document.getElementById("qris-total-pay").innerText = "Rp " + totalBayar.toLocaleString('id-ID');
-        document.getElementById("qris-display-container").style.display = "block";
-
-        let timeLeft = Math.floor((expiredAt - Date.now()) / 1000);
-        if (timeLeft <= 0 || isNaN(timeLeft)) timeLeft = 600;
-
-        const qrisTimer = document.getElementById("qris-countdown-timer");
-        clearInterval(qrisCountdownInterval);
-        qrisCountdownInterval = setInterval(() => {
-            let mins = Math.floor(timeLeft / 60);
-            let secs = timeLeft % 60;
-            secs = secs < 10 ? '0' + secs : secs;
-            qrisTimer.innerHTML = `<i class="fa-solid fa-clock"></i> ${mins}:${secs}`;
-            if (timeLeft <= 0) {
-                clearInterval(qrisCountdownInterval);
-                closeTopupModal();
-                window.showToast("Tagihan Expired", "Waktu pembayaran telah habis.", "error");
-            }
-            timeLeft--;
-        }, 1000);
-
-        clearInterval(qrisPollingInterval);
-        qrisPollingInterval = setInterval(async () => {
-            try {
-                const statusRes = await authFetch(`/api/topup?action=status&code=${qrisCode}`);
-                const statusData = await statusRes.json();
-
-                if (statusData.success && statusData.data.status === "completed") {
-                    clearInterval(qrisCountdownInterval);
-                    clearInterval(qrisPollingInterval);
-
-                    const amountCredited = statusData.data.amount;
-
-                    closeTopupModal();
-                    window.showToast("Top Up Berhasil!", `Selamat! Saldo sebesar Rp ${amountCredited.toLocaleString('id-ID')} telah ditambahkan ke akunmu!`, "success");
-                }
-            } catch(err) {
-                console.error("Gagal memeriksa status deposit:", err);
-            }
-        }, 8000);
+        showQrisPayment(qrisCode, qrisString, totalBayar, expiredAt);
 
     } catch (err) {
         window.showToast("Gagal Top Up", err.message, "error");
