@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- VANNSTORE-BUILD: beranda-riwayat-v3 (20-okt-2026) -->
+<!-- VANNSTORE-BUILD: produk-v4 (21-okt-2026) -->
  
 <html lang="id">
 <head>
@@ -605,6 +605,62 @@
     .shop-opt-info span { display: block; font-size: 11px; color: var(--text-muted); }
     .shop-opt-price { font-size: 13px; font-weight: 700; color: #10b981; }
 
+    /* --- HALAMAN PRODUK BARU --- */
+    .shop-top { display: flex; align-items: center; justify-content: space-between; gap: 10px; text-align: left; }
+    .shop-top-text h3 { font-size: 19px; font-weight: 800; color: var(--text-primary); }
+    .shop-top-text p { font-size: 11.5px; color: var(--text-muted); margin-top: 2px; }
+    .shop-saldo { display: flex; align-items: center; gap: 7px; padding: 8px 12px; border-radius: 14px; cursor: pointer; font-family: inherit; flex-shrink: 0;
+        border: 1px solid rgba(16,185,129,0.35); background: rgba(16,185,129,0.1); color: #10b981; font-size: 12px; }
+    .shop-saldo b { font-weight: 800; }
+    .shop-saldo i:last-child { opacity: .8; }
+    .shop-tabs { display: none; gap: 8px; overflow-x: auto; margin: 14px 0 2px; padding-bottom: 2px; scrollbar-width: none; }
+    .shop-tabs::-webkit-scrollbar { display: none; }
+    .shop-tabs.show { display: flex; }
+    .shop-tab { flex: 0 0 auto; display: flex; align-items: center; gap: 7px; padding: 9px 15px; border-radius: 14px; border: 1px solid var(--card-border); background: var(--input-bg); color: var(--text-secondary); font-size: 12.5px; font-weight: 700; cursor: pointer; font-family: inherit; }
+    .shop-tab.active { background: linear-gradient(135deg, #3b82f6, #6366f1); color: #fff; border-color: transparent; box-shadow: 0 8px 18px -8px rgba(99,102,241,0.8); }
+    .shop-searchbox { display: flex; align-items: center; gap: 10px; margin-top: 14px; padding: 0 14px; border-radius: 16px; border: 1px solid var(--input-border); background: var(--input-bg); }
+    .shop-searchbox:focus-within { border-color: #3b82f6; }
+    .shop-searchbox i { color: var(--text-muted); font-size: 14px; }
+    .shop-searchbox input { flex: 1; min-width: 0; background: transparent; border: none; outline: none; padding: 13px 0; color: var(--text-primary); font-size: 13.5px; font-family: inherit; }
+    .shop-meta { display: flex; justify-content: space-between; align-items: center; margin: 14px 2px 8px; font-size: 11px; font-weight: 700; letter-spacing: .5px; text-transform: uppercase; color: var(--text-muted); text-align: left; }
+    .shop-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 9px; }
+    .shop-tile { display: flex; flex-direction: column; align-items: center; gap: 8px; padding: 14px 6px 11px; border-radius: 18px; cursor: pointer; font-family: inherit; text-align: center;
+        border: 1px solid var(--product-border); background: var(--product-bg); color: var(--text-primary); transition: transform .15s ease, border-color .2s, box-shadow .2s; animation: fadeIn .25s ease; }
+    .shop-tile:active { transform: scale(.95); }
+    .shop-tile:hover { border-color: rgba(99,102,241,0.5); box-shadow: 0 10px 22px -12px rgba(99,102,241,0.7); }
+    .shop-tile b { font-size: 11.5px; font-weight: 700; line-height: 1.25; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; word-break: break-word; min-height: 29px; }
+    .svc-ic { width: 46px; height: 46px; border-radius: 15px; display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0; color: #fff; font-weight: 800; font-size: 17px;
+        background: linear-gradient(135deg, var(--g1, #3b82f6), var(--g2, #6366f1)); box-shadow: 0 8px 16px -8px var(--g1, #3b82f6); }
+    .svc-ic.dark { color: #111; }
+    .shop-skel { height: 104px; border-radius: 18px; background: linear-gradient(90deg, var(--product-bg) 25%, rgba(148,163,184,0.18) 50%, var(--product-bg) 75%); background-size: 200% 100%; animation: shimmer 1.2s infinite; }
+    @keyframes shimmer { to { background-position: -200% 0; } }
+    .shop-more { width: 100%; margin-top: 12px; padding: 11px; border-radius: 14px; border: 1px dashed var(--card-border); background: transparent; color: var(--text-secondary); font-size: 12.5px; font-weight: 700; cursor: pointer; font-family: inherit; }
+    .shop-empty { padding: 34px 10px; color: var(--text-muted); font-size: 13px; line-height: 1.6; }
+    .shop-empty i { display: block; font-size: 28px; margin-bottom: 8px; opacity: .6; }
+
+    .sheet-overlay { position: fixed; inset: 0; z-index: 99990; display: none; align-items: flex-end; justify-content: center; background: rgba(2,6,23,0.65); backdrop-filter: blur(6px); }
+    .sheet-overlay.show { display: flex; animation: fadeIn .2s ease; }
+    .sheet { width: 100%; max-width: 480px; max-height: 82vh; overflow-y: auto; background: var(--modal-bg); border: 1px solid var(--modal-border); border-bottom: none; border-radius: 26px 26px 0 0;
+        padding: 10px 18px calc(18px + env(safe-area-inset-bottom, 0px)); box-shadow: 0 -20px 50px rgba(0,0,0,0.5); animation: sheetUp .3s cubic-bezier(.2,.9,.3,1.1); text-align: left; }
+    @keyframes sheetUp { from { transform: translateY(60px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+    .sheet-handle { width: 42px; height: 4px; border-radius: 4px; background: rgba(148,163,184,0.45); margin: 4px auto 14px; }
+    .sheet-head { display: flex; align-items: center; gap: 12px; margin-bottom: 8px; }
+    .sheet-title { flex: 1; min-width: 0; }
+    .sheet-title h4 { font-size: 16px; font-weight: 800; color: var(--text-primary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .sheet-title small { font-size: 11.5px; color: var(--text-muted); }
+    .sheet-close { width: 34px; height: 34px; border-radius: 12px; border: 1px solid var(--card-border); background: var(--input-bg); color: var(--text-secondary); cursor: pointer; }
+    .sheet-opt { display: flex; align-items: center; gap: 12px; padding: 13px 12px; margin-top: 8px; border-radius: 16px; border: 1px solid var(--product-border); background: var(--product-bg); }
+    .sheet-opt.best { border-color: rgba(16,185,129,0.45); background: linear-gradient(135deg, rgba(16,185,129,0.1), transparent); }
+    .so-info { flex: 1; min-width: 0; }
+    .so-info b { font-size: 13.5px; color: var(--text-primary); display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+    .so-info span { display: block; font-size: 11px; color: var(--text-muted); margin-top: 2px; }
+    .so-tag { font-size: 9.5px; font-weight: 800; padding: 2px 7px; border-radius: 999px; background: rgba(16,185,129,0.18); color: #10b981; }
+    .so-price { font-size: 14px; font-weight: 800; color: #10b981; white-space: nowrap; }
+    .sheet-opt .buy-item-btn { margin: 0 !important; }
+    .sheet-note { margin-top: 14px; font-size: 11px; color: var(--text-muted); line-height: 1.5; }
+    .sheet-note i { color: #10b981; margin-right: 4px; }
+    .sheet-state { padding: 26px 6px; text-align: center; font-size: 12.5px; color: var(--text-muted); }
+
     /* --- BERANDA BARU --- */
     .home-head { display: flex; align-items: center; gap: 12px; text-align: left; margin-bottom: 14px; }
     .home-avatar { position: relative; width: 56px; height: 56px; flex-shrink: 0; }
@@ -816,6 +872,19 @@
     </div>
 </div>
 
+<div class="sheet-overlay" id="shop-sheet">
+    <div class="sheet" role="dialog" aria-modal="true">
+        <div class="sheet-handle"></div>
+        <div class="sheet-head">
+            <span id="sheet-ic"></span>
+            <div class="sheet-title"><h4 id="sheet-name"></h4><small id="sheet-sub"></small></div>
+            <button class="sheet-close" id="sheet-close" aria-label="Tutup"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+        <div id="sheet-body"></div>
+        <p class="sheet-note"><i class="fa-solid fa-shield-halved"></i> Saldo dipotong saat pesanan dibuat dan dikembalikan otomatis jika gagal atau dibatalkan.</p>
+    </div>
+</div>
+
 <div class="topup-modal" id="hist-modal-box">
     <div class="topup-modal-content" id="hist-modal-content"></div>
 </div>
@@ -972,10 +1041,17 @@
             </div>
 
             <div id="shop-page" class="page-content">
-                <h3 style="font-weight: 700; font-size: 18px;"><i class="fa-solid fa-tags" style="color:#60a5fa; margin-right:8px;"></i> Nomor OTP</h3>
-                <p style="color:var(--text-secondary); font-size:12.5px; margin:4px 0 0; line-height:1.5;">Stok dan harga diambil langsung dari katalog. Pilih aplikasi, lalu pilih operator.</p>
-                <input type="text" class="chat-input-field shop-search" id="shop-search" placeholder="Cari aplikasi (WhatsApp, Shopee...)">
-                <div class="product-list" id="shop-list"><div class="history-empty">Memuat katalog...</div></div>
+                <div class="shop-top">
+                    <div class="shop-top-text">
+                        <h3>Beli Produk</h3>
+                        <p>Stok dan harga diambil langsung dari katalog.</p>
+                    </div>
+                    <button class="shop-saldo" onclick="openTopupModal()" title="Top up saldo"><i class="fa-solid fa-wallet"></i><b id="shop-saldo-text">Rp 0</b><i class="fa-solid fa-circle-plus"></i></button>
+                </div>
+                <div class="shop-tabs" id="shop-tabs"></div>
+                <div class="shop-searchbox"><i class="fa-solid fa-magnifying-glass"></i><input type="text" id="shop-search" placeholder="Cari produk..." autocomplete="off"></div>
+                <div class="shop-meta" id="shop-meta"></div>
+                <div id="shop-list"><div class="shop-grid"><div class="shop-skel"></div><div class="shop-skel"></div><div class="shop-skel"></div><div class="shop-skel"></div><div class="shop-skel"></div><div class="shop-skel"></div></div></div>
             </div>
 
             <div id="chat-page" class="page-content">
@@ -1076,6 +1152,7 @@ let currentUser = null;
 let unsubscribeAdminUsers = null, unsubscribeAdminLog = null;
 let adminUsers = [], saldoTarget = null, saldoMode = "add";
 let shopServices = [];
+let shopData = {};
 let shopLoaded = false;
 let unsubscribeTx = null;
 let unsubscribeChat = null;
@@ -1188,7 +1265,7 @@ function handleLogoutDOM() {
     const tl = document.getElementById("ticket-list-container");
     if (tl) tl.innerHTML = "";
     currentUser = null;
-    shopServices = []; shopLoaded = false;
+    shopServices = []; shopLoaded = false; shopData = {};
     if (typeof stopAdminDashboard === "function") stopAdminDashboard();
     const mAdminEl = document.getElementById("m-admin");
     if (mAdminEl) mAdminEl.style.display = "none";
@@ -1246,6 +1323,8 @@ function listenToUserData(uid) {
             const data = docSnap.data();
             const saldo = data.saldo || 0;
             document.getElementById("user-saldo-text").innerText = "Rp " + saldo.toLocaleString('id-ID');
+            const shopSaldo = document.getElementById("shop-saldo-text");
+            if (shopSaldo) shopSaldo.innerText = "Rp " + saldo.toLocaleString('id-ID');
         }
     });
 }
@@ -1493,72 +1572,224 @@ document.getElementById("chat-input").addEventListener("keypress", (e) => { if(e
 // SISTEM TRANSAKSI NOKOS
 // ============================================================
 
+// ============================================================
+// HALAMAN PRODUK
+// Setiap kategori = satu "provider". Untuk menambah produk baru (Game, Data, E-Money, dll) cukup
+// menambah satu provider di SHOP_PROVIDERS di bawah, tanpa mengubah tampilan:
+//   loadItems()          -> [{ id, name }]                      daftar produk/aplikasi/game
+//   loadOptions(item)    -> [{ title, stock, price, tag?, data }] pilihan yang tampil di lembar harga
+//   buy(item, option)    -> Promise<boolean>                    true jika pesanan berhasil dibuat
+// Kategori baru otomatis muncul sebagai tab. Tab disembunyikan kalau hanya ada satu kategori.
+// ============================================================
+const BRAND_ICONS = [
+    [/whatsapp|\bwa\b/i, "fa-brands fa-whatsapp", "#25D366", "#128C7E"],
+    [/telegram/i, "fa-brands fa-telegram", "#2AABEE", "#229ED9"],
+    [/instagram/i, "fa-brands fa-instagram", "#f09433", "#bc1888"],
+    [/facebook|\bfb\b/i, "fa-brands fa-facebook-f", "#1877F2", "#0d5bd1"],
+    [/tiktok/i, "fa-brands fa-tiktok", "#25F4EE", "#fe2c55"],
+    [/google|gmail/i, "fa-brands fa-google", "#4285F4", "#34A853"],
+    [/discord/i, "fa-brands fa-discord", "#5865F2", "#4752c4"],
+    [/twitter|\bx\b|x\.com/i, "fa-brands fa-twitter", "#222222", "#000000"],
+    [/\bline\b/i, "fa-brands fa-line", "#06C755", "#05a548"],
+    [/snapchat/i, "fa-brands fa-snapchat", "#FFFC00", "#e6e300", true],
+    [/spotify/i, "fa-brands fa-spotify", "#1DB954", "#168f42"],
+    [/youtube/i, "fa-brands fa-youtube", "#FF0000", "#c40000"],
+    [/steam/i, "fa-brands fa-steam", "#1b2838", "#2a475e"],
+    [/microsoft|outlook/i, "fa-brands fa-microsoft", "#00A4EF", "#0078d4"],
+    [/amazon/i, "fa-brands fa-amazon", "#FF9900", "#e68a00"],
+    [/paypal/i, "fa-brands fa-paypal", "#003087", "#009cde"],
+    [/linkedin/i, "fa-brands fa-linkedin-in", "#0A66C2", "#084e96"],
+    [/pinterest/i, "fa-brands fa-pinterest-p", "#E60023", "#b3001b"],
+    [/reddit/i, "fa-brands fa-reddit-alien", "#FF4500", "#cc3700"],
+    [/viber/i, "fa-brands fa-viber", "#7360F2", "#5a49c9"],
+    [/wechat/i, "fa-brands fa-weixin", "#07C160", "#059a4c"],
+    [/skype/i, "fa-brands fa-skype", "#00AFF0", "#0087bd"],
+    [/twitch/i, "fa-brands fa-twitch", "#9146FF", "#6f2fd1"],
+    [/shopee/i, "fa-solid fa-bag-shopping", "#EE4D2D", "#c93a1d"],
+    [/tokopedia/i, "fa-solid fa-bag-shopping", "#42B549", "#2f8f36"],
+    [/dana/i, "fa-solid fa-wallet", "#118EEA", "#0c6fb8"],
+    [/gopay|gojek/i, "fa-solid fa-motorcycle", "#00AA13", "#008a0f"],
+    [/\bovo\b/i, "fa-solid fa-wallet", "#4C2A86", "#3a1f69"],
+    [/grab/i, "fa-solid fa-car", "#00B14F", "#008a3d"],
+    [/\b(bank|bca|bni|bri|mandiri)\b/i, "fa-solid fa-building-columns", "#0ea5e9", "#0369a1"],
+];
+const FALLBACK_GRADS = [["#6366f1", "#8b5cf6"], ["#3b82f6", "#06b6d4"], ["#10b981", "#14b8a6"], ["#f59e0b", "#ef4444"], ["#ec4899", "#f43f5e"], ["#8b5cf6", "#d946ef"], ["#0ea5e9", "#6366f1"], ["#f97316", "#eab308"]];
+
+function brandOf(name) { return BRAND_ICONS.find(b => b[0].test(name)); }
+function svcIconHTML(name, size) {
+    const b = brandOf(name);
+    let g1, g2, inner, cls = "svc-ic";
+    if (b) { g1 = b[2]; g2 = b[3]; inner = `<i class="${b[1]}"></i>`; if (b[4]) cls += " dark"; }
+    else {
+        let h = 0; for (const c of name) h = (h * 31 + c.charCodeAt(0)) >>> 0;
+        [g1, g2] = FALLBACK_GRADS[h % FALLBACK_GRADS.length];
+        inner = escHtml(name.replace(/[^A-Za-z0-9 ]/g, "").trim().split(/\s+/).slice(0, 2).map(w => w[0]).join("").toUpperCase() || "?");
+    }
+    const dim = size ? `width:${size}px;height:${size}px;` : "";
+    return `<span class="${cls}" style="--g1:${g1};--g2:${g2};${dim}">${inner}</span>`;
+}
+
+const SHOP_PROVIDERS = {
+    otp: {
+        label: "Nomor OTP", icon: "fa-sim-card", hint: "Cari aplikasi (WhatsApp, Shopee...)", unit: "aplikasi", sub: "Nomor OTP · Indonesia",
+        async loadItems() {
+            const r = await authFetch("/api/otp?action=catalog");
+            const j = await r.json();
+            if (!r.ok || !j.success) throw new Error(j.error || "Gagal memuat katalog");
+            return j.data.map(x => ({ id: x.id, name: x.name }));
+        },
+        async loadOptions(item) {
+            const r = await authFetch(`/api/otp?action=products&service_id=${encodeURIComponent(item.id)}`);
+            const j = await r.json();
+            if (!r.ok || !j.success) throw new Error(j.error || "Gagal memuat produk");
+            return j.data.map(o => ({ title: o.operator, stock: o.available, price: o.price, data: { cpid: o.catalog_product_id, opid: o.operator_id, op: o.operator } }));
+        },
+        async buy(item, o) {
+            await orderOtpProduct({ sid: item.id, name: item.name, cpid: o.data.cpid, opid: o.data.opid === null ? "" : o.data.opid, op: o.data.op, price: o.price });
+            return lastOrderOk;
+        }
+    }
+    // Contoh nanti:
+    // game: { label: "Game", icon: "fa-gamepad", hint: "Cari game...", unit: "game", sub: "Top up game", loadItems() {...}, loadOptions(item) {...}, buy(item, o) {...} }
+};
+
+let shopCat = "otp", shopLimit = 60, shopSheetItem = null, shopSheetToken = 0, lastOrderOk = false;
+const shopCats = () => Object.keys(SHOP_PROVIDERS);
+
+function renderShopTabs() {
+    const box = document.getElementById("shop-tabs");
+    const cats = shopCats();
+    box.classList.toggle("show", cats.length > 1);
+    box.innerHTML = cats.map(id => `<button class="shop-tab ${id === shopCat ? "active" : ""}" data-cat="${id}"><i class="fa-solid ${SHOP_PROVIDERS[id].icon}"></i>${escHtml(SHOP_PROVIDERS[id].label)}</button>`).join("");
+    document.getElementById("shop-search").placeholder = SHOP_PROVIDERS[shopCat].hint;
+}
+
 async function loadShopCatalog(force) {
     if (!currentUser) return;
+    renderShopTabs();
     const box = document.getElementById("shop-list");
-    if (shopLoaded && !force) return renderShop();
-    box.innerHTML = `<div class="history-empty">Memuat katalog...</div>`;
+    if (shopData[shopCat] && !force) return renderShop();
+    box.innerHTML = `<div class="shop-grid">${'<div class="shop-skel"></div>'.repeat(9)}</div>`;
+    document.getElementById("shop-meta").innerHTML = "";
+    const cat = shopCat;
     try {
-        const r = await authFetch("/api/otp?action=catalog");
-        const j = await r.json();
-        if (!r.ok || !j.success) throw new Error(j.error || "Gagal memuat katalog");
-        shopServices = j.data; shopLoaded = true;
-        renderShop();
+        const items = await SHOP_PROVIDERS[cat].loadItems();
+        shopData[cat] = items;
+        if (cat === shopCat) renderShop();
     } catch (e) {
-        box.innerHTML = `<div class="history-empty" style="color:#ef4444;">⚠️ ${escHtml(e.message)}<br><button class="ai-action-btn" id="shop-retry">Coba Lagi</button></div>`;
+        if (cat !== shopCat) return;
+        box.innerHTML = `<div class="shop-empty"><i class="fa-solid fa-triangle-exclamation"></i>${escHtml(e.message)}<br><button class="ai-action-btn" id="shop-retry">Coba Lagi</button></div>`;
     }
+}
+
+function tileHTML(x) {
+    return `<button class="shop-tile" data-id="${escHtml(x.id)}">${svcIconHTML(x.name)}<b>${escHtml(x.name)}</b></button>`;
 }
 
 function renderShop() {
     const box = document.getElementById("shop-list");
+    const meta = document.getElementById("shop-meta");
+    const prov = SHOP_PROVIDERS[shopCat];
+    const all = shopData[shopCat] || [];
     const term = document.getElementById("shop-search").value.trim().toLowerCase();
-    const list = shopServices.filter(x => x.name.toLowerCase().includes(term)).slice(0, 60);
-    if (list.length === 0) { box.innerHTML = `<div class="history-empty">Aplikasi tidak ditemukan</div>`; return; }
-    box.innerHTML = list.map(x => `
-        <div class="product-item shop-svc" data-sid="${escHtml(x.id)}" data-name="${escHtml(x.name)}">
-            <div class="shop-svc-head"><h4>${escHtml(x.name)}</h4><i class="fa-solid fa-chevron-down"></i></div>
-            <div class="shop-opts" style="display:none;"></div>
-        </div>`).join("");
+    const list = all.filter(x => !term || x.name.toLowerCase().includes(term));
+
+    if (list.length === 0) {
+        meta.innerHTML = "";
+        box.innerHTML = `<div class="shop-empty"><i class="fa-solid fa-box-open"></i>${term ? "Tidak ada hasil untuk “" + escHtml(term) + "”" : "Belum ada produk tersedia"}</div>`;
+        return;
+    }
+    if (term) {
+        meta.innerHTML = `<span>Hasil pencarian</span><span>${list.length} ${prov.unit}</span>`;
+        box.innerHTML = `<div class="shop-grid">${list.slice(0, shopLimit).map(tileHTML).join("")}</div>`;
+        return;
+    }
+    const popular = list.filter(x => brandOf(x.name)).slice(0, 9);
+    const popIds = new Set(popular.map(x => x.id));
+    const rest = list.filter(x => !popIds.has(x.id)).sort((a, b) => a.name.localeCompare(b.name));
+    let html = "";
+    if (popular.length) html += `<div class="shop-meta" style="margin-top:0;"><span>🔥 Populer</span></div><div class="shop-grid">${popular.map(tileHTML).join("")}</div>`;
+    if (rest.length) {
+        html += `<div class="shop-meta"><span>Semua ${prov.unit}</span><span>${rest.length} · A-Z</span></div><div class="shop-grid">${rest.slice(0, shopLimit).map(tileHTML).join("")}</div>`;
+        if (rest.length > shopLimit) html += `<button class="shop-more" id="shop-more">Tampilkan lebih banyak</button>`;
+    }
+    meta.innerHTML = "";
+    box.innerHTML = html;
 }
 
-async function loadShopOptions(card) {
-    const opts = card.querySelector(".shop-opts");
-    opts.innerHTML = `<div class="history-empty">Memuat stok...</div>`;
+// ----- lembar harga (bottom sheet) -----
+async function openShopSheet(item) {
+    shopSheetItem = item;
+    const prov = SHOP_PROVIDERS[shopCat];
+    document.getElementById("sheet-ic").innerHTML = svcIconHTML(item.name);
+    document.getElementById("sheet-name").innerText = item.name;
+    document.getElementById("sheet-sub").innerText = prov.sub;
+    document.getElementById("shop-sheet").classList.add("show");
+    await loadShopSheetOptions();
+}
+
+async function loadShopSheetOptions() {
+    const item = shopSheetItem;
+    if (!item) return;
+    const body = document.getElementById("sheet-body");
+    const token = ++shopSheetToken;
+    body.innerHTML = `<div class="sheet-state"><div class="shop-skel" style="height:64px;margin-bottom:8px;"></div><div class="shop-skel" style="height:64px;"></div></div>`;
     try {
-        const r = await authFetch(`/api/otp?action=products&service_id=${encodeURIComponent(card.dataset.sid)}`);
-        const j = await r.json();
-        if (!r.ok || !j.success) throw new Error(j.error || "Gagal memuat produk");
-        if (j.data.length === 0) { opts.innerHTML = `<div class="history-empty">Stok habis</div>`; return; }
-        opts.innerHTML = j.data.map(o => `
-            <div class="shop-opt">
-                <div class="shop-opt-info"><b>${escHtml(o.operator)}</b><span>Stok ${Number(o.available).toLocaleString('id-ID')}</span></div>
-                <div class="shop-opt-price">Rp ${Number(o.price).toLocaleString('id-ID')}</div>
-                <button class="btn buy-item-btn" data-sid="${escHtml(card.dataset.sid)}" data-name="${escHtml(card.dataset.name)}" data-cpid="${o.catalog_product_id}" data-opid="${o.operator_id ?? ''}" data-op="${escHtml(o.operator)}" data-price="${o.price}">Beli</button>
+        const rows = await SHOP_PROVIDERS[shopCat].loadOptions(item);
+        if (token !== shopSheetToken) return;
+        if (rows.length === 0) { body.innerHTML = `<div class="sheet-state"><i class="fa-solid fa-box-open" style="font-size:26px;opacity:.6;display:block;margin-bottom:8px;"></i>Stok sedang habis. Coba lagi nanti.</div>`; return; }
+        window._sheetRows = rows;
+        body.innerHTML = rows.map((o, i) => `
+            <div class="sheet-opt ${i === 0 && rows.length > 1 ? "best" : ""}">
+                <div class="so-info"><b>${escHtml(o.title)}${i === 0 && rows.length > 1 ? '<em class="so-tag" style="font-style:normal;">TERMURAH</em>' : ""}</b><span>Stok ${Number(o.stock).toLocaleString("id-ID")}</span></div>
+                <div class="so-price">${rupiah(o.price)}</div>
+                <button class="btn buy-item-btn" data-i="${i}">Beli</button>
             </div>`).join("");
     } catch (e) {
-        opts.innerHTML = `<div class="history-empty" style="color:#ef4444;">⚠️ ${escHtml(e.message)}</div>`;
+        if (token !== shopSheetToken) return;
+        body.innerHTML = `<div class="sheet-state" style="color:#ef4444;">⚠️ ${escHtml(e.message)}<br><button class="ai-action-btn" id="sheet-retry">Coba Lagi</button></div>`;
     }
 }
 
-document.getElementById("shop-search").addEventListener("input", renderShop);
+function closeShopSheet() { document.getElementById("shop-sheet").classList.remove("show"); shopSheetItem = null; shopSheetToken++; }
+
+document.getElementById("shop-search").addEventListener("input", () => { shopLimit = 60; renderShop(); });
+document.getElementById("shop-tabs").addEventListener("click", (e) => {
+    const t = e.target.closest(".shop-tab");
+    if (!t || t.dataset.cat === shopCat) return;
+    shopCat = t.dataset.cat; shopLimit = 60;
+    document.getElementById("shop-search").value = "";
+    loadShopCatalog();
+});
 document.getElementById("shop-list").addEventListener("click", (e) => {
     if (e.target.closest("#shop-retry")) return loadShopCatalog(true);
-    const buy = e.target.closest("button[data-cpid]");
-    if (buy) return orderOtpProduct(buy.dataset);
-    const head = e.target.closest(".shop-svc-head");
-    if (head) {
-        const card = head.parentElement;
-        const opts = card.querySelector(".shop-opts");
-        const open = card.classList.toggle("open");
-        opts.style.display = open ? "block" : "none";
-        if (open) loadShopOptions(card);
+    if (e.target.closest("#shop-more")) { shopLimit += 60; return renderShop(); }
+    const tile = e.target.closest(".shop-tile");
+    if (tile) {
+        const item = (shopData[shopCat] || []).find(x => String(x.id) === tile.dataset.id);
+        if (item) openShopSheet(item);
     }
 });
+document.getElementById("sheet-body").addEventListener("click", async (e) => {
+    if (e.target.closest("#sheet-retry")) return loadShopSheetOptions();
+    const btn = e.target.closest("button[data-i]");
+    if (!btn || !shopSheetItem) return;
+    const row = (window._sheetRows || [])[parseInt(btn.dataset.i, 10)];
+    if (!row) return;
+    btn.disabled = true; btn.style.opacity = "0.6";
+    try {
+        const ok = await SHOP_PROVIDERS[shopCat].buy(shopSheetItem, row);
+        if (ok) closeShopSheet(); else loadShopSheetOptions();
+    } finally { btn.disabled = false; btn.style.opacity = ""; }
+});
+document.getElementById("sheet-close").addEventListener("click", closeShopSheet);
+document.getElementById("shop-sheet").addEventListener("click", (e) => { if (e.target.id === "shop-sheet") closeShopSheet(); });
 
 async function orderOtpProduct(ds) {
     if (!currentUser) return window.showToast("Akses Ditolak", "Silakan login terlebih dahulu untuk membeli!", "error");
     const price = parseInt(ds.price, 10);
     const productName = `Nokos ${ds.name}`;
+    lastOrderOk = false;
     try {
         const userSnap = await getDoc(doc(db, "users", currentUser.uid));
         const saldoUser = userSnap.exists() ? (userSnap.data().saldo || 0) : 0;
@@ -1578,11 +1809,12 @@ async function orderOtpProduct(ds) {
         });
         const result = await response.json();
         if (!response.ok || !result.success) {
-            if (result.refresh) { document.querySelectorAll(".shop-svc.open").forEach(c => loadShopOptions(c)); }
+            if (result.refresh && shopSheetItem) loadShopSheetOptions();
             throw new Error(result.error || "Gagal mengambil nomor dari provider.");
         }
         currentActiveOrderId = result.data.id;
         openOtpModal(result.data.number, result.data.id, productName, result.data.price);
+        lastOrderOk = true;
     } catch (e) {
         window.showToast("Transaksi Gagal", e.message, "error");
     }
