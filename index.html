@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- VANNSTORE-BUILD: produk-v4 (21-okt-2026) -->
+<!-- VANNSTORE-BUILD: negara-v5 (21-okt-2026) -->
  
 <html lang="id">
 <head>
@@ -661,6 +661,22 @@
     .sheet-note i { color: #10b981; margin-right: 4px; }
     .sheet-state { padding: 26px 6px; text-align: center; font-size: 12.5px; color: var(--text-muted); }
 
+    .shop-country { display: flex; align-items: center; gap: 12px; width: 100%; margin-top: 14px; padding: 10px 14px; border-radius: 16px; cursor: pointer; font-family: inherit; text-align: left;
+        border: 1px solid rgba(99,102,241,0.35); background: linear-gradient(135deg, rgba(99,102,241,0.12), rgba(59,130,246,0.06)); color: var(--text-primary); }
+    .shop-country:active { transform: scale(.985); }
+    .sc-flag { font-size: 26px; line-height: 1; }
+    .sc-text { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+    .sc-text small { font-size: 10.5px; color: var(--text-muted); }
+    .sc-text b { font-size: 14px; font-weight: 800; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .sc-change { font-size: 11.5px; font-weight: 700; color: #818cf8; white-space: nowrap; }
+    .country-row { display: flex; align-items: center; gap: 12px; width: 100%; padding: 11px 10px; border-radius: 14px; border: 1px solid transparent; background: transparent; cursor: pointer; font-family: inherit; text-align: left; color: var(--text-primary); }
+    .country-row:active { background: var(--input-bg); }
+    .country-row.sel { border-color: rgba(99,102,241,0.45); background: rgba(99,102,241,0.1); }
+    .country-row .cr-flag { font-size: 24px; line-height: 1; width: 30px; text-align: center; }
+    .country-row .cr-name { flex: 1; min-width: 0; font-size: 13.5px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .country-row .cr-code { font-size: 12px; color: var(--text-muted); }
+    .country-row .cr-check { color: #818cf8; width: 14px; }
+
     /* --- BERANDA BARU --- */
     .home-head { display: flex; align-items: center; gap: 12px; text-align: left; margin-bottom: 14px; }
     .home-avatar { position: relative; width: 56px; height: 56px; flex-shrink: 0; }
@@ -885,6 +901,18 @@
     </div>
 </div>
 
+<div class="sheet-overlay" id="country-sheet">
+    <div class="sheet" role="dialog" aria-modal="true">
+        <div class="sheet-handle"></div>
+        <div class="sheet-head">
+            <div class="sheet-title"><h4>Pilih Negara</h4><small>Nomor OTP dari negara yang dipilih</small></div>
+            <button class="sheet-close" id="country-close" aria-label="Tutup"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+        <div class="shop-searchbox" style="margin-top:4px;"><i class="fa-solid fa-magnifying-glass"></i><input type="text" id="country-search" placeholder="Cari negara atau kode (+62)..." autocomplete="off"></div>
+        <div id="country-list" style="margin-top:8px;"></div>
+    </div>
+</div>
+
 <div class="topup-modal" id="hist-modal-box">
     <div class="topup-modal-content" id="hist-modal-content"></div>
 </div>
@@ -1049,6 +1077,7 @@
                     <button class="shop-saldo" onclick="openTopupModal()" title="Top up saldo"><i class="fa-solid fa-wallet"></i><b id="shop-saldo-text">Rp 0</b><i class="fa-solid fa-circle-plus"></i></button>
                 </div>
                 <div class="shop-tabs" id="shop-tabs"></div>
+                <button class="shop-country" id="shop-country-btn" style="display:none;"><span class="sc-flag" id="shop-country-flag">🌍</span><span class="sc-text"><small>Negara nomor</small><b id="shop-country-name">Memuat...</b></span><span class="sc-change">Ganti <i class="fa-solid fa-chevron-down"></i></span></button>
                 <div class="shop-searchbox"><i class="fa-solid fa-magnifying-glass"></i><input type="text" id="shop-search" placeholder="Cari produk..." autocomplete="off"></div>
                 <div class="shop-meta" id="shop-meta"></div>
                 <div id="shop-list"><div class="shop-grid"><div class="shop-skel"></div><div class="shop-skel"></div><div class="shop-skel"></div><div class="shop-skel"></div><div class="shop-skel"></div><div class="shop-skel"></div></div></div>
@@ -1375,7 +1404,7 @@ function buildHistoryItems() {
         let st = "wait", label = berakhir ? "Memproses" : "Menunggu OTP";
         if (o.status === "done") { st = "done"; label = "Berhasil"; }
         else if (o.status === "refunded") { st = "fail"; label = "Dibatalkan"; }
-        items.push({ key: "o:" + o.id, kind: "nokos", ts: o.createdAt || 0, title: o.produk || "Nokos", sub: o.phone || "", amount: -(o.price || 0), st, label,
+        items.push({ key: "o:" + o.id, kind: "nokos", ts: o.createdAt || 0, title: o.produk || "Nokos", sub: [o.countryEmoji, o.phone].filter(Boolean).join(" "), amount: -(o.price || 0), st, label,
             active: st === "wait" && !berakhir, raw: o, type: "order" });
     });
     histDeposits.forEach(d => {
@@ -1475,6 +1504,7 @@ function showHistDetail(it) {
     row(it.amount > 0 ? "Saldo masuk" : "Harga", rupiah(Math.abs(it.amount)));
     if (it.type === "order") {
         if (r.phone) row("Nomor", `<span style="color:var(--text-primary)">${escHtml(r.phone)}</span>`);
+        if (r.country) row("Negara", escHtml(((r.countryEmoji || "") + " " + r.country).trim()));
         if (r.operator) row("Operator", escHtml(r.operator));
         if (r.status === "done") {
             extra = r.otp ? `<div class="hd-code">${escHtml(r.otp)}</div><button class="hd-btn" data-copy="${escHtml(r.otp)}">📋 Salin kode OTP</button>`
@@ -1631,21 +1661,21 @@ function svcIconHTML(name, size) {
 
 const SHOP_PROVIDERS = {
     otp: {
-        label: "Nomor OTP", icon: "fa-sim-card", hint: "Cari aplikasi (WhatsApp, Shopee...)", unit: "aplikasi", sub: "Nomor OTP · Indonesia",
+        label: "Nomor OTP", icon: "fa-sim-card", hasCountry: true, hint: "Cari aplikasi (WhatsApp, Shopee...)", unit: "aplikasi", sub: "Nomor OTP · Indonesia",
         async loadItems() {
-            const r = await authFetch("/api/otp?action=catalog");
+            const r = await authFetch("/api/otp?action=catalog&country_id=" + encodeURIComponent(shopCountry.id));
             const j = await r.json();
             if (!r.ok || !j.success) throw new Error(j.error || "Gagal memuat katalog");
             return j.data.map(x => ({ id: x.id, name: x.name }));
         },
         async loadOptions(item) {
-            const r = await authFetch(`/api/otp?action=products&service_id=${encodeURIComponent(item.id)}`);
+            const r = await authFetch(`/api/otp?action=products&service_id=${encodeURIComponent(item.id)}&country_id=${encodeURIComponent(shopCountry.id)}`);
             const j = await r.json();
             if (!r.ok || !j.success) throw new Error(j.error || "Gagal memuat produk");
             return j.data.map(o => ({ title: o.operator, stock: o.available, price: o.price, data: { cpid: o.catalog_product_id, opid: o.operator_id, op: o.operator } }));
         },
         async buy(item, o) {
-            await orderOtpProduct({ sid: item.id, name: item.name, cpid: o.data.cpid, opid: o.data.opid === null ? "" : o.data.opid, op: o.data.op, price: o.price });
+            await orderOtpProduct({ sid: item.id, cid: shopCountry.id, name: item.name, cpid: o.data.cpid, opid: o.data.opid === null ? "" : o.data.opid, op: o.data.op, price: o.price });
             return lastOrderOk;
         }
     }
@@ -1656,31 +1686,114 @@ const SHOP_PROVIDERS = {
 let shopCat = "otp", shopLimit = 60, shopSheetItem = null, shopSheetToken = 0, lastOrderOk = false;
 const shopCats = () => Object.keys(SHOP_PROVIDERS);
 
+let shopCountries = [], shopCountry = null;
+const shopKey = () => shopCat + (SHOP_PROVIDERS[shopCat].hasCountry && shopCountry ? ":" + shopCountry.id : "");
+
+function renderCountryBtn() {
+    const prov = SHOP_PROVIDERS[shopCat];
+    const btn = document.getElementById("shop-country-btn");
+    btn.style.display = prov.hasCountry ? "flex" : "none";
+    if (prov.hasCountry && shopCountry) {
+        document.getElementById("shop-country-flag").innerText = shopCountry.emoji || "🌍";
+        document.getElementById("shop-country-name").innerText = shopCountry.name;
+    }
+}
+
 function renderShopTabs() {
     const box = document.getElementById("shop-tabs");
     const cats = shopCats();
     box.classList.toggle("show", cats.length > 1);
     box.innerHTML = cats.map(id => `<button class="shop-tab ${id === shopCat ? "active" : ""}" data-cat="${id}"><i class="fa-solid ${SHOP_PROVIDERS[id].icon}"></i>${escHtml(SHOP_PROVIDERS[id].label)}</button>`).join("");
     document.getElementById("shop-search").placeholder = SHOP_PROVIDERS[shopCat].hint;
+    renderCountryBtn();
+}
+
+async function ensureCountries() {
+    if (shopCountries.length) return;
+    const r = await authFetch("/api/otp?action=countries");
+    const j = await r.json();
+    if (!r.ok || !j.success) throw new Error(j.error || "Gagal memuat daftar negara");
+    shopCountries = j.data;
+}
+
+async function ensureCountry() {
+    if (shopCountry) return;
+    await ensureCountries();
+    let saved = null;
+    try { saved = localStorage.getItem("vannstore_country"); } catch (e) {}
+    shopCountry = shopCountries.find(c => String(c.id) === saved) || shopCountries.find(c => /indonesia/i.test(c.name)) || shopCountries[0];
+    if (!shopCountry) throw new Error("Daftar negara kosong");
 }
 
 async function loadShopCatalog(force) {
     if (!currentUser) return;
     renderShopTabs();
     const box = document.getElementById("shop-list");
-    if (shopData[shopCat] && !force) return renderShop();
-    box.innerHTML = `<div class="shop-grid">${'<div class="shop-skel"></div>'.repeat(9)}</div>`;
-    document.getElementById("shop-meta").innerHTML = "";
+    const prov = SHOP_PROVIDERS[shopCat];
     const cat = shopCat;
+    const skel = `<div class="shop-grid">${'<div class="shop-skel"></div>'.repeat(9)}</div>`;
     try {
-        const items = await SHOP_PROVIDERS[cat].loadItems();
-        shopData[cat] = items;
-        if (cat === shopCat) renderShop();
+        if (prov.hasCountry && !shopCountry) { box.innerHTML = skel; await ensureCountry(); renderCountryBtn(); }
+        const key = shopKey();
+        if (shopData[key] && !force) return renderShop();
+        box.innerHTML = skel;
+        document.getElementById("shop-meta").innerHTML = "";
+        const items = await prov.loadItems();
+        shopData[key] = items;
+        if (cat === shopCat && key === shopKey()) renderShop();
     } catch (e) {
         if (cat !== shopCat) return;
         box.innerHTML = `<div class="shop-empty"><i class="fa-solid fa-triangle-exclamation"></i>${escHtml(e.message)}<br><button class="ai-action-btn" id="shop-retry">Coba Lagi</button></div>`;
     }
 }
+
+// ----- pilih negara -----
+function renderCountryList() {
+    const term = document.getElementById("country-search").value.trim().toLowerCase();
+    const list = shopCountries.filter(c => !term || c.name.toLowerCase().includes(term) || String(c.dial_code || "").replace("+", "").startsWith(term.replace("+", "")));
+    const box = document.getElementById("country-list");
+    if (list.length === 0) { box.innerHTML = `<div class="sheet-state">Negara tidak ditemukan</div>`; return; }
+    box.innerHTML = list.map(c => `
+        <button class="country-row ${shopCountry && String(shopCountry.id) === String(c.id) ? "sel" : ""}" data-id="${escHtml(c.id)}">
+            <span class="cr-flag">${escHtml(c.emoji || "🌍")}</span>
+            <span class="cr-name">${escHtml(c.name)}</span>
+            <span class="cr-code">${escHtml(c.dial_code || "")}</span>
+            <span class="cr-check">${shopCountry && String(shopCountry.id) === String(c.id) ? '<i class="fa-solid fa-check"></i>' : ""}</span>
+        </button>`).join("");
+}
+
+async function openCountrySheet() {
+    document.getElementById("country-search").value = "";
+    document.getElementById("country-sheet").classList.add("show");
+    const box = document.getElementById("country-list");
+    box.innerHTML = `<div class="sheet-state"><div class="shop-skel" style="height:46px;margin-bottom:8px;"></div><div class="shop-skel" style="height:46px;"></div></div>`;
+    try { await ensureCountries(); renderCountryList(); }
+    catch (e) { box.innerHTML = `<div class="sheet-state" style="color:#ef4444;">⚠️ ${escHtml(e.message)}</div>`; }
+}
+
+function closeCountrySheet() { document.getElementById("country-sheet").classList.remove("show"); }
+
+function selectCountry(id) {
+    const c = shopCountries.find(x => String(x.id) === String(id));
+    if (!c) return;
+    if (!shopCountry || String(shopCountry.id) !== String(c.id)) {
+        shopCountry = c;
+        try { localStorage.setItem("vannstore_country", String(c.id)); } catch (e) {}
+        shopLimit = 60;
+        document.getElementById("shop-search").value = "";
+    }
+    closeCountrySheet();
+    loadShopCatalog();
+}
+
+document.getElementById("shop-country-btn").addEventListener("click", openCountrySheet);
+document.getElementById("country-close").addEventListener("click", closeCountrySheet);
+document.getElementById("country-sheet").addEventListener("click", (e) => { if (e.target.id === "country-sheet") closeCountrySheet(); });
+document.getElementById("country-search").addEventListener("input", renderCountryList);
+document.getElementById("country-list").addEventListener("click", (e) => {
+    const row = e.target.closest(".country-row");
+    if (row) selectCountry(row.dataset.id);
+});
 
 function tileHTML(x) {
     return `<button class="shop-tile" data-id="${escHtml(x.id)}">${svcIconHTML(x.name)}<b>${escHtml(x.name)}</b></button>`;
@@ -1690,7 +1803,7 @@ function renderShop() {
     const box = document.getElementById("shop-list");
     const meta = document.getElementById("shop-meta");
     const prov = SHOP_PROVIDERS[shopCat];
-    const all = shopData[shopCat] || [];
+    const all = shopData[shopKey()] || [];
     const term = document.getElementById("shop-search").value.trim().toLowerCase();
     const list = all.filter(x => !term || x.name.toLowerCase().includes(term));
 
@@ -1723,7 +1836,7 @@ async function openShopSheet(item) {
     const prov = SHOP_PROVIDERS[shopCat];
     document.getElementById("sheet-ic").innerHTML = svcIconHTML(item.name);
     document.getElementById("sheet-name").innerText = item.name;
-    document.getElementById("sheet-sub").innerText = prov.sub;
+    document.getElementById("sheet-sub").innerText = prov.hasCountry && shopCountry ? `${prov.label} · ${shopCountry.emoji || ""} ${shopCountry.name}` : prov.sub;
     document.getElementById("shop-sheet").classList.add("show");
     await loadShopSheetOptions();
 }
@@ -1766,7 +1879,7 @@ document.getElementById("shop-list").addEventListener("click", (e) => {
     if (e.target.closest("#shop-more")) { shopLimit += 60; return renderShop(); }
     const tile = e.target.closest(".shop-tile");
     if (tile) {
-        const item = (shopData[shopCat] || []).find(x => String(x.id) === tile.dataset.id);
+        const item = (shopData[shopKey()] || []).find(x => String(x.id) === tile.dataset.id);
         if (item) openShopSheet(item);
     }
 });
@@ -1803,7 +1916,7 @@ async function orderOtpProduct(ds) {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
-                service_id: ds.sid, catalog_product_id: ds.cpid,
+                service_id: ds.sid, country_id: ds.cid, catalog_product_id: ds.cpid,
                 operator_id: ds.opid === "" ? null : ds.opid, expected_price: price
             })
         });
